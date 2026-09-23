@@ -92,11 +92,11 @@ class AuthController {
         return res.status(400).json({ success: false, message: "Please enter your full name (minimum 3 characters)." });
       }
 
-      const validRoles = ['Teacher', 'School Staff', 'Student', 'Parent', 'Officer', 'Other authorized role'];
+      const validRoles = ['APO', 'DEO', 'MEO', 'Teacher'];
       if (!role || !validRoles.includes(role)) {
         return res.status(400).json({
           success: false,
-          message: "Please select a valid role (Teacher, School Staff, Student, Parent, Officer, or Other)."
+          message: "Please select a valid role (APO, DEO, MEO, or Teacher)."
         });
       }
 

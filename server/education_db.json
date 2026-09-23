@@ -38,6 +38,45 @@
       "officialProfileId": null,
       "createdAt": "2026-09-23T18:10:02.505Z",
       "lastLogin": "2026-09-23T18:10:02.569Z"
+    },
+    {
+      "id": "USER-1790188271851-7301",
+      "fullName": "S. Ramesh Kumar",
+      "role": "Teacher",
+      "mobileNumber": "9824618505",
+      "passwordHash": "scrypt$26e204dbe0ef28f70cfbb6f67b7681dc$6fdc51886542037cbdb33187b8e94d8c3acd32c97ee2f77e7d77e6f3e4b521cd5823d40b9842d010d0381368ee6e69d68426a216864eef7ee175a847f62e9d3b",
+      "mobileVerified": true,
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-09-23T18:31:11.851Z",
+      "lastLogin": "2026-09-23T18:31:11.900Z"
+    },
+    {
+      "id": "USER-1790188305075-7468",
+      "fullName": "S. Ramesh Kumar",
+      "role": "Teacher",
+      "mobileNumber": "9866052615",
+      "passwordHash": "scrypt$ddf775a1333b42611128c4bbe094061f$538332882e97b9d36d335befaf87a3d291b458ff8950e04098c671218f35c494132f958fc424d4d07c5d663d4a12bd6cb7be1e5cda189e39e9b7b41767419403",
+      "mobileVerified": true,
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-09-23T18:31:45.075Z",
+      "lastLogin": "2026-09-23T18:31:45.143Z"
+    },
+    {
+      "id": "USER-1790188305206-5840",
+      "fullName": "B. Srinivas Rao",
+      "role": "APO",
+      "mobileNumber": "9873409839",
+      "passwordHash": "scrypt$33ddbfefe2bf7c6833257c2bb5b89272$02c021f9ac8aff79ca747df2f20e424e72faa002f3fe77e5d2c1dbd3ee49581e3a00512244d07045e3781c3847d55a1570e1e25f57823f039bda65f57a843c34",
+      "mobileVerified": true,
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-09-23T18:31:45.206Z",
+      "lastLogin": "2026-09-23T18:31:45.206Z"
     }
   ],
   "otps": [
@@ -73,6 +112,50 @@
       "maxAttempts": 3,
       "verified": true,
       "createdAt": "2026-09-23T18:10:02.432Z"
+    },
+    {
+      "id": "OTP-1790188271798-3038",
+      "mobileNumber": "9824618505",
+      "otpCode": "560961",
+      "purpose": "REGISTRATION",
+      "expiresAt": 1790188571798,
+      "attempts": 1,
+      "maxAttempts": 3,
+      "verified": true,
+      "createdAt": "2026-09-23T18:31:11.798Z"
+    },
+    {
+      "id": "OTP-1790188305007-1755",
+      "mobileNumber": "9866052615",
+      "otpCode": "191495",
+      "purpose": "REGISTRATION",
+      "expiresAt": 1790188605007,
+      "attempts": 1,
+      "maxAttempts": 3,
+      "verified": true,
+      "createdAt": "2026-09-23T18:31:45.007Z"
+    },
+    {
+      "id": "OTP-1790188305162-8734",
+      "mobileNumber": "9873409839",
+      "otpCode": "592701",
+      "purpose": "REGISTRATION",
+      "expiresAt": 1790188605162,
+      "attempts": 1,
+      "maxAttempts": 3,
+      "verified": true,
+      "createdAt": "2026-09-23T18:31:45.162Z"
+    },
+    {
+      "id": "OTP-1790188305213-3713",
+      "mobileNumber": "9835495699",
+      "otpCode": "913914",
+      "purpose": "REGISTRATION",
+      "expiresAt": 1790188605213,
+      "attempts": 0,
+      "maxAttempts": 3,
+      "verified": false,
+      "createdAt": "2026-09-23T18:31:45.213Z"
     }
   ],
   "notifications": [

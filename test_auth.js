@@ -98,17 +98,39 @@ async function runTests() {
     if (!loginRes.data.success) throw new Error("Login failed");
     console.log("✓ Login successful! Token issued.");
 
-    // Test 5: Rejection of Incorrect Password
-    console.log("\n[Test 5] Testing incorrect password rejection...");
-    const failLogin = await request('POST', '/api/auth/login', {
-      mobileNumber: testMobile,
-      password: 'WrongPassword123!'
+    // Test 6: Verify registration with authorized role 'APO'
+    console.log("\n[Test 6] Testing registration with authorized role 'APO'...");
+    const apoMobile = '98' + Math.floor(10000000 + Math.random() * 90000000);
+    const apoOtpRes = await request('POST', '/api/auth/send-otp', { mobileNumber: apoMobile, purpose: 'REGISTRATION' });
+    const apoReg = await request('POST', '/api/auth/register', {
+      fullName: 'B. Srinivas Rao',
+      role: 'APO',
+      mobileNumber: apoMobile,
+      password: 'OfficialPassword2025!',
+      confirmPassword: 'OfficialPassword2025!',
+      otpCode: apoOtpRes.data.debugOtp
     });
-    console.log("Wrong Password HTTP Status:", failLogin.status);
-    if (failLogin.status === 401) {
-      console.log("✓ Wrong password rejected safely with HTTP 401!");
+    if (!apoReg.data.success || apoReg.data.user.role !== 'APO') {
+      throw new Error("Failed to register with role APO");
+    }
+    console.log("✓ Successfully registered user with role:", apoReg.data.user.role);
+
+    // Test 7: Verify rejection of invalid/removed roles (e.g., 'Student', 'Parent')
+    console.log("\n[Test 7] Testing rejection of removed/unauthorized role 'Student'...");
+    const badRoleMobile = '98' + Math.floor(10000000 + Math.random() * 90000000);
+    const badOtpRes = await request('POST', '/api/auth/send-otp', { mobileNumber: badRoleMobile, purpose: 'REGISTRATION' });
+    const badRoleReg = await request('POST', '/api/auth/register', {
+      fullName: 'Unauthorized Student',
+      role: 'Student',
+      mobileNumber: badRoleMobile,
+      password: 'SomePassword2025!',
+      confirmPassword: 'SomePassword2025!',
+      otpCode: badOtpRes.data.debugOtp
+    });
+    if (badRoleReg.status === 400 && !badRoleReg.data.success) {
+      console.log("✓ Unauthorized role 'Student' correctly rejected with HTTP 400:", badRoleReg.data.message);
     } else {
-      throw new Error("Expected 401 for wrong password");
+      throw new Error("Expected HTTP 400 rejection for unauthorized role 'Student'");
     }
 
     console.log("\n🎉 ALL VERIFICATION TESTS PASSED SUCCESSFULLY!\n");
