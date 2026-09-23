@@ -1,5 +1,5 @@
 // Official SVG Logos and Graphics for Telangana DEO Jangaon Portal
-// Strictly matching original government visual identity and colors
+// Strictly matching IMAGE 2 (Original Correct Light Government Version)
 
 window.PORTAL_LOGOS = {
   // Telangana State Emblem SVG Crest
@@ -14,7 +14,7 @@ window.PORTAL_LOGOS = {
       React.createElement('circle', { key: 'c1', cx: 100, cy: 100, r: 94, stroke: "#007a33", strokeWidth: 8, fill: "#ffffff" }),
       React.createElement('circle', { key: 'c2', cx: 100, cy: 100, r: 84, stroke: "#007a33", strokeWidth: 2, strokeDasharray: "4 3" }),
       // Inner decorative ring
-      React.createElement('circle', { key: 'c3', cx: 100, cy: 100, r: 66, stroke: "#d4af37", strokeWidth: 3, fill: "#fbfcf7" }),
+      React.createElement('circle', { key: 'c3', cx: 100, cy: 100, r: 66, stroke: "#d4af37", strokeWidth: 3, fill: "#ffffff" }),
       // Kakatiya Kala Thoranam arch
       React.createElement('path', {
         key: 'arch',
@@ -63,7 +63,7 @@ window.PORTAL_LOGOS = {
     ]);
   },
 
-  // Official "1 Telangana Rising" Emblem
+  // Official "1 Telangana Rising" Emblem (Matching IMAGE 2)
   TelanganaRisingLogo: function({ className = "w-24 h-24" }) {
     return React.createElement('svg', {
       className,
@@ -115,46 +115,45 @@ window.PORTAL_LOGOS = {
     ]);
   },
 
-  // Giant Illustrated Pencil Banner matching the original screenshot
-  PencilBanner: function({ className = "w-full max-w-4xl" }) {
+  // Giant Illustrated Pencil Banner matching IMAGE 2 exactly:
+  // - "GOVERNMENT OF TELANGANA" -> DARK GREEN
+  // - RED PENCIL GRAPHIC
+  // - "DEPARTMENT OF SCHOOL EDUCATION" -> BLUE
+  // - "JANGAON DISTRICT" -> RED / DARK RED
+  PencilBanner: function({ className = "w-full max-w-3xl" }) {
     return React.createElement('div', { className: `relative flex flex-col items-center select-none ${className}` }, [
-      // Top Government Label in Forest Green
+      // 1. "GOVERNMENT OF TELANGANA" -> DARK GREEN (#007a33)
       React.createElement('div', {
         key: 'govt-title',
-        className: 'text-center font-extrabold tracking-widest text-[#007a33] text-sm md:text-lg mb-1'
+        className: 'text-center font-extrabold tracking-widest text-[#007a33] text-base sm:text-xl md:text-2xl mb-2'
       }, 'GOVERNMENT OF TELANGANA'),
 
-      // Pencil Graphic
+      // 2. Center Pencil Graphic (Classic Red body with wood tip, gold ferrule and eraser)
       React.createElement('div', {
         key: 'pencil-body',
-        className: 'relative w-full h-14 md:h-16 flex items-center shadow-md my-1 rounded-sm overflow-hidden'
+        className: 'relative w-full h-8 sm:h-10 md:h-11 flex items-center shadow-md my-1.5 rounded-sm overflow-hidden'
       }, [
-        // Wood tip
+        // Wood sharpened tip
         React.createElement('div', {
           key: 'tip-wood',
-          className: 'w-10 md:w-14 h-full bg-[#f6d7b0] flex items-center justify-start relative clip-pencil-tip'
+          className: 'w-10 sm:w-14 md:w-16 h-full bg-[#f6d7b0] flex items-center justify-start relative clip-pencil-tip'
         }, [
           React.createElement('div', {
             key: 'lead',
-            className: 'w-4 md:w-5 h-full bg-[#1e293b] clip-lead'
+            className: 'w-4 sm:w-5 md:w-6 h-full bg-[#1e293b] clip-lead'
           })
         ]),
 
-        // Red Pencil Body with bold white text
+        // Red pencil body shaft
         React.createElement('div', {
           key: 'shaft',
-          className: 'flex-1 h-full bg-[#d32f2f] flex items-center justify-center px-4 border-y border-red-700'
-        }, [
-          React.createElement('span', {
-            key: 'pencil-text',
-            className: 'text-white font-extrabold text-sm sm:text-lg md:text-2xl tracking-wider uppercase text-center drop-shadow'
-          }, 'DEPARTMENT OF SCHOOL EDUCATION')
-        ]),
+          className: 'flex-1 h-full bg-gradient-to-b from-[#e53935] via-[#d32f2f] to-[#c62828] border-y border-red-700'
+        }),
 
         // Gold metal ferrule band
         React.createElement('div', {
           key: 'ferrule',
-          className: 'w-4 md:w-6 h-full bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 border-y border-amber-500 flex flex-col justify-around py-1'
+          className: 'w-5 sm:w-7 md:w-8 h-full bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 border-y border-amber-500 flex flex-col justify-around py-1'
         }, [
           React.createElement('div', { key: 'l1', className: 'h-0.5 bg-amber-600 opacity-60' }),
           React.createElement('div', { key: 'l2', className: 'h-0.5 bg-amber-600 opacity-60' })
@@ -163,14 +162,20 @@ window.PORTAL_LOGOS = {
         // Dark eraser on right
         React.createElement('div', {
           key: 'eraser',
-          className: 'w-8 md:w-10 h-full bg-[#334155] rounded-r-sm'
+          className: 'w-7 sm:w-9 md:w-10 h-full bg-[#334155] rounded-r-sm'
         })
       ]),
 
-      // District Title in Original Maroon/Red
+      // 3. "DEPARTMENT OF SCHOOL EDUCATION" -> BLUE (#0c4a7e)
+      React.createElement('div', {
+        key: 'dept-title',
+        className: 'text-center font-extrabold tracking-wide text-[#0c4a7e] text-base sm:text-xl md:text-2xl mt-1.5 uppercase'
+      }, 'DEPARTMENT OF SCHOOL EDUCATION'),
+
+      // 4. "JANGAON DISTRICT" -> RED / DARK RED (#c51c24)
       React.createElement('div', {
         key: 'district-title',
-        className: 'text-center font-black tracking-wider text-[#990000] text-xl sm:text-2xl md:text-4xl mt-1'
+        className: 'text-center font-black tracking-wider text-[#c51c24] text-2xl sm:text-3xl md:text-5xl mt-0.5'
       }, 'JANGAON DISTRICT')
     ]);
   }
