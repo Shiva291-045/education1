@@ -169,14 +169,93 @@ window.PORTAL_LOGOS = {
       // 3. "DEPARTMENT OF SCHOOL EDUCATION" -> BLUE (#0c4a7e)
       React.createElement('div', {
         key: 'dept-title',
-        className: 'text-center font-extrabold tracking-wide text-[#0c4a7e] text-base sm:text-xl md:text-2xl mt-1.5 uppercase'
+        className: 'text-center font-extrabold tracking-wide text-[#0c4a7e] text-base sm:text-xl md:text-2xl mt-1 uppercase'
       }, 'DEPARTMENT OF SCHOOL EDUCATION'),
 
       // 4. "JANGAON DISTRICT" -> RED / DARK RED (#c51c24)
       React.createElement('div', {
         key: 'district-title',
-        className: 'text-center font-black tracking-wider text-[#c51c24] text-2xl sm:text-3xl md:text-5xl mt-0.5'
+        className: 'text-center font-black tracking-wider text-[#c51c24] text-3xl sm:text-4xl md:text-5xl mt-0.5'
       }, 'JANGAON DISTRICT')
+    ]);
+  },
+
+  // School Illustration Vector Graphic (Matching Column 2 in Reference Image)
+  SchoolBuildingGraphic: function({ className = "w-32 h-24" }) {
+    return React.createElement('svg', {
+      className,
+      viewBox: "0 0 200 140",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, [
+      // Base grass hill
+      React.createElement('ellipse', { key: 'g1', cx: 100, cy: 135, rx: 95, ry: 15, fill: "#e8f5e9" }),
+      React.createElement('path', { key: 'g2', d: "M10 135 Q 100 120 190 135 Z", fill: "#c8e6c9" }),
+      // Left tree
+      React.createElement('rect', { key: 't1-trunk', x: 28, y: 100, width: 4, height: 25, fill: "#8d6e63" }),
+      React.createElement('circle', { key: 't1-leaf1', cx: 30, cy: 90, r: 18, fill: "#81c784" }),
+      React.createElement('circle', { key: 't1-leaf2', cx: 30, cy: 82, r: 14, fill: "#4caf50" }),
+      // Right tree
+      React.createElement('rect', { key: 't2-trunk', x: 168, y: 100, width: 4, height: 25, fill: "#8d6e63" }),
+      React.createElement('circle', { key: 't2-leaf1', cx: 170, cy: 90, r: 18, fill: "#81c784" }),
+      React.createElement('circle', { key: 't2-leaf2', cx: 170, cy: 82, r: 14, fill: "#4caf50" }),
+      // School main block
+      React.createElement('rect', { key: 'b-main', x: 50, y: 65, width: 100, height: 60, rx: 2, fill: "#ffffff", stroke: "#90caf9", strokeWidth: 1.5 }),
+      // Center tower
+      React.createElement('rect', { key: 'b-tower', x: 82, y: 35, width: 36, height: 90, fill: "#f0f7ff", stroke: "#64b5f6", strokeWidth: 1.5 }),
+      // Roof left & right
+      React.createElement('polygon', { key: 'r-l', points: "45,65 100,35 100,65", fill: "#1976d2" }),
+      React.createElement('polygon', { key: 'r-r', points: "155,65 100,35 100,65", fill: "#1565c0" }),
+      // Tower triangular pediment
+      React.createElement('polygon', { key: 'r-tower', points: "78,35 100,10 122,35", fill: "#0d47a1" }),
+      // Flag pole & flag
+      React.createElement('line', { key: 'f-pole', x1: 100, y1: 10, x2: 100, y2: 0, stroke: "#37474f", strokeWidth: 1.5 }),
+      React.createElement('polygon', { key: 'f-flag', points: "100,1 112,4 100,7", fill: "#ff9800" }),
+      // Clock on tower
+      React.createElement('circle', { key: 'clock', cx: 100, cy: 26, r: 6, fill: "#ffffff", stroke: "#0d47a1", strokeWidth: 1 }),
+      React.createElement('line', { key: 'c-h', x1: 100, y1: 26, x2: 100, y2: 23, stroke: "#0d47a1", strokeWidth: 1 }),
+      React.createElement('line', { key: 'c-m', x1: 100, y1: 26, x2: 103, y2: 26, stroke: "#0d47a1", strokeWidth: 1 }),
+      // Windows
+      React.createElement('rect', { key: 'w1', x: 58, y: 75, width: 14, height: 16, rx: 2, fill: "#e3f2fd", stroke: "#1976d2", strokeWidth: 1 }),
+      React.createElement('rect', { key: 'w2', x: 58, y: 100, width: 14, height: 16, rx: 2, fill: "#e3f2fd", stroke: "#1976d2", strokeWidth: 1 }),
+      React.createElement('rect', { key: 'w3', x: 128, y: 75, width: 14, height: 16, rx: 2, fill: "#e3f2fd", stroke: "#1976d2", strokeWidth: 1 }),
+      React.createElement('rect', { key: 'w4', x: 128, y: 100, width: 14, height: 16, rx: 2, fill: "#e3f2fd", stroke: "#1976d2", strokeWidth: 1 }),
+      // Arched main entrance door
+      React.createElement('path', { key: 'door', d: "M92 125 L92 100 Q 100 92 108 100 L108 125 Z", fill: "#0c4a7e" }),
+      // Entrance steps
+      React.createElement('rect', { key: 'steps1', x: 88, y: 125, width: 24, height: 3, fill: "#cfd8dc" }),
+      React.createElement('rect', { key: 'steps2', x: 84, y: 128, width: 32, height: 3, fill: "#b0bec5" })
+    ]);
+  },
+
+  // Telangana Heritage Skyline Silhouette for Footer
+  SkylineGraphic: function({ className = "w-48 h-16 opacity-30" }) {
+    return React.createElement('svg', {
+      className,
+      viewBox: "0 0 300 80",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, [
+      // Base line
+      React.createElement('line', { key: 'b', x1: 0, y1: 78, x2: 300, y2: 78, stroke: "#ffffff", strokeWidth: 1.5 }),
+      // Charminar silhouette center
+      React.createElement('rect', { key: 'cm-l', x: 130, y: 20, width: 6, height: 58, fill: "#ffffff" }),
+      React.createElement('rect', { key: 'cm-r', x: 164, y: 20, width: 6, height: 58, fill: "#ffffff" }),
+      React.createElement('rect', { key: 'cm-b', x: 136, y: 40, width: 28, height: 38, fill: "#ffffff" }),
+      React.createElement('path', { key: 'cm-a', d: "M142 78 L142 55 Q 150 48 158 55 L158 78 Z", fill: "#0c4a7e" }),
+      React.createElement('circle', { key: 'cm-d1', cx: 133, cy: 18, r: 4, fill: "#ffffff" }),
+      React.createElement('circle', { key: 'cm-d2', cx: 167, cy: 18, r: 4, fill: "#ffffff" }),
+      // Kakatiya Kala Thoranam Arch left
+      React.createElement('path', {
+        key: 'kt',
+        d: "M40 78 L40 40 Q 65 25 90 40 L90 78 M 48 78 L48 45 Q 65 33 82 45 L82 78",
+        stroke: "#ffffff",
+        strokeWidth: 2,
+        fill: "none"
+      }),
+      // Temple tower right
+      React.createElement('polygon', { key: 'tmp', points: "220,78 235,30 250,78", fill: "#ffffff" }),
+      React.createElement('polygon', { key: 'tmp2', points: "260,78 270,45 280,78", fill: "#ffffff" })
     ]);
   }
 };

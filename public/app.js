@@ -2,7 +2,7 @@
 // React 18 Application - 100% Faithful to IMAGE 2 (Original Correct Light Government Version)
 
 const { useState, useEffect, useContext, createContext, useRef } = React;
-const { TelanganaEmblem, TelanganaRisingLogo, PencilBanner } = window.PORTAL_LOGOS;
+const { TelanganaEmblem, TelanganaRisingLogo, PencilBanner, SchoolBuildingGraphic, SkylineGraphic } = window.PORTAL_LOGOS;
 
 // ==========================================
 // 1. AUTH CONTEXT & BACKEND API CLIENT
@@ -309,51 +309,45 @@ function MainHeader() {
   }, [
     React.createElement('div', {
       key: 'header-row',
-      className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between'
+      className: 'max-w-[1440px] mx-auto px-4 sm:px-6 py-2 flex items-center justify-between'
     }, [
       // Left Brand: Telangana Green Emblem + Blue Typography
       React.createElement('div', {
         key: 'brand',
         onClick: () => setCurrentView('PORTAL'),
-        className: 'flex items-center space-x-3 cursor-pointer group'
+        className: 'flex items-center space-x-3 cursor-pointer group flex-shrink-0'
       }, [
-        React.createElement(TelanganaEmblem, { key: 'crest', className: 'w-14 h-14 flex-shrink-0' }),
+        React.createElement(TelanganaEmblem, { key: 'crest', className: 'w-12 h-12 flex-shrink-0' }),
         React.createElement('div', { key: 'brand-titles', className: 'flex flex-col' }, [
           React.createElement('h1', {
             key: 'h1',
-            className: 'font-extrabold text-[#0c4a7e] text-base sm:text-lg lg:text-xl leading-tight tracking-tight'
+            className: 'font-extrabold text-[#0c4a7e] text-base lg:text-[18px] leading-tight tracking-tight whitespace-nowrap'
           }, 'District Educational Office, Jangaon'),
           React.createElement('span', {
             key: 'sub1',
-            className: 'text-xs sm:text-sm font-semibold text-slate-700'
+            className: 'text-xs font-semibold text-slate-700 leading-tight whitespace-nowrap'
           }, 'School Education Department, Telangana'),
           React.createElement('span', {
             key: 'sub2',
-            className: 'text-[11px] font-bold text-[#1565c0] italic'
+            className: 'text-[11px] font-bold text-[#1565c0] italic leading-tight whitespace-nowrap'
           }, 'Education for a Brighter Tomorrow')
         ])
       ]),
 
-      // Center Navigation Links (IMAGE 2: Blue navigation & Active indicator)
+      // Center Navigation Links (Matching Reference Image)
       React.createElement('nav', {
         key: 'nav',
-        className: 'hidden xl:flex items-center space-x-6 text-sm font-semibold text-slate-700'
+        className: 'hidden md:flex items-center space-x-2 lg:space-x-3.5 text-xs lg:text-[13px] font-semibold text-slate-700 whitespace-nowrap mx-2'
       }, [
         React.createElement('button', {
           key: 'home',
           onClick: () => setCurrentView('PORTAL'),
-          className: `flex items-center space-x-1.5 transition-colors cursor-pointer ${currentView === 'PORTAL' ? 'text-[#0c4a7e] border-b-2 border-[#0c4a7e] pb-1' : 'hover:text-[#0c4a7e]'}`
+          className: `flex items-center space-x-1 px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+            currentView === 'PORTAL' ? 'text-[#0c4a7e] bg-blue-50 font-bold' : 'hover:text-[#0c4a7e]'
+          }`
         }, [
           React.createElement('span', { key: 'i' }, '🏠'),
           React.createElement('span', { key: 't' }, 'Home')
-        ]),
-        React.createElement('button', {
-          key: 'btn-dash',
-          onClick: () => setCurrentView('DASHBOARD'),
-          className: `flex items-center space-x-1.5 transition-colors cursor-pointer ${currentView === 'DASHBOARD' ? 'text-[#0c4a7e] font-bold border-b-2 border-[#0c4a7e] pb-1' : 'hover:text-[#0c4a7e]'}`
-        }, [
-          React.createElement('span', { key: 'i' }, '📊'),
-          React.createElement('span', { key: 't' }, 'Dashboard')
         ]),
         React.createElement('span', { key: 'abt', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'About ▾'),
         React.createElement('span', { key: 'tch', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Teachers ▾'),
@@ -364,15 +358,15 @@ function MainHeader() {
         React.createElement('span', { key: 'contact', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Contact')
       ]),
 
-      // Right Action Buttons (IMAGE 2: Login outline button & Register solid button)
+      // Right Action Buttons (Matching Reference Image)
       React.createElement('div', {
         key: 'actions',
-        className: 'flex items-center space-x-3'
+        className: 'flex items-center space-x-2 lg:space-x-2.5 flex-shrink-0'
       }, [
         // 9-dot grid icon
         React.createElement('button', {
           key: 'grid-btn',
-          className: 'text-slate-600 hover:text-[#0c4a7e] p-1.5 text-lg'
+          className: 'text-slate-600 hover:text-[#0c4a7e] p-1 text-lg cursor-pointer'
         }, '⠿'),
 
         !user ? (
@@ -383,7 +377,7 @@ function MainHeader() {
               key: 'btn-login',
               id: 'header-login-btn',
               onClick: () => openModal('LOGIN'),
-              className: 'flex items-center space-x-1.5 border border-[#0c4a7e] text-[#0c4a7e] hover:bg-blue-50 px-4 py-1.5 rounded-md font-semibold text-sm transition-all shadow-xs'
+              className: 'flex items-center space-x-1.5 border border-[#0c4a7e] text-[#0c4a7e] hover:bg-blue-50 px-3 py-1.5 rounded-md font-semibold text-xs lg:text-sm transition-all shadow-xs cursor-pointer whitespace-nowrap'
             }, [
               React.createElement('span', { key: 'icon' }, '👤'),
               React.createElement('span', { key: 'text' }, 'Login')
@@ -394,7 +388,7 @@ function MainHeader() {
               key: 'btn-register',
               id: 'header-register-btn',
               onClick: () => openModal('REGISTER'),
-              className: 'flex items-center space-x-1.5 bg-[#0c4a7e] hover:bg-[#08355b] text-white px-4 py-1.5 rounded-md font-semibold text-sm transition-all shadow-xs'
+              className: 'flex items-center space-x-1.5 bg-[#0c4a7e] hover:bg-[#08355b] text-white px-3 py-1.5 rounded-md font-semibold text-xs lg:text-sm transition-all shadow-xs cursor-pointer whitespace-nowrap'
             }, [
               React.createElement('span', { key: 'icon' }, '+'),
               React.createElement('span', { key: 'text' }, 'Register')
@@ -511,18 +505,18 @@ function MainHeader() {
 // ==========================================
 function HeroBanner() {
   return React.createElement('div', {
-    className: 'bg-white py-8 sm:py-10 px-4 border-b border-slate-200'
+    className: 'bg-white py-3 sm:py-4 px-4 border-b border-slate-200'
   }, [
     React.createElement('div', {
       key: 'hero-grid',
-      className: 'max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6'
+      className: 'max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6'
     }, [
       // Left: Original Green Telangana Government Emblem
       React.createElement('div', {
         key: 'left-crest',
-        className: 'hidden md:flex flex-col items-center justify-center p-2'
+        className: 'hidden md:flex flex-col items-center justify-center p-1'
       }, [
-        React.createElement(TelanganaEmblem, { className: 'w-36 h-36 drop-shadow-xs' })
+        React.createElement(TelanganaEmblem, { className: 'w-36 h-36 md:w-44 md:h-44 drop-shadow-xs' })
       ]),
 
       // Center: Giant Pencil Graphic matching IMAGE 2
@@ -540,9 +534,9 @@ function HeroBanner() {
       // Right: Original 1 Telangana Rising Logo
       React.createElement('div', {
         key: 'right-rising',
-        className: 'hidden md:flex flex-col items-center justify-center p-2'
+        className: 'hidden md:flex flex-col items-center justify-center p-1'
       }, [
-        React.createElement(TelanganaRisingLogo, { className: 'w-36 h-36 drop-shadow-xs' })
+        React.createElement(TelanganaRisingLogo, { className: 'w-32 h-32 md:w-40 md:h-40 drop-shadow-xs' })
       ])
     ])
   ]);
@@ -550,46 +544,47 @@ function HeroBanner() {
 
 // ==========================================
 // 5. STATISTICS / CATEGORY BAR (MATCHING IMAGE 2 EXACTLY)
+// Unified horizontal bar:
 // Left side: Deep blue bar (#0c4a7e) with pills
 // Right side: Integrated WHITE section with 4 stats
 // ==========================================
 function StatsRibbon() {
   return React.createElement('div', {
-    className: 'bg-white border-b border-slate-200 shadow-xs'
+    className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2.5 mb-1.5'
   }, [
     React.createElement('div', {
-      key: 'ribbon-row',
-      className: 'max-w-7xl mx-auto flex flex-col lg:flex-row items-stretch justify-between'
+      key: 'ribbon-card',
+      className: 'rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col lg:flex-row items-stretch'
     }, [
       // Left Side: Deep Government Blue Bar (#0c4a7e) with Category Pills
       React.createElement('div', {
         key: 'left-pills-bar',
-        className: 'bg-[#0c4a7e] text-white py-3 px-4 sm:px-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm font-semibold flex-1'
+        className: 'bg-[#0c4a7e] text-white py-2 px-3 sm:px-5 flex items-center justify-between flex-wrap gap-2 text-xs sm:text-[13px] font-semibold flex-1'
       }, [
         React.createElement('div', {
           key: 'p1',
-          className: 'flex items-center space-x-1.5 bg-[#08355b] border border-blue-400/30 px-3.5 py-1.5 rounded-full'
+          className: 'flex items-center space-x-1.5 bg-[#08355b] border border-blue-400/30 px-3 py-1 rounded-full'
         }, [
           React.createElement('span', { key: 'i' }, '📍'),
           React.createElement('span', { key: 't' }, 'Jangaon')
         ]),
         React.createElement('div', {
           key: 'p2',
-          className: 'flex items-center space-x-1.5 bg-[#08355b] border border-blue-400/30 px-3.5 py-1.5 rounded-full'
+          className: 'flex items-center space-x-1.5 bg-[#08355b] border border-blue-400/30 px-3 py-1 rounded-full'
         }, [
           React.createElement('span', { key: 'i' }, '📖'),
           React.createElement('span', { key: 't' }, 'Quality Education')
         ]),
         React.createElement('div', {
           key: 'p3',
-          className: 'flex items-center space-x-1.5 bg-[#08355b] border border-blue-400/30 px-3.5 py-1.5 rounded-full'
+          className: 'flex items-center space-x-1.5 bg-[#08355b] border border-blue-400/30 px-3 py-1 rounded-full'
         }, [
           React.createElement('span', { key: 'i' }, '👥'),
           React.createElement('span', { key: 't' }, 'Empowered Teachers')
         ]),
         React.createElement('div', {
           key: 'p4',
-          className: 'flex items-center space-x-1.5 bg-[#08355b] border border-blue-400/30 px-3.5 py-1.5 rounded-full'
+          className: 'flex items-center space-x-1.5 bg-[#08355b] border border-blue-400/30 px-3 py-1 rounded-full'
         }, [
           React.createElement('span', { key: 'i' }, '🎓'),
           React.createElement('span', { key: 't' }, 'Brighter Future')
@@ -599,41 +594,41 @@ function StatsRibbon() {
       // Right Side: Integrated WHITE section with 4 Statistics (Matching IMAGE 2)
       React.createElement('div', {
         key: 'right-stats-bar',
-        className: 'bg-white py-3 px-6 sm:px-10 flex items-center justify-around space-x-6 sm:space-x-8 text-center border-t lg:border-t-0 lg:border-l border-slate-200'
+        className: 'bg-white py-2 px-4 sm:px-6 flex items-center justify-around space-x-4 sm:space-x-8 text-center border-t lg:border-t-0 lg:border-l border-slate-200'
       }, [
         // 1,248 Schools
         React.createElement('div', { key: 'st-sch', className: 'flex items-center space-x-2' }, [
-          React.createElement('span', { key: 'icon', className: 'text-2xl text-[#0c4a7e]' }, '🏛️'),
+          React.createElement('span', { key: 'icon', className: 'text-xl sm:text-2xl text-[#0c4a7e]' }, '🏛️'),
           React.createElement('div', { key: 'v', className: 'text-left' }, [
-            React.createElement('div', { key: 'num', className: 'font-extrabold text-base sm:text-lg leading-tight text-[#0c4a7e]' }, '1,248'),
-            React.createElement('div', { key: 'lbl', className: 'text-[11px] text-slate-600 font-semibold' }, 'Schools')
+            React.createElement('div', { key: 'num', className: 'font-extrabold text-sm sm:text-base leading-tight text-[#0c4a7e]' }, '1,248'),
+            React.createElement('div', { key: 'lbl', className: 'text-[10px] sm:text-[11px] text-slate-600 font-semibold' }, 'Schools')
           ])
         ]),
 
         // 3,842 Teachers
         React.createElement('div', { key: 'st-tch', className: 'flex items-center space-x-2' }, [
-          React.createElement('span', { key: 'icon', className: 'text-2xl text-[#007a33]' }, '👨‍🏫'),
+          React.createElement('span', { key: 'icon', className: 'text-xl sm:text-2xl text-[#007a33]' }, '👨‍🏫'),
           React.createElement('div', { key: 'v', className: 'text-left' }, [
-            React.createElement('div', { key: 'num', className: 'font-extrabold text-base sm:text-lg leading-tight text-[#0c4a7e]' }, '3,842'),
-            React.createElement('div', { key: 'lbl', className: 'text-[11px] text-slate-600 font-semibold' }, 'Teachers')
+            React.createElement('div', { key: 'num', className: 'font-extrabold text-sm sm:text-base leading-tight text-[#0c4a7e]' }, '3,842'),
+            React.createElement('div', { key: 'lbl', className: 'text-[10px] sm:text-[11px] text-slate-600 font-semibold' }, 'Teachers')
           ])
         ]),
 
         // 1,45,620 Students
         React.createElement('div', { key: 'st-stu', className: 'flex items-center space-x-2' }, [
-          React.createElement('span', { key: 'icon', className: 'text-2xl text-[#0c4a7e]' }, '🎒'),
+          React.createElement('span', { key: 'icon', className: 'text-xl sm:text-2xl text-[#0c4a7e]' }, '🎒'),
           React.createElement('div', { key: 'v', className: 'text-left' }, [
-            React.createElement('div', { key: 'num', className: 'font-extrabold text-base sm:text-lg leading-tight text-[#0c4a7e]' }, '1,45,620'),
-            React.createElement('div', { key: 'lbl', className: 'text-[11px] text-slate-600 font-semibold' }, 'Students')
+            React.createElement('div', { key: 'num', className: 'font-extrabold text-sm sm:text-base leading-tight text-[#0c4a7e]' }, '1,45,620'),
+            React.createElement('div', { key: 'lbl', className: 'text-[10px] sm:text-[11px] text-slate-600 font-semibold' }, 'Students')
           ])
         ]),
 
         // 29 Mandals
         React.createElement('div', { key: 'st-mnd', className: 'flex items-center space-x-2' }, [
-          React.createElement('span', { key: 'icon', className: 'text-2xl text-[#c51c24]' }, '📍'),
+          React.createElement('span', { key: 'icon', className: 'text-xl sm:text-2xl text-[#c51c24]' }, '📍'),
           React.createElement('div', { key: 'v', className: 'text-left' }, [
-            React.createElement('div', { key: 'num', className: 'font-extrabold text-base sm:text-lg leading-tight text-[#0c4a7e]' }, '29'),
-            React.createElement('div', { key: 'lbl', className: 'text-[11px] text-slate-600 font-semibold' }, 'Mandals')
+            React.createElement('div', { key: 'num', className: 'font-extrabold text-sm sm:text-base leading-tight text-[#0c4a7e]' }, '29'),
+            React.createElement('div', { key: 'lbl', className: 'text-[10px] sm:text-[11px] text-slate-600 font-semibold' }, 'Mandals')
           ])
         ])
       ])
@@ -648,25 +643,25 @@ function QuickServices() {
   const { openModal } = useContext(AuthContext);
 
   return React.createElement('div', {
-    className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'
+    className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5'
   }, [
     React.createElement('div', {
       key: 'qs-head',
-      className: 'flex items-center justify-between mb-5'
+      className: 'flex items-center justify-between mb-3'
     }, [
-      React.createElement('div', { key: 'title', className: 'flex items-center space-x-2.5' }, [
+      React.createElement('div', { key: 'title', className: 'flex items-center space-x-2' }, [
         React.createElement('div', {
           key: 'icon-circle',
-          className: 'w-8 h-8 rounded-full bg-[#0c4a7e] text-white flex items-center justify-center font-bold text-sm shadow-xs'
+          className: 'w-7 h-7 rounded-full bg-[#0c4a7e] text-white flex items-center justify-center font-bold text-xs shadow-xs'
         }, '⚡'),
         React.createElement('div', { key: 'text' }, [
-          React.createElement('h2', { key: 'h2', className: 'text-lg font-bold text-slate-900 leading-tight' }, 'Quick Services'),
-          React.createElement('p', { key: 'p', className: 'text-xs text-slate-500' }, 'Access essential information and services')
+          React.createElement('h2', { key: 'h2', className: 'text-base sm:text-lg font-bold text-slate-900 leading-tight' }, 'Quick Services'),
+          React.createElement('p', { key: 'p', className: 'text-[11px] text-slate-500' }, 'Access essential information and services')
         ])
       ]),
       React.createElement('button', {
         key: 'view-all',
-        className: 'text-sm font-semibold text-[#0c4a7e] hover:text-blue-900 flex items-center space-x-1'
+        className: 'text-xs font-semibold text-[#0c4a7e] hover:text-blue-900 flex items-center space-x-1'
       }, [
         React.createElement('span', { key: 't' }, 'View All Services'),
         React.createElement('span', { key: 'a' }, '→')
@@ -675,27 +670,27 @@ function QuickServices() {
 
     React.createElement('div', {
       key: 'cards-grid',
-      className: 'grid grid-cols-1 md:grid-cols-2 gap-5'
+      className: 'grid grid-cols-1 md:grid-cols-2 gap-4'
     }, [
       // Left Card: Very light green / pale green background (#e8f5e9) with green circle icon
       React.createElement('div', {
         key: 'c-tch',
         onClick: () => openModal('LOGIN'),
-        className: 'bg-[#e8f5e9] border border-[#c8e6c9] hover:border-emerald-400 rounded-2xl p-5 flex items-center justify-between cursor-pointer transition-all duration-200 hover:shadow-sm group'
+        className: 'bg-[#e8f5e9] border border-[#c8e6c9] hover:border-emerald-400 rounded-xl p-3.5 sm:p-4 flex items-center justify-between cursor-pointer transition-all duration-200 hover:shadow-xs group'
       }, [
-        React.createElement('div', { key: 'info', className: 'flex items-center space-x-4' }, [
+        React.createElement('div', { key: 'info', className: 'flex items-center space-x-3.5' }, [
           React.createElement('div', {
             key: 'icon-wrap',
-            className: 'w-14 h-14 rounded-full bg-[#00897b] text-white flex items-center justify-center text-2xl shadow-xs group-hover:scale-105 transition-transform'
+            className: 'w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#00897b] text-white flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition-transform'
           }, '👤'),
           React.createElement('div', { key: 'txt' }, [
-            React.createElement('h3', { key: 'title', className: 'text-base sm:text-lg font-bold text-[#0c4a7e] group-hover:text-blue-900' }, 'Teachers Information'),
-            React.createElement('p', { key: 'sub', className: 'text-xs sm:text-sm text-slate-600' }, 'Transfers, Vacancies, Trainings and More')
+            React.createElement('h3', { key: 'title', className: 'text-sm sm:text-base font-bold text-[#0c4a7e] group-hover:text-blue-900' }, 'Teachers Information'),
+            React.createElement('p', { key: 'sub', className: 'text-xs text-slate-600' }, 'Transfers, Vacancies, Trainings and More')
           ])
         ]),
         React.createElement('div', {
           key: 'arrow',
-          className: 'w-9 h-9 rounded-full bg-white text-slate-600 border border-slate-200 flex items-center justify-center text-sm font-bold shadow-xs group-hover:bg-[#00897b] group-hover:text-white group-hover:border-[#00897b] transition-all'
+          className: 'w-8 h-8 rounded-full bg-white text-slate-600 border border-slate-200 flex items-center justify-center text-xs font-bold shadow-xs group-hover:bg-[#00897b] group-hover:text-white group-hover:border-[#00897b] transition-all'
         }, '→')
       ]),
 
@@ -706,21 +701,21 @@ function QuickServices() {
           const el = document.getElementById('find-school-section');
           if (el) el.scrollIntoView({ behavior: 'smooth' });
         },
-        className: 'bg-[#e3f2fd] border border-[#bbdefb] hover:border-blue-400 rounded-2xl p-5 flex items-center justify-between cursor-pointer transition-all duration-200 hover:shadow-sm group'
+        className: 'bg-[#e3f2fd] border border-[#bbdefb] hover:border-blue-400 rounded-xl p-3.5 sm:p-4 flex items-center justify-between cursor-pointer transition-all duration-200 hover:shadow-xs group'
       }, [
-        React.createElement('div', { key: 'info', className: 'flex items-center space-x-4' }, [
+        React.createElement('div', { key: 'info', className: 'flex items-center space-x-3.5' }, [
           React.createElement('div', {
             key: 'icon-wrap',
-            className: 'w-14 h-14 rounded-full bg-[#1976d2] text-white flex items-center justify-center text-2xl shadow-xs group-hover:scale-105 transition-transform'
+            className: 'w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#1976d2] text-white flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition-transform'
           }, '🏛️'),
           React.createElement('div', { key: 'txt' }, [
-            React.createElement('h3', { key: 'title', className: 'text-base sm:text-lg font-bold text-[#0c4a7e] group-hover:text-blue-900' }, 'Schools Information'),
-            React.createElement('p', { key: 'sub', className: 'text-xs sm:text-sm text-slate-600' }, 'Find Schools in Jangaon District')
+            React.createElement('h3', { key: 'title', className: 'text-sm sm:text-base font-bold text-[#0c4a7e] group-hover:text-blue-900' }, 'Schools Information'),
+            React.createElement('p', { key: 'sub', className: 'text-xs text-slate-600' }, 'Find Schools in Jangaon District')
           ])
         ]),
         React.createElement('div', {
           key: 'arrow',
-          className: 'w-9 h-9 rounded-full bg-white text-slate-600 border border-slate-200 flex items-center justify-center text-sm font-bold shadow-xs group-hover:bg-[#1976d2] group-hover:text-white group-hover:border-[#1976d2] transition-all'
+          className: 'w-8 h-8 rounded-full bg-white text-slate-600 border border-slate-200 flex items-center justify-center text-xs font-bold shadow-xs group-hover:bg-[#1976d2] group-hover:text-white group-hover:border-[#1976d2] transition-all'
         }, '→')
       ])
     ])
@@ -730,6 +725,86 @@ function QuickServices() {
 // ==========================================
 // 7. LOWER CONTENT CARDS (IMAGE 2: PURE WHITE BACKGROUND, LIGHT PASTELS)
 // ==========================================
+function NewsThumbnail({ type, className = "w-11 h-11" }) {
+  if (type === 'science') {
+    return React.createElement('svg', {
+      className: `${className} rounded-lg flex-shrink-0 border border-blue-200 shadow-2xs`,
+      viewBox: "0 0 48 48",
+      fill: "none"
+    }, [
+      React.createElement('rect', { key: 'bg', width: 48, height: 48, rx: 8, fill: "url(#sciGrad)" }),
+      React.createElement('defs', { key: 'defs' }, [
+        React.createElement('linearGradient', { key: 'g', id: 'sciGrad', x1: 0, y1: 0, x2: 48, y2: 48 }, [
+          React.createElement('stop', { key: 's1', offset: '0%', stopColor: '#0284c7' }),
+          React.createElement('stop', { key: 's2', offset: '100%', stopColor: '#0369a1' })
+        ])
+      ]),
+      React.createElement('path', { key: 'flask', d: "M20 14 L28 14 L28 20 L35 32 A 3 3 0 0 1 32 36 L16 36 A 3 3 0 0 1 13 32 L20 20 Z", fill: "#ffffff", fillOpacity: 0.9 }),
+      React.createElement('path', { key: 'liquid', d: "M16 32 L32 32 L34 34 L14 34 Z", fill: "#38bdf8" }),
+      React.createElement('circle', { key: 'b1', cx: 22, cy: 28, r: 1.5, fill: "#0284c7" }),
+      React.createElement('circle', { key: 'b2', cx: 26, cy: 25, r: 1, fill: "#0284c7" })
+    ]);
+  }
+  if (type === 'sports') {
+    return React.createElement('svg', {
+      className: `${className} rounded-lg flex-shrink-0 border border-amber-200 shadow-2xs`,
+      viewBox: "0 0 48 48",
+      fill: "none"
+    }, [
+      React.createElement('rect', { key: 'bg', width: 48, height: 48, rx: 8, fill: "url(#sportGrad)" }),
+      React.createElement('defs', { key: 'defs' }, [
+        React.createElement('linearGradient', { key: 'g', id: 'sportGrad', x1: 0, y1: 0, x2: 48, y2: 48 }, [
+          React.createElement('stop', { key: 's1', offset: '0%', stopColor: '#f59e0b' }),
+          React.createElement('stop', { key: 's2', offset: '100%', stopColor: '#d97706' })
+        ])
+      ]),
+      React.createElement('path', { key: 'cup', d: "M18 16 L30 16 L30 25 C 30 29, 18 29, 18 25 Z", fill: "#ffffff" }),
+      React.createElement('path', { key: 'h-l', d: "M18 18 C 14 18, 14 23, 18 23", stroke: "#ffffff", strokeWidth: 1.5, fill: "none" }),
+      React.createElement('path', { key: 'h-r', d: "M30 18 C 34 18, 34 23, 30 23", stroke: "#ffffff", strokeWidth: 1.5, fill: "none" }),
+      React.createElement('rect', { key: 'stem', x: 22, y: 28, width: 4, height: 4, fill: "#ffffff" }),
+      React.createElement('rect', { key: 'base', x: 19, y: 32, width: 10, height: 3, rx: 1, fill: "#ffffff" }),
+      React.createElement('circle', { key: 'star', cx: 24, cy: 21, r: 1.5, fill: "#f59e0b" })
+    ]);
+  }
+  if (type === 'training') {
+    return React.createElement('svg', {
+      className: `${className} rounded-lg flex-shrink-0 border border-emerald-200 shadow-2xs`,
+      viewBox: "0 0 48 48",
+      fill: "none"
+    }, [
+      React.createElement('rect', { key: 'bg', width: 48, height: 48, rx: 8, fill: "url(#trainGrad)" }),
+      React.createElement('defs', { key: 'defs' }, [
+        React.createElement('linearGradient', { key: 'g', id: 'trainGrad', x1: 0, y1: 0, x2: 48, y2: 48 }, [
+          React.createElement('stop', { key: 's1', offset: '0%', stopColor: '#059669' }),
+          React.createElement('stop', { key: 's2', offset: '100%', stopColor: '#047857' })
+        ])
+      ]),
+      React.createElement('rect', { key: 'board', x: 13, y: 13, width: 22, height: 16, rx: 1.5, fill: "#ffffff" }),
+      React.createElement('rect', { key: 'screen', x: 15, y: 15, width: 18, height: 12, fill: "#059669" }),
+      React.createElement('line', { key: 'stand-l', x1: 17, y1: 29, x2: 15, y2: 35, stroke: "#ffffff", strokeWidth: 1.5 }),
+      React.createElement('line', { key: 'stand-r', x1: 31, y1: 29, x2: 33, y2: 35, stroke: "#ffffff", strokeWidth: 1.5 }),
+      React.createElement('path', { key: 'chart', d: "M17 24 L21 21 L25 23 L29 18", stroke: "#ffffff", strokeWidth: 1.5, fill: "none" })
+    ]);
+  }
+  return React.createElement('svg', {
+    className: `${className} rounded-lg flex-shrink-0 border border-purple-200 shadow-2xs`,
+    viewBox: "0 0 48 48",
+    fill: "none"
+  }, [
+    React.createElement('rect', { key: 'bg', width: 48, height: 48, rx: 8, fill: "url(#celebGrad)" }),
+    React.createElement('defs', { key: 'defs' }, [
+      React.createElement('linearGradient', { key: 'g', id: 'celebGrad', x1: 0, y1: 0, x2: 48, y2: 48 }, [
+        React.createElement('stop', { key: 's1', offset: '0%', stopColor: '#7c3aed' }),
+        React.createElement('stop', { key: 's2', offset: '100%', stopColor: '#6d28d9' })
+      ])
+    ]),
+    React.createElement('polygon', { key: 'mortar', points: "24,14 36,20 24,26 12,20", fill: "#ffffff" }),
+    React.createElement('path', { key: 'skull', d: "M16 23 L16 29 C 16 32, 32 32, 32 29 L32 23", fill: "#ffffff" }),
+    React.createElement('line', { key: 'tassel', x1: 24, y1: 20, x2: 34, y2: 24, stroke: "#fbbf24", strokeWidth: 1.5 }),
+    React.createElement('circle', { key: 'dot', cx: 34, cy: 25, r: 1.5, fill: "#fbbf24" })
+  ]);
+}
+
 function PortalCardsGrid() {
   const [mandal, setMandal] = useState('all');
   const [schoolType, setSchoolType] = useState('all');
@@ -743,10 +818,10 @@ function PortalCardsGrid() {
   ];
 
   const newsItems = [
-    { title: 'District Level Science Exhibition', date: '14 Sep 2025', img: '🔬' },
-    { title: 'Inter School Sports Meet 2025', date: '10 Sep 2025', img: '🏆' },
-    { title: 'Teachers Training Program', date: '05 Sep 2025', img: '📚' },
-    { title: 'National Education Day Celebrations', date: '01 Sep 2025', img: '🎉' }
+    { title: 'District Level Science Exhibition', date: '14 Sep 2025', type: 'science' },
+    { title: 'Inter School Sports Meet 2025', date: '10 Sep 2025', type: 'sports' },
+    { title: 'Teachers Training Program', date: '05 Sep 2025', type: 'training' },
+    { title: 'National Education Day Celebrations', date: '01 Sep 2025', type: 'celebration' }
   ];
 
   const handleSearchSchool = async () => {
@@ -760,58 +835,58 @@ function PortalCardsGrid() {
   };
 
   return React.createElement('div', {
-    className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12'
+    className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 pb-8'
   }, [
     React.createElement('div', {
       key: 'three-col-grid',
-      className: 'grid grid-cols-1 lg:grid-cols-3 gap-6'
+      className: 'grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch'
     }, [
       // 1. Latest Notifications (White Card, Blue Title, Light Border)
       React.createElement('div', {
         key: 'card-notif',
-        className: 'bg-white rounded-2xl border border-slate-200 shadow-xs p-5 flex flex-col justify-between'
+        className: 'bg-white rounded-xl border border-slate-200 shadow-xs p-4 flex flex-col justify-between'
       }, [
         React.createElement('div', { key: 'c1-content' }, [
           React.createElement('div', {
             key: 'c1-head',
-            className: 'flex items-center justify-between pb-3 border-b border-slate-100 mb-4'
+            className: 'flex items-center justify-between pb-2.5 border-b border-slate-100 mb-3'
           }, [
             React.createElement('div', { key: 't', className: 'flex items-center space-x-2' }, [
-              React.createElement('span', { key: 'i', className: 'text-[#0c4a7e] font-bold' }, '🔔'),
-              React.createElement('h3', { key: 'title', className: 'font-bold text-[#0c4a7e] text-base' }, 'Latest Notifications')
+              React.createElement('span', { key: 'i', className: 'text-[#0c4a7e] font-bold text-sm' }, '🔔'),
+              React.createElement('h3', { key: 'title', className: 'font-bold text-[#0c4a7e] text-sm sm:text-base' }, 'Latest Notifications')
             ]),
             React.createElement('button', { key: 'view-all', className: 'text-xs font-semibold text-[#0c4a7e] hover:text-blue-900' }, 'View All →')
           ]),
 
-          React.createElement('div', { key: 'c1-list', className: 'space-y-3' }, [
+          React.createElement('div', { key: 'c1-list', className: 'space-y-2' }, [
             notifications.map((item, idx) => {
               const parts = item.date.split(' ');
               return React.createElement('div', {
                 key: `notif-${idx}`,
-                className: 'flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group'
+                className: 'flex items-center justify-between p-1.5 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group'
               }, [
                 React.createElement('div', {
                   key: 'date-box',
-                  className: 'w-12 h-12 rounded-xl bg-[#e8f0fe] border border-blue-100 flex flex-col items-center justify-center flex-shrink-0'
+                  className: 'w-10 h-10 rounded-lg bg-[#e8f0fe] border border-blue-100 flex flex-col items-center justify-center flex-shrink-0'
                 }, [
                   React.createElement('span', { key: 'd', className: 'text-xs font-black text-[#1a73e8] leading-none' }, parts[0]),
                   React.createElement('span', { key: 'm', className: 'text-[9px] font-bold text-[#1a73e8] uppercase mt-0.5' }, parts[1])
                 ]),
 
-                React.createElement('div', { key: 'details', className: 'flex-1 mx-3' }, [
-                  React.createElement('div', { key: 'tags', className: 'flex items-center space-x-2 mb-0.5' }, [
+                React.createElement('div', { key: 'details', className: 'flex-1 mx-2.5 min-w-0' }, [
+                  React.createElement('div', { key: 'tags', className: 'flex items-center space-x-1.5 mb-0.5' }, [
                     React.createElement('span', {
                       key: 'cat',
-                      className: `text-[10px] font-semibold px-2 py-0.5 rounded-full ${item.tagColor}`
+                      className: `text-[9px] font-semibold px-1.5 py-0.2 rounded-full ${item.tagColor}`
                     }, item.tag),
                     item.isNew && React.createElement('span', {
                       key: 'new-badge',
-                      className: 'bg-[#d32f2f] text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded-full badge-pulse'
+                      className: 'bg-[#d32f2f] text-white text-[8px] font-extrabold px-1.5 py-0.2 rounded-full badge-pulse'
                     }, 'New')
                   ]),
                   React.createElement('p', {
                     key: 't',
-                    className: 'text-xs font-medium text-slate-800 line-clamp-1 group-hover:text-[#0c4a7e] transition-colors'
+                    className: 'text-xs font-medium text-slate-800 truncate group-hover:text-[#0c4a7e] transition-colors'
                   }, item.title)
                 ]),
 
@@ -826,16 +901,16 @@ function PortalCardsGrid() {
       React.createElement('div', {
         key: 'card-stats-search',
         id: 'find-school-section',
-        className: 'bg-white rounded-2xl border border-slate-200 shadow-xs p-5 flex flex-col justify-between'
+        className: 'bg-white rounded-xl border border-slate-200 shadow-xs p-4 flex flex-col justify-between'
       }, [
         React.createElement('div', { key: 'c2-content' }, [
           React.createElement('div', {
             key: 'c2-head',
-            className: 'flex items-center justify-between pb-3 border-b border-slate-100 mb-4'
+            className: 'flex items-center justify-between pb-2.5 border-b border-slate-100 mb-3'
           }, [
             React.createElement('div', { key: 't', className: 'flex items-center space-x-2' }, [
-              React.createElement('span', { key: 'i', className: 'text-[#0c4a7e] font-bold' }, '📊'),
-              React.createElement('h3', { key: 'title', className: 'font-bold text-[#0c4a7e] text-base' }, 'District Education Statistics')
+              React.createElement('span', { key: 'i', className: 'text-[#0c4a7e] font-bold text-sm' }, '📊'),
+              React.createElement('h3', { key: 'title', className: 'font-bold text-[#0c4a7e] text-sm sm:text-base' }, 'District Education Statistics')
             ]),
             React.createElement('button', { key: 'view-all', className: 'text-xs font-semibold text-[#0c4a7e] hover:text-blue-900' }, 'View Details →')
           ]),
@@ -843,111 +918,120 @@ function PortalCardsGrid() {
           // 4 Metric Tiles with Original Pastel Backgrounds
           React.createElement('div', {
             key: 'metrics-grid',
-            className: 'grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-2.5 mb-5'
+            className: 'grid grid-cols-2 gap-2 mb-3'
           }, [
             React.createElement('div', {
               key: 'm1',
-              className: 'bg-[#e8f5e9] border border-[#c8e6c9] p-2.5 rounded-xl text-center'
+              className: 'bg-[#e8f5e9] border border-[#c8e6c9] p-2 rounded-lg text-center'
             }, [
-              React.createElement('div', { key: 'i', className: 'text-lg text-[#2e7d32] mb-0.5' }, '📋'),
-              React.createElement('div', { key: 'num', className: 'text-base font-extrabold text-[#2e7d32]' }, '94.2%'),
+              React.createElement('div', { key: 'i', className: 'text-base text-[#2e7d32] mb-0.5' }, '📋'),
+              React.createElement('div', { key: 'num', className: 'text-sm font-extrabold text-[#2e7d32]' }, '94.2%'),
               React.createElement('div', { key: 'lbl', className: 'text-[10px] text-slate-600 font-medium' }, 'Pass Percentage')
             ]),
             React.createElement('div', {
               key: 'm2',
-              className: 'bg-[#fff3e0] border border-[#ffe0b2] p-2.5 rounded-xl text-center'
+              className: 'bg-[#fff3e0] border border-[#ffe0b2] p-2 rounded-lg text-center'
             }, [
-              React.createElement('div', { key: 'i', className: 'text-lg text-[#e65100] mb-0.5' }, '🏫'),
-              React.createElement('div', { key: 'num', className: 'text-base font-extrabold text-[#e65100]' }, '385'),
+              React.createElement('div', { key: 'i', className: 'text-base text-[#e65100] mb-0.5' }, '🏫'),
+              React.createElement('div', { key: 'num', className: 'text-sm font-extrabold text-[#e65100]' }, '385'),
               React.createElement('div', { key: 'lbl', className: 'text-[10px] text-slate-600 font-medium' }, 'Government Schools')
             ]),
             React.createElement('div', {
               key: 'm3',
-              className: 'bg-[#f3e5f5] border border-[#e1bee7] p-2.5 rounded-xl text-center'
+              className: 'bg-[#f3e5f5] border border-[#e1bee7] p-2 rounded-lg text-center'
             }, [
-              React.createElement('div', { key: 'i', className: 'text-lg text-[#6a1b9a] mb-0.5' }, '👥'),
-              React.createElement('div', { key: 'num', className: 'text-base font-extrabold text-[#6a1b9a]' }, '378'),
+              React.createElement('div', { key: 'i', className: 'text-base text-[#6a1b9a] mb-0.5' }, '👥'),
+              React.createElement('div', { key: 'num', className: 'text-sm font-extrabold text-[#6a1b9a]' }, '378'),
               React.createElement('div', { key: 'lbl', className: 'text-[10px] text-slate-600 font-medium' }, 'Students per Teacher')
             ]),
             React.createElement('div', {
               key: 'm4',
-              className: 'bg-[#e3f2fd] border border-[#bbdefb] p-2.5 rounded-xl text-center'
+              className: 'bg-[#e3f2fd] border border-[#bbdefb] p-2 rounded-lg text-center'
             }, [
-              React.createElement('div', { key: 'i', className: 'text-lg text-[#1565c0] mb-0.5' }, '💻'),
-              React.createElement('div', { key: 'num', className: 'text-base font-extrabold text-[#1565c0]' }, '72%'),
+              React.createElement('div', { key: 'i', className: 'text-base text-[#1565c0] mb-0.5' }, '💻'),
+              React.createElement('div', { key: 'num', className: 'text-sm font-extrabold text-[#1565c0]' }, '72%'),
               React.createElement('div', { key: 'lbl', className: 'text-[10px] text-slate-600 font-medium' }, 'Digital Facilities')
             ])
           ]),
 
-          // Find a School Box (Light slate background, white selects, blue search button)
+          // Find a School Box with SchoolBuildingGraphic
           React.createElement('div', {
             key: 'find-school-box',
-            className: 'bg-[#f8fafc] border border-slate-200 rounded-xl p-3.5'
+            className: 'bg-[#f8fafc] border border-slate-200 rounded-xl p-2.5'
           }, [
-            React.createElement('div', { key: 'fs-head', className: 'flex items-center space-x-2 mb-2' }, [
-              React.createElement('span', { key: 'i', className: 'text-base text-[#0c4a7e]' }, '🏛️'),
+            React.createElement('div', { key: 'fs-head', className: 'flex items-center space-x-1.5 mb-2' }, [
+              React.createElement('span', { key: 'i', className: 'text-sm text-[#0c4a7e]' }, '🏛️'),
               React.createElement('div', { key: 't' }, [
-                React.createElement('h4', { key: 'title', className: 'text-xs font-bold text-slate-900' }, 'Find a School'),
-                React.createElement('p', { key: 'sub', className: 'text-[10px] text-slate-500' }, 'Search government and private schools in your area')
+                React.createElement('h4', { key: 'title', className: 'text-xs font-bold text-slate-900 leading-tight' }, 'Find a School'),
+                React.createElement('p', { key: 'sub', className: 'text-[10px] text-slate-500' }, 'Search schools in Jangaon District')
               ])
             ]),
 
-            React.createElement('div', { key: 'fs-form', className: 'grid grid-cols-2 gap-2 mb-2' }, [
-              React.createElement('select', {
-                key: 'sel-mandal',
-                value: mandal,
-                onChange: (e) => setMandal(e.target.value),
-                className: 'text-xs border border-slate-300 rounded-lg p-1.5 bg-white text-slate-700 focus:outline-none focus:border-[#0c4a7e]'
-              }, [
-                React.createElement('option', { key: 'all', value: 'all' }, 'Select Mandal ▾'),
-                React.createElement('option', { key: 'm1', value: 'Jangaon' }, 'Jangaon'),
-                React.createElement('option', { key: 'm2', value: 'Bachannapet' }, 'Bachannapet'),
-                React.createElement('option', { key: 'm3', value: 'Devaruppula' }, 'Devaruppula'),
-                React.createElement('option', { key: 'm4', value: 'Lingalaghanpur' }, 'Lingalaghanpur'),
-                React.createElement('option', { key: 'm5', value: 'Narmetta' }, 'Narmetta'),
-                React.createElement('option', { key: 'm6', value: 'Station Ghanpur' }, 'Station Ghanpur'),
-                React.createElement('option', { key: 'm7', value: 'Palakurthi' }, 'Palakurthi')
+            React.createElement('div', { key: 'fs-body', className: 'flex items-center gap-2' }, [
+              React.createElement('div', { key: 'fs-inputs', className: 'flex-1 space-y-1.5' }, [
+                React.createElement('select', {
+                  key: 'sel-mandal',
+                  value: mandal,
+                  onChange: (e) => setMandal(e.target.value),
+                  className: 'w-full text-[11px] border border-slate-300 rounded-lg p-1.5 bg-white text-slate-700 focus:outline-none focus:border-[#0c4a7e]'
+                }, [
+                  React.createElement('option', { key: 'all', value: 'all' }, 'Select Mandal ▾'),
+                  React.createElement('option', { key: 'm1', value: 'Jangaon' }, 'Jangaon'),
+                  React.createElement('option', { key: 'm2', value: 'Bachannapet' }, 'Bachannapet'),
+                  React.createElement('option', { key: 'm3', value: 'Devaruppula' }, 'Devaruppula'),
+                  React.createElement('option', { key: 'm4', value: 'Lingalaghanpur' }, 'Lingalaghanpur'),
+                  React.createElement('option', { key: 'm5', value: 'Narmetta' }, 'Narmetta'),
+                  React.createElement('option', { key: 'm6', value: 'Station Ghanpur' }, 'Station Ghanpur'),
+                  React.createElement('option', { key: 'm7', value: 'Palakurthi' }, 'Palakurthi')
+                ]),
+
+                React.createElement('select', {
+                  key: 'sel-type',
+                  value: schoolType,
+                  onChange: (e) => setSchoolType(e.target.value),
+                  className: 'w-full text-[11px] border border-slate-300 rounded-lg p-1.5 bg-white text-slate-700 focus:outline-none focus:border-[#0c4a7e]'
+                }, [
+                  React.createElement('option', { key: 'all', value: 'all' }, 'Select School Type ▾'),
+                  React.createElement('option', { key: 't1', value: 'Government' }, 'Government High School'),
+                  React.createElement('option', { key: 't2', value: 'ZPHS' }, 'Zilla Parishad (ZPHS)'),
+                  React.createElement('option', { key: 't3', value: 'KGBV' }, 'KGBV Residential'),
+                  React.createElement('option', { key: 't4', value: 'Model School' }, 'TS Model School')
+                ]),
+
+                React.createElement('button', {
+                  key: 'btn-search',
+                  onClick: handleSearchSchool,
+                  className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold text-xs py-1.5 rounded-lg flex items-center justify-center space-x-1.5 transition-colors shadow-2xs'
+                }, [
+                  React.createElement('span', { key: 'icon' }, '🔍'),
+                  React.createElement('span', { key: 't' }, 'Search Schools')
+                ])
               ]),
 
-              React.createElement('select', {
-                key: 'sel-type',
-                value: schoolType,
-                onChange: (e) => setSchoolType(e.target.value),
-                className: 'text-xs border border-slate-300 rounded-lg p-1.5 bg-white text-slate-700 focus:outline-none focus:border-[#0c4a7e]'
+              React.createElement('div', {
+                key: 'fs-graphic',
+                className: 'hidden sm:flex items-center justify-center flex-shrink-0'
               }, [
-                React.createElement('option', { key: 'all', value: 'all' }, 'Select School Type ▾'),
-                React.createElement('option', { key: 't1', value: 'Government' }, 'Government High School'),
-                React.createElement('option', { key: 't2', value: 'ZPHS' }, 'Zilla Parishad (ZPHS)'),
-                React.createElement('option', { key: 't3', value: 'KGBV' }, 'KGBV Residential'),
-                React.createElement('option', { key: 't4', value: 'Model School' }, 'TS Model School')
+                React.createElement(SchoolBuildingGraphic, { className: 'w-24 h-20 drop-shadow-2xs' })
               ])
-            ]),
-
-            React.createElement('button', {
-              key: 'btn-search',
-              onClick: handleSearchSchool,
-              className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold text-xs py-2 rounded-lg flex items-center justify-center space-x-1.5 transition-colors shadow-xs'
-            }, [
-              React.createElement('span', { key: 'icon' }, '🔍'),
-              React.createElement('span', { key: 't' }, 'Search Schools')
             ]),
 
             searchResults && React.createElement('div', {
               key: 'search-results-box',
-              className: 'mt-2 max-h-32 overflow-y-auto space-y-1.5 p-1 bg-white rounded border border-slate-200'
+              className: 'mt-2 max-h-28 overflow-y-auto space-y-1 p-1 bg-white rounded border border-slate-200'
             }, searchResults.length > 0 ? (
               searchResults.map((s, idx) => React.createElement('div', {
                 key: `res-${idx}`,
-                className: 'text-[11px] p-1.5 bg-slate-50 rounded border border-slate-100 flex items-center justify-between'
+                className: 'text-[10px] p-1 bg-slate-50 rounded border border-slate-100 flex items-center justify-between'
               }, [
-                React.createElement('div', { key: 't' }, [
-                  React.createElement('div', { key: 'n', className: 'font-bold text-slate-800' }, s.name),
-                  React.createElement('div', { key: 'd', className: 'text-[10px] text-slate-500' }, `${s.mandal} • ${s.medium}`)
+                React.createElement('div', { key: 't', className: 'truncate' }, [
+                  React.createElement('div', { key: 'n', className: 'font-bold text-slate-800 truncate' }, s.name),
+                  React.createElement('div', { key: 'd', className: 'text-[9px] text-slate-500' }, `${s.mandal} • ${s.medium}`)
                 ]),
-                React.createElement('span', { key: 'tag', className: 'text-[9px] font-semibold bg-[#e3f2fd] text-[#0c4a7e] px-1.5 py-0.5 rounded' }, s.type)
+                React.createElement('span', { key: 'tag', className: 'text-[8px] font-semibold bg-[#e3f2fd] text-[#0c4a7e] px-1 py-0.2 rounded flex-shrink-0 ml-1' }, s.type)
               ]))
             ) : (
-              React.createElement('div', { className: 'text-xs text-slate-500 text-center py-2' }, 'No schools found for selection.')
+              React.createElement('div', { className: 'text-[11px] text-slate-500 text-center py-1.5' }, 'No schools found for selection.')
             ))
           ])
         ])
@@ -956,34 +1040,35 @@ function PortalCardsGrid() {
       // 3. News & Events (White Card, Blue Title, Light Border)
       React.createElement('div', {
         key: 'card-news',
-        className: 'bg-white rounded-2xl border border-slate-200 shadow-xs p-5 flex flex-col justify-between'
+        className: 'bg-white rounded-xl border border-slate-200 shadow-xs p-4 flex flex-col justify-between'
       }, [
         React.createElement('div', { key: 'c3-content' }, [
           React.createElement('div', {
             key: 'c3-head',
-            className: 'flex items-center justify-between pb-3 border-b border-slate-100 mb-4'
+            className: 'flex items-center justify-between pb-2.5 border-b border-slate-100 mb-3'
           }, [
             React.createElement('div', { key: 't', className: 'flex items-center space-x-2' }, [
-              React.createElement('span', { key: 'i', className: 'text-[#0c4a7e] font-bold' }, '📅'),
-              React.createElement('h3', { key: 'title', className: 'font-bold text-[#0c4a7e] text-base' }, 'News & Events')
+              React.createElement('span', { key: 'i', className: 'text-[#0c4a7e] font-bold text-sm' }, '📅'),
+              React.createElement('h3', { key: 'title', className: 'font-bold text-[#0c4a7e] text-sm sm:text-base' }, 'News & Events')
             ]),
             React.createElement('button', { key: 'view-all', className: 'text-xs font-semibold text-[#0c4a7e] hover:text-blue-900' }, 'View All →')
           ]),
 
-          React.createElement('div', { key: 'c3-list', className: 'space-y-3' }, [
+          React.createElement('div', { key: 'c3-list', className: 'space-y-2' }, [
             newsItems.map((n, idx) => React.createElement('div', {
               key: `news-${idx}`,
-              className: 'flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group'
+              className: 'flex items-center justify-between p-1.5 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group'
             }, [
-              React.createElement('div', {
+              React.createElement(NewsThumbnail, {
                 key: 'thumb',
-                className: 'w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-xl flex-shrink-0'
-              }, n.img),
+                type: n.type,
+                className: 'w-10 h-10'
+              }),
 
-              React.createElement('div', { key: 'details', className: 'flex-1 mx-3' }, [
+              React.createElement('div', { key: 'details', className: 'flex-1 mx-2.5 min-w-0' }, [
                 React.createElement('p', {
                   key: 't',
-                  className: 'text-xs font-bold text-slate-800 line-clamp-1 group-hover:text-[#0c4a7e] transition-colors'
+                  className: 'text-xs font-bold text-slate-800 truncate group-hover:text-[#0c4a7e] transition-colors'
                 }, n.title),
                 React.createElement('p', {
                   key: 'd',
@@ -1005,70 +1090,76 @@ function PortalCardsGrid() {
 // ==========================================
 function OfficialFooter() {
   return React.createElement('footer', {
-    className: 'bg-[#0c4a7e] text-white pt-10 pb-6 border-t-4 border-amber-400 footer-skyline-bg relative'
+    className: 'bg-[#0c4a7e] text-white pt-7 pb-4 border-t-4 border-amber-400 relative'
   }, [
     React.createElement('div', {
       key: 'footer-content',
-      className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-blue-400/20'
+      className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-6 pb-6 border-b border-blue-400/20'
     }, [
-      React.createElement('div', { key: 'col1', className: 'space-y-3' }, [
-        React.createElement('div', { key: 'seal-wrap', className: 'flex items-center space-x-3' }, [
-          React.createElement(TelanganaEmblem, { key: 'emblem', className: 'w-12 h-12' }),
+      React.createElement('div', { key: 'col1', className: 'space-y-2' }, [
+        React.createElement('div', { key: 'seal-wrap', className: 'flex items-center space-x-2.5' }, [
+          React.createElement(TelanganaEmblem, { key: 'emblem', className: 'w-10 h-10' }),
           React.createElement('div', { key: 'txt' }, [
-            React.createElement('div', { key: 't1', className: 'font-bold text-sm leading-tight text-white' }, 'District Educational Office, Jangaon'),
-            React.createElement('div', { key: 't2', className: 'text-xs text-blue-200' }, 'School Education Department, Telangana'),
-            React.createElement('div', { key: 't3', className: 'text-[11px] text-amber-300 italic' }, 'Education for a Brighter Tomorrow')
+            React.createElement('div', { key: 't1', className: 'font-bold text-xs sm:text-sm leading-tight text-white' }, 'District Educational Office, Jangaon'),
+            React.createElement('div', { key: 't2', className: 'text-[11px] text-blue-200' }, 'School Education Department, Telangana'),
+            React.createElement('div', { key: 't3', className: 'text-[10px] text-amber-300 italic' }, 'Education for a Brighter Tomorrow')
           ])
         ]),
-        React.createElement('p', { key: 'p', className: 'text-xs text-blue-100 leading-relaxed' },
+        React.createElement('p', { key: 'p', className: 'text-[11px] text-blue-100 leading-relaxed' },
           'Official portal of the District Educational Office, Jangaon District, providing quality school education governance and teacher-student services.'
         )
       ]),
 
-      React.createElement('div', { key: 'col2', className: 'space-y-2.5 text-xs' }, [
-        React.createElement('h4', { key: 'title', className: 'text-sm font-bold text-amber-300 mb-2' }, 'Contact Us'),
-        React.createElement('div', { key: 'addr', className: 'flex items-start space-x-2 text-blue-100' }, [
+      React.createElement('div', { key: 'col2', className: 'space-y-1.5 text-xs' }, [
+        React.createElement('h4', { key: 'title', className: 'text-sm font-bold text-amber-300 mb-1.5' }, 'Contact Us'),
+        React.createElement('div', { key: 'addr', className: 'flex items-start space-x-1.5 text-blue-100 text-[11px]' }, [
           React.createElement('span', { key: 'i' }, '📍'),
           React.createElement('span', { key: 't' }, 'Collectorate Road, Jangaon, Telangana – 506167')
         ]),
-        React.createElement('div', { key: 'ph', className: 'flex items-center space-x-2 text-blue-100' }, [
+        React.createElement('div', { key: 'ph', className: 'flex items-center space-x-1.5 text-blue-100 text-[11px]' }, [
           React.createElement('span', { key: 'i' }, '📞'),
           React.createElement('span', { key: 't' }, '+91 8678 222 333')
         ]),
-        React.createElement('div', { key: 'email', className: 'flex items-center space-x-2 text-blue-100' }, [
+        React.createElement('div', { key: 'email', className: 'flex items-center space-x-1.5 text-blue-100 text-[11px]' }, [
           React.createElement('span', { key: 'i' }, '✉️'),
           React.createElement('span', { key: 't' }, 'deo.jangaon@telangana.gov.in')
         ])
       ]),
 
-      React.createElement('div', { key: 'col3', className: 'space-y-2 text-xs text-blue-100' }, [
-        React.createElement('h4', { key: 'title', className: 'text-sm font-bold text-amber-300 mb-2' }, 'Quick Links'),
-        React.createElement('div', { key: 'l1', className: 'hover:text-amber-300 cursor-pointer' }, '› About DEO'),
-        React.createElement('div', { key: 'l2', className: 'hover:text-amber-300 cursor-pointer' }, '› Teachers Information'),
-        React.createElement('div', { key: 'l3', className: 'hover:text-amber-300 cursor-pointer' }, '› Schools Directory'),
-        React.createElement('div', { key: 'l4', className: 'hover:text-amber-300 cursor-pointer' }, '› Examinations & Results'),
-        React.createElement('div', { key: 'l5', className: 'hover:text-amber-300 cursor-pointer' }, '› Notifications & Orders'),
-        React.createElement('div', { key: 'l6', className: 'hover:text-amber-300 cursor-pointer' }, '› Contact District Office')
+      React.createElement('div', { key: 'col3', className: 'space-y-1.5 text-xs text-blue-100' }, [
+        React.createElement('h4', { key: 'title', className: 'text-sm font-bold text-amber-300 mb-1.5' }, 'Quick Links'),
+        React.createElement('div', { key: 'links-grid', className: 'grid grid-cols-2 gap-x-2 gap-y-1 text-[11px]' }, [
+          React.createElement('div', { key: 'l1', className: 'hover:text-amber-300 cursor-pointer' }, '› About DEO'),
+          React.createElement('div', { key: 'l2', className: 'hover:text-amber-300 cursor-pointer' }, '› Teachers Info'),
+          React.createElement('div', { key: 'l3', className: 'hover:text-amber-300 cursor-pointer' }, '› Schools Directory'),
+          React.createElement('div', { key: 'l4', className: 'hover:text-amber-300 cursor-pointer' }, '› Examinations'),
+          React.createElement('div', { key: 'l5', className: 'hover:text-amber-300 cursor-pointer' }, '› Notifications'),
+          React.createElement('div', { key: 'l6', className: 'hover:text-amber-300 cursor-pointer' }, '› Contact DEO')
+        ])
       ]),
 
-      React.createElement('div', { key: 'col4', className: 'space-y-4' }, [
+      React.createElement('div', { key: 'col4', className: 'space-y-2' }, [
         React.createElement('h4', { key: 'title', className: 'text-sm font-bold text-amber-300' }, 'Follow Us'),
-        React.createElement('div', { key: 'socials', className: 'flex items-center space-x-3 text-lg' }, [
-          React.createElement('div', { key: 'yt', className: 'w-8 h-8 rounded-full bg-red-600 flex items-center justify-center cursor-pointer hover:opacity-90' }, '▶'),
-          React.createElement('div', { key: 'x', className: 'w-8 h-8 rounded-full bg-blue-900 border border-blue-400 flex items-center justify-center cursor-pointer hover:bg-blue-800' }, '𝕏'),
-          React.createElement('div', { key: 'fb', className: 'w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center cursor-pointer hover:opacity-90' }, 'f'),
-          React.createElement('div', { key: 'ig', className: 'w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-500 via-pink-500 to-purple-600 flex items-center justify-center cursor-pointer hover:opacity-90' }, '📷')
+        React.createElement('div', { key: 'socials', className: 'flex items-center space-x-2 text-sm' }, [
+          React.createElement('div', { key: 'yt', className: 'w-7 h-7 rounded-full bg-red-600 flex items-center justify-center cursor-pointer hover:opacity-90' }, '▶'),
+          React.createElement('div', { key: 'x', className: 'w-7 h-7 rounded-full bg-blue-900 border border-blue-400 flex items-center justify-center cursor-pointer hover:bg-blue-800' }, '𝕏'),
+          React.createElement('div', { key: 'fb', className: 'w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center cursor-pointer hover:opacity-90' }, 'f'),
+          React.createElement('div', { key: 'ig', className: 'w-7 h-7 rounded-full bg-gradient-to-tr from-yellow-500 via-pink-500 to-purple-600 flex items-center justify-center cursor-pointer hover:opacity-90' }, '📷')
         ]),
+        React.createElement(SkylineGraphic, {
+          key: 'skyline',
+          className: 'w-44 h-11 opacity-40 pt-1'
+        }),
         React.createElement('div', {
           key: 'motto',
-          className: 'pt-2 font-display italic text-amber-200 text-sm tracking-wide'
+          className: 'font-display italic text-amber-200 text-xs sm:text-sm tracking-wide'
         }, 'Together for a Brighter Jangaon')
       ])
     ]),
 
     React.createElement('div', {
       key: 'footer-bottom',
-      className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 flex flex-col sm:flex-row items-center justify-between text-xs text-blue-200 gap-2'
+      className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 flex flex-col sm:flex-row items-center justify-between text-[11px] text-blue-200 gap-2'
     }, [
       React.createElement('div', { key: 'cr' }, '© 2025 District Educational Office, Jangaon. All Rights Reserved.'),
       React.createElement('div', { key: 'legal', className: 'flex items-center space-x-4' }, [
