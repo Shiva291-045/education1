@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>District Educational Office, Jangaon | School Education Department, Telangana</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23007a33'/><circle cx='50' cy='50' r='35' fill='white'/><text x='50' y='58' font-size='24' font-weight='bold' text-anchor='middle' fill='%23007a33'>TS</text></svg>">
+
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gov: {
+              blue: '#0c4a7e',
+              bluedark: '#08355b',
+              bluelight: '#e3f2fd',
+              green: '#007a33',
+              red: '#d32f2f',
+              maroon: '#990000',
+              gold: '#d4af37'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Outfit', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React 18 & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body class="bg-[#f8fafc] text-slate-800 antialiased font-scale-md">
+  <div id="root">
+    <div class="min-h-screen flex items-center justify-center bg-slate-50">
+      <div class="text-center p-8 bg-white rounded-xl shadow-md border border-slate-200 max-w-md">
+        <div class="w-14 h-14 border-4 border-[#0c4a7e] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <h2 class="text-lg font-bold text-[#0c4a7e]">District Educational Office, Jangaon</h2>
+        <p class="text-xs text-slate-500 mt-2">Loading Department of School Education Portal...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Component Logos -->
+  <script src="/assets/logos.js"></script>
+
+  <!-- Main Application Script -->
+  <script src="/app.js"></script>
+</body>
+</html>

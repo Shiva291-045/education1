@@ -1,0 +1,21 @@
+{
+  "name": "telangana-deo-jangaon-portal",
+  "version": "1.0.0",
+  "description": "District Educational Office, Jangaon - Telangana School Education Department Portal with Complete Authentication, OTP Verification, Official Data Linking, and Role-Based Dashboards",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "server": "node server/index.js",
+    "dev": "node server/index.js"
+  },
+  "keywords": [
+    "telangana",
+    "education",
+    "jangaon",
+    "authentication",
+    "otp-verification",
+    "role-based-dashboard"
+  ],
+  "author": "District Educational Office, Jangaon",
+  "license": "ISC"
+}
