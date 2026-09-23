@@ -1222,7 +1222,7 @@ function RegisterModal() {
   const [successMsg, setSuccessMsg] = useState('');
 
   const [fullName, setFullName] = useState('');
-  const [role, setRole] = useState('Teacher');
+  const [role, setRole] = useState('APO');
   const [mobileNumber, setMobileNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -1414,12 +1414,10 @@ function RegisterModal() {
               onChange: (e) => setRole(e.target.value),
               className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:border-[#0c4a7e] font-medium'
             }, [
-              React.createElement('option', { key: 't', value: 'Teacher' }, 'Teacher'),
-              React.createElement('option', { key: 's', value: 'School Staff' }, 'School Staff'),
-              React.createElement('option', { key: 'st', value: 'Student' }, 'Student'),
-              React.createElement('option', { key: 'p', value: 'Parent' }, 'Parent'),
-              React.createElement('option', { key: 'o', value: 'Officer' }, 'Officer'),
-              React.createElement('option', { key: 'oth', value: 'Other authorized role' }, 'Other authorized role')
+              React.createElement('option', { key: 'apo', value: 'APO' }, 'APO'),
+              React.createElement('option', { key: 'deo', value: 'DEO' }, 'DEO'),
+              React.createElement('option', { key: 'meo', value: 'MEO' }, 'MEO'),
+              React.createElement('option', { key: 'tch', value: 'Teacher' }, 'Teacher')
             ])
           ]),
 
@@ -1967,7 +1965,7 @@ function ForgotPasswordModal() {
 // ==========================================
 function RoleDashboard() {
   const { user, setCurrentView, theme, changeTheme, openModal } = useContext(AuthContext);
-  const [previewRole, setPreviewRole] = useState('Teacher');
+  const [previewRole, setPreviewRole] = useState('APO');
 
   const isDark = (theme === 'dark');
 
@@ -2075,7 +2073,7 @@ function RoleDashboard() {
           React.createElement('span', { key: 'msg' }, 'Previewing dashboard views and themes. Switch roles below or log in:')
         ]),
         React.createElement('div', { key: 'roles', className: 'flex items-center flex-wrap gap-1.5' }, [
-          ['Teacher', 'School Staff', 'Student', 'Officer', 'Parent'].map(r => (
+          ['APO', 'DEO', 'MEO', 'Teacher'].map(r => (
             React.createElement('button', {
               key: r,
               onClick: () => setPreviewRole(r),
@@ -2152,9 +2150,9 @@ function RoleDashboard() {
 
       // Role modules
       activeUser.role === 'Teacher' && React.createElement(TeacherModules, { key: 'teacher-mod', user: activeUser, isDark }),
+      (activeUser.role === 'APO' || activeUser.role === 'DEO' || activeUser.role === 'MEO' || activeUser.role === 'Officer') && React.createElement(OfficerModules, { key: 'officer-mod', user: activeUser, isDark }),
       activeUser.role === 'School Staff' && React.createElement(SchoolStaffModules, { key: 'staff-mod', user: activeUser, isDark }),
       activeUser.role === 'Student' && React.createElement(StudentModules, { key: 'student-mod', user: activeUser, isDark }),
-      activeUser.role === 'Officer' && React.createElement(OfficerModules, { key: 'officer-mod', user: activeUser, isDark }),
       (activeUser.role === 'Parent' || activeUser.role === 'Other authorized role') && React.createElement(ParentModules, { key: 'parent-mod', user: activeUser, isDark })
     ])
   ]);

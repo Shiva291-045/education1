@@ -1,118 +1,25 @@
-// Official SVG Logos and Graphics for Telangana DEO Jangaon Portal
-// Strictly matching IMAGE 2 (Original Correct Light Government Version)
+// Official Logos and Graphics for Telangana DEO Jangaon Portal
+// Using exact official Government of Telangana Emblem and Telangana Rising Logo from user reference images
 
 window.PORTAL_LOGOS = {
-  // Telangana State Emblem SVG Crest
-  TelanganaEmblem: function({ className = "w-16 h-16" }) {
-    return React.createElement('svg', {
-      className,
-      viewBox: "0 0 200 200",
-      fill: "none",
-      xmlns: "http://www.w3.org/2000/svg"
-    }, [
-      // Outer green ring
-      React.createElement('circle', { key: 'c1', cx: 100, cy: 100, r: 94, stroke: "#007a33", strokeWidth: 8, fill: "#ffffff" }),
-      React.createElement('circle', { key: 'c2', cx: 100, cy: 100, r: 84, stroke: "#007a33", strokeWidth: 2, strokeDasharray: "4 3" }),
-      // Inner decorative ring
-      React.createElement('circle', { key: 'c3', cx: 100, cy: 100, r: 66, stroke: "#d4af37", strokeWidth: 3, fill: "#ffffff" }),
-      // Kakatiya Kala Thoranam arch
-      React.createElement('path', {
-        key: 'arch',
-        d: "M55 125 C 55 70, 145 70, 145 125 M 65 125 C 65 82, 135 82, 135 125",
-        stroke: "#007a33",
-        strokeWidth: 4,
-        fill: "none"
-      }),
-      // Arch decorative brackets
-      React.createElement('path', {
-        key: 'brackets',
-        d: "M60 98 Q 72 88 85 92 Q 100 80 115 92 Q 128 88 140 98",
-        stroke: "#007a33",
-        strokeWidth: 3,
-        fill: "none"
-      }),
-      // Charminar center silhouette
-      React.createElement('rect', { key: 'minar-l', x: 80, y: 92, width: 6, height: 32, fill: "#007a33" }),
-      React.createElement('rect', { key: 'minar-r', x: 114, y: 92, width: 6, height: 32, fill: "#007a33" }),
-      React.createElement('rect', { key: 'dome', x: 84, y: 98, width: 32, height: 6, fill: "#007a33" }),
-      React.createElement('path', { key: 'dome-arc', d: "M88 124 C 88 108 112 108 112 124 Z", fill: "#007a33" }),
-      // Pedestal at bottom
-      React.createElement('rect', { key: 'pedestal', x: 74, y: 132, width: 52, height: 8, rx: 2, fill: "#007a33" }),
-      React.createElement('circle', { key: 'chakra', cx: 100, cy: 136, r: 3, fill: "#d4af37" }),
-      // Text
-      React.createElement('text', {
-        key: 'txt1',
-        x: 100,
-        y: 28,
-        textAnchor: "middle",
-        fill: "#007a33",
-        fontSize: "12",
-        fontWeight: "bold",
-        fontFamily: "Inter, sans-serif"
-      }, "GOVERNMENT OF TELANGANA"),
-      React.createElement('text', {
-        key: 'txt2',
-        x: 100,
-        y: 180,
-        textAnchor: "middle",
-        fill: "#007a33",
-        fontSize: "11",
-        fontWeight: "bold",
-        fontFamily: "sans-serif"
-      }, "తెలంగాణ ప్రభుత్వం • حکومت تلنگانہ")
-    ]);
+  // Official Government of Telangana Emblem (Exact reference image 2 from user)
+  TelanganaEmblem: function({ className = "w-16 h-16", alt = "Government of Telangana Emblem" }) {
+    return React.createElement('img', {
+      src: "/assets/telangana_govt_emblem.png",
+      alt,
+      className: `${className} object-contain inline-block`,
+      loading: "eager"
+    });
   },
 
-  // Official "1 Telangana Rising" Emblem (Matching IMAGE 2)
-  TelanganaRisingLogo: function({ className = "w-24 h-24" }) {
-    return React.createElement('svg', {
-      className,
-      viewBox: "0 0 160 160",
-      fill: "none",
-      xmlns: "http://www.w3.org/2000/svg"
-    }, [
-      React.createElement('path', {
-        key: 'num1',
-        d: "M60 42 L88 24 L102 24 L102 124 L118 124 L118 136 L48 136 L48 124 L68 124 L68 46 L54 54 Z",
-        fill: "url(#blueGrad)",
-        stroke: "#0c4a7e",
-        strokeWidth: 2
-      }),
-      React.createElement('circle', { key: 'medallion', cx: 85, cy: 75, r: 16, fill: "#ffffff", stroke: "#0c4a7e", strokeWidth: 2 }),
-      React.createElement('path', { key: 'arch-mini', d: "M76 82 C 76 70 94 70 94 82 Z", fill: "#0c4a7e" }),
-      React.createElement('defs', { key: 'defs' }, [
-        React.createElement('linearGradient', {
-          key: 'grad1',
-          id: 'blueGrad',
-          x1: '0%', y1: '0%', x2: '100%', y2: '100%'
-        }, [
-          React.createElement('stop', { key: 's1', offset: '0%', stopColor: '#0c4a7e' }),
-          React.createElement('stop', { key: 's2', offset: '100%', stopColor: '#1976d2' })
-        ])
-      ]),
-      React.createElement('text', {
-        key: 'txt-tel',
-        x: 80,
-        y: 148,
-        textAnchor: "middle",
-        fill: "#0c4a7e",
-        fontSize: "12",
-        fontWeight: "900",
-        letterSpacing: "1px",
-        fontFamily: "Inter, sans-serif"
-      }, "TELANGANA"),
-      React.createElement('text', {
-        key: 'txt-ris',
-        x: 80,
-        y: 159,
-        textAnchor: "middle",
-        fill: "#d32f2f",
-        fontSize: "10",
-        fontWeight: "900",
-        letterSpacing: "2px",
-        fontFamily: "Inter, sans-serif"
-      }, "RISING")
-    ]);
+  // Official "1 Telangana Rising" Logo (Exact reference image 1 from user)
+  TelanganaRisingLogo: function({ className = "w-24 h-24", alt = "Telangana Rising" }) {
+    return React.createElement('img', {
+      src: "/assets/telangana_rising_logo.png",
+      alt,
+      className: `${className} object-contain inline-block`,
+      loading: "eager"
+    });
   },
 
   // Giant Illustrated Pencil Banner matching IMAGE 2 exactly:
