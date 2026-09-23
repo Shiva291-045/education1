@@ -263,25 +263,19 @@ function TopGovtBar({ fontScale, setFontScale }) {
       React.createElement('button', {
         key: 'sun-icn',
         onClick: () => changeTheme('light'),
-        className: `flex items-center space-x-1 px-1.5 py-0.5 rounded transition-all cursor-pointer ${
-          theme === 'light' ? 'bg-amber-400 text-slate-900 font-bold shadow-xs' : 'text-white hover:text-amber-300 hover:bg-white/10'
+        className: `flex items-center justify-center p-1 rounded transition-all cursor-pointer ${
+          theme === 'light' ? 'bg-amber-400 text-slate-900 shadow-xs' : 'text-white hover:text-amber-300 hover:bg-white/10'
         }`,
-        title: "Day Mode (Light Theme)"
-      }, [
-        React.createElement('span', { key: 'i' }, '☀️'),
-        React.createElement('span', { key: 't', className: 'hidden sm:inline' }, 'Day')
-      ]),
+        title: "Light Theme"
+      }, React.createElement('span', { key: 'i' }, '☀️')),
       React.createElement('button', {
         key: 'moon-icn',
         onClick: () => changeTheme('dark'),
-        className: `flex items-center space-x-1 px-1.5 py-0.5 rounded transition-all cursor-pointer ${
-          theme === 'dark' ? 'bg-amber-400 text-slate-900 font-bold shadow-xs' : 'text-white hover:text-amber-300 hover:bg-white/10'
+        className: `flex items-center justify-center p-1 rounded transition-all cursor-pointer ${
+          theme === 'dark' ? 'bg-amber-400 text-slate-900 shadow-xs' : 'text-white hover:text-amber-300 hover:bg-white/10'
         }`,
-        title: "Night Mode (Dark Theme)"
-      }, [
-        React.createElement('span', { key: 'i' }, '🌙'),
-        React.createElement('span', { key: 't', className: 'hidden sm:inline' }, 'Night')
-      ])
+        title: "Dark Theme"
+      }, React.createElement('span', { key: 'i' }, '🌙'))
     ])
   ]);
 }
