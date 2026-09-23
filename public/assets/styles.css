@@ -1,0 +1,81 @@
+/* ORIGINAL GOVERNMENT EDUCATION PORTAL STYLES (LOCKED ORIGINAL PALETTE) */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* LOCKED ORIGINAL COLORS */
+  --gov-blue: #0c4a7e;
+  --gov-blue-dark: #08355b;
+  --gov-blue-light: #e3f2fd;
+  --gov-green: #007a33;
+  --gov-red: #d32f2f;
+  --gov-maroon: #990000;
+  --gov-bg: #f8fafc;
+  --gov-card-bg: #ffffff;
+  --gov-border: #e2e8f0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--gov-bg);
+  color: #1e293b;
+  margin: 0;
+  padding: 0;
+}
+
+/* Pencil graphic tip clipping */
+.clip-pencil-tip {
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+}
+
+.clip-lead {
+  clip-path: polygon(0 50%, 100% 25%, 100% 75%);
+}
+
+/* Font Sizing for Accessibility */
+body.font-scale-sm {
+  font-size: 14px;
+}
+body.font-scale-md {
+  font-size: 16px;
+}
+body.font-scale-lg {
+  font-size: 18px;
+}
+
+/* OTP 6-Digit input boxes */
+.otp-digit-box {
+  width: 3.25rem;
+  height: 3.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 0.5rem;
+  border: 2px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #0c4a7e;
+  transition: all 0.15s ease-in-out;
+}
+
+.otp-digit-box:focus {
+  outline: none;
+  border-color: #0c4a7e;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(12, 74, 126, 0.15);
+}
+
+/* Pulse animation for 'New' notifications */
+@keyframes softPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.04); }
+}
+
+.badge-pulse {
+  animation: softPulse 2s infinite ease-in-out;
+}
+
+/* Footer skyline subtle pattern */
+.footer-skyline-bg {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 0);
+  background-size: 16px 16px;
+}

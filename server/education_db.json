@@ -1,0 +1,52 @@
+{
+  "users": [],
+  "otps": [],
+  "notifications": [
+    {
+      "id": "NOTIF-1",
+      "date": "15 Sep 2025",
+      "category": "Examinations",
+      "title": "SSC Public Examinations – Time Table Released",
+      "tagColor": "blue",
+      "isNew": true,
+      "fileUrl": "#"
+    },
+    {
+      "id": "NOTIF-2",
+      "date": "12 Sep 2025",
+      "category": "Teachers",
+      "title": "Teacher Transfers – Guidelines and Format",
+      "tagColor": "amber",
+      "isNew": true,
+      "fileUrl": "#"
+    },
+    {
+      "id": "NOTIF-3",
+      "date": "08 Sep 2025",
+      "category": "Schools",
+      "title": "School Infrastructure Grants – Utilization Certificates",
+      "tagColor": "blue",
+      "isNew": true,
+      "fileUrl": "#"
+    },
+    {
+      "id": "NOTIF-4",
+      "date": "01 Sep 2025",
+      "category": "General",
+      "title": "Revised Academic Calendar for 2025-26",
+      "tagColor": "cyan",
+      "isNew": true,
+      "fileUrl": "#"
+    }
+  ],
+  "statistics": {
+    "schools": "1,248",
+    "teachers": "3,842",
+    "students": "1,45,620",
+    "mandals": "29",
+    "passPercentage": "94.2%",
+    "governmentSchools": "385",
+    "studentsPerTeacher": "378",
+    "schoolsWithDigitalFacilities": "72%"
+  }
+}
