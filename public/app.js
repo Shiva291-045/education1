@@ -16,6 +16,35 @@ function AuthProvider({ children }) {
   const [activeModal, setActiveModal] = useState(null); // 'LOGIN' | 'REGISTER' | 'FORGOT' | null
   const [devOtpNotification, setDevOtpNotification] = useState(null);
   const [currentView, setCurrentView] = useState('PORTAL'); // 'PORTAL' | 'DASHBOARD'
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('jangaon_portal_theme') || 'light';
+  });
+
+  const changeTheme = (newTheme) => {
+    setTheme(newTheme);
+    localStorage.setItem('jangaon_portal_theme', newTheme);
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
+    }
+  };
+
+  const toggleTheme = () => {
+    changeTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
+    }
+  }, [theme]);
 
   useEffect(() => {
     async function checkAuth() {
@@ -161,7 +190,10 @@ function AuthProvider({ children }) {
       currentView,
       setCurrentView,
       devOtpNotification,
-      setDevOtpNotification
+      setDevOtpNotification,
+      theme,
+      changeTheme,
+      toggleTheme
     }
   }, children);
 }
@@ -170,6 +202,7 @@ function AuthProvider({ children }) {
 // 2. TOP GOVERNMENT ACCESSIBILITY BAR (IMAGE 2: DEEP BLUE #0c4a7e)
 // ==========================================
 function TopGovtBar({ fontScale, setFontScale }) {
+  const { theme, changeTheme } = useContext(AuthContext);
   const [lang, setLang] = useState('English');
 
   const handleFontChange = (scale) => {
@@ -226,9 +259,29 @@ function TopGovtBar({ fontScale, setFontScale }) {
       React.createElement('span', { key: 'sep3', className: 'text-blue-300' }, '|'),
 
       // Icons: Search, Light, Dark toggle
-      React.createElement('button', { key: 's-icn', className: 'hover:text-amber-300 text-white transition-colors', title: "Search" }, '🔍'),
-      React.createElement('button', { key: 'sun-icn', className: 'hover:text-amber-300 text-white transition-colors', title: "Day" }, '☀️'),
-      React.createElement('button', { key: 'moon-icn', className: 'hover:text-amber-300 text-white transition-colors', title: "Night" }, '🌙')
+      React.createElement('button', { key: 's-icn', className: 'hover:text-amber-300 text-white transition-colors cursor-pointer', title: "Search" }, '🔍'),
+      React.createElement('button', {
+        key: 'sun-icn',
+        onClick: () => changeTheme('light'),
+        className: `flex items-center space-x-1 px-1.5 py-0.5 rounded transition-all cursor-pointer ${
+          theme === 'light' ? 'bg-amber-400 text-slate-900 font-bold shadow-xs' : 'text-white hover:text-amber-300 hover:bg-white/10'
+        }`,
+        title: "Day Mode (Light Theme)"
+      }, [
+        React.createElement('span', { key: 'i' }, '☀️'),
+        React.createElement('span', { key: 't', className: 'hidden sm:inline' }, 'Day')
+      ]),
+      React.createElement('button', {
+        key: 'moon-icn',
+        onClick: () => changeTheme('dark'),
+        className: `flex items-center space-x-1 px-1.5 py-0.5 rounded transition-all cursor-pointer ${
+          theme === 'dark' ? 'bg-amber-400 text-slate-900 font-bold shadow-xs' : 'text-white hover:text-amber-300 hover:bg-white/10'
+        }`,
+        title: "Night Mode (Dark Theme)"
+      }, [
+        React.createElement('span', { key: 'i' }, '🌙'),
+        React.createElement('span', { key: 't', className: 'hidden sm:inline' }, 'Night')
+      ])
     ])
   ]);
 }
@@ -289,10 +342,18 @@ function MainHeader() {
         React.createElement('button', {
           key: 'home',
           onClick: () => setCurrentView('PORTAL'),
-          className: `flex items-center space-x-1.5 transition-colors ${currentView === 'PORTAL' ? 'text-[#0c4a7e] border-b-2 border-[#0c4a7e] pb-1' : 'hover:text-[#0c4a7e]'}`
+          className: `flex items-center space-x-1.5 transition-colors cursor-pointer ${currentView === 'PORTAL' ? 'text-[#0c4a7e] border-b-2 border-[#0c4a7e] pb-1' : 'hover:text-[#0c4a7e]'}`
         }, [
           React.createElement('span', { key: 'i' }, '🏠'),
           React.createElement('span', { key: 't' }, 'Home')
+        ]),
+        React.createElement('button', {
+          key: 'btn-dash',
+          onClick: () => setCurrentView('DASHBOARD'),
+          className: `flex items-center space-x-1.5 transition-colors cursor-pointer ${currentView === 'DASHBOARD' ? 'text-[#0c4a7e] font-bold border-b-2 border-[#0c4a7e] pb-1' : 'hover:text-[#0c4a7e]'}`
+        }, [
+          React.createElement('span', { key: 'i' }, '📊'),
+          React.createElement('span', { key: 't' }, 'Dashboard')
         ]),
         React.createElement('span', { key: 'abt', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'About ▾'),
         React.createElement('span', { key: 'tch', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Teachers ▾'),
@@ -1811,197 +1872,479 @@ function ForgotPasswordModal() {
 }
 
 // ==========================================
-// 13. ROLE-BASED DASHBOARDS (IMAGE 2 THEME: WHITE & GOVT BLUE)
+// 13. ROLE-BASED DASHBOARDS (LIGHT & DARK THEMES FULLY SUPPORTED)
 // ==========================================
 function RoleDashboard() {
-  const { user, setCurrentView } = useContext(AuthContext);
-  if (!user) return null;
+  const { user, setCurrentView, theme, changeTheme, openModal } = useContext(AuthContext);
+  const [previewRole, setPreviewRole] = useState('Teacher');
+
+  const isDark = (theme === 'dark');
+
+  // If user is authenticated, use their account; otherwise allow guest preview
+  const activeUser = user || {
+    id: 'DEMO-PREVIEW',
+    fullName: 'Preview Visitor',
+    role: previewRole,
+    mobileNumber: '9876543210',
+    accountStatus: 'PREVIEW_MODE',
+    lastLogin: new Date().toISOString()
+  };
 
   return React.createElement('div', {
-    className: 'min-h-screen bg-[#f0f4f8] py-8 px-4 sm:px-6 lg:px-8'
+    className: `min-h-screen py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-200 ${
+      isDark ? 'bg-[#0b1329] text-slate-100' : 'bg-[#f0f4f8] text-slate-800'
+    }`
   }, [
     React.createElement('div', {
       key: 'dash-wrap',
       className: 'max-w-7xl mx-auto space-y-6'
     }, [
-      // Top Navigation bar
+      // Top Navigation bar with Theme Toggle
       React.createElement('div', {
         key: 'top-bar',
-        className: 'flex items-center justify-between bg-white p-4 rounded-xl border border-slate-200 shadow-xs'
+        className: `flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border transition-colors gap-3 ${
+          isDark
+            ? 'bg-[#131f37] border-slate-700/80 shadow-md'
+            : 'bg-white border-slate-200 shadow-xs'
+        }`
       }, [
         React.createElement('div', { key: 'l', className: 'flex items-center space-x-3' }, [
           React.createElement('button', {
             key: 'btn-back',
             onClick: () => setCurrentView('PORTAL'),
-            className: 'text-sm font-semibold text-[#0c4a7e] bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200'
+            className: `text-sm font-semibold px-3 py-1.5 rounded-lg border transition-all cursor-pointer ${
+              isDark
+                ? 'text-blue-300 bg-slate-800 hover:bg-slate-700 border-slate-600'
+                : 'text-[#0c4a7e] bg-blue-50 hover:bg-blue-100 border-blue-200'
+            }`
           }, '← Back to Public Portal'),
-          React.createElement('span', { key: 'sep', className: 'text-slate-300' }, '|'),
-          React.createElement('span', { key: 'title', className: 'text-sm font-bold text-[#0c4a7e]' }, `${user.role} Dashboard`)
+          React.createElement('span', { key: 'sep', className: isDark ? 'text-slate-600' : 'text-slate-300' }, '|'),
+          React.createElement('span', {
+            key: 'title',
+            className: `text-sm font-bold ${isDark ? 'text-white' : 'text-[#0c4a7e]'}`
+          }, `${activeUser.role} Dashboard`)
         ]),
-        React.createElement('div', { key: 'r', className: 'flex items-center space-x-2' }, [
+
+        React.createElement('div', { key: 'r', className: 'flex items-center space-x-3 flex-wrap gap-y-2' }, [
+          // Interactive Theme Switcher in Dashboard
+          React.createElement('div', {
+            key: 'theme-toggle-box',
+            className: `flex items-center p-1 rounded-lg border text-xs ${
+              isDark ? 'bg-slate-800/90 border-slate-700' : 'bg-slate-100 border-slate-300'
+            }`
+          }, [
+            React.createElement('button', {
+              key: 'btn-light',
+              onClick: () => changeTheme('light'),
+              className: `flex items-center space-x-1.5 px-3 py-1 rounded-md font-semibold text-xs transition-all cursor-pointer ${
+                !isDark
+                  ? 'bg-white text-[#0c4a7e] shadow-xs font-bold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`
+            }, [
+              React.createElement('span', { key: 'i' }, '☀️'),
+              React.createElement('span', { key: 't' }, 'Light')
+            ]),
+            React.createElement('button', {
+              key: 'btn-dark',
+              onClick: () => changeTheme('dark'),
+              className: `flex items-center space-x-1.5 px-3 py-1 rounded-md font-semibold text-xs transition-all cursor-pointer ${
+                isDark
+                  ? 'bg-blue-600 text-white shadow-xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`
+            }, [
+              React.createElement('span', { key: 'i' }, '🌙'),
+              React.createElement('span', { key: 't' }, 'Dark')
+            ])
+          ]),
+
           React.createElement('span', {
             key: 'l-pend',
-            className: 'inline-flex items-center text-xs font-bold text-amber-800 bg-amber-100 px-3 py-1 rounded-full'
+            className: `inline-flex items-center text-xs font-bold px-3 py-1.5 rounded-full border ${
+              isDark
+                ? 'text-amber-300 bg-amber-950/70 border-amber-800/60'
+                : 'text-amber-800 bg-amber-100 border-amber-200'
+            }`
           }, '⚠ Department Database Integration Pending')
         ])
       ]),
 
-      // Profile Header Card in Original Blue
+      // Guest preview mode banner if not logged in
+      !user && React.createElement('div', {
+        key: 'guest-banner',
+        className: `p-3 rounded-xl border flex flex-col md:flex-row items-center justify-between gap-3 text-xs ${
+          isDark
+            ? 'bg-blue-950/60 border-blue-800 text-blue-200'
+            : 'bg-blue-50 border-blue-200 text-[#0c4a7e]'
+        }`
+      }, [
+        React.createElement('div', { key: 'txt', className: 'flex items-center space-x-2' }, [
+          React.createElement('span', { key: 'badge', className: 'bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded text-[10px]' }, 'PREVIEW MODE'),
+          React.createElement('span', { key: 'msg' }, 'Previewing dashboard views and themes. Switch roles below or log in:')
+        ]),
+        React.createElement('div', { key: 'roles', className: 'flex items-center flex-wrap gap-1.5' }, [
+          ['Teacher', 'School Staff', 'Student', 'Officer', 'Parent'].map(r => (
+            React.createElement('button', {
+              key: r,
+              onClick: () => setPreviewRole(r),
+              className: `px-2.5 py-1 rounded text-xs font-semibold transition-all cursor-pointer ${
+                previewRole === r
+                  ? (isDark ? 'bg-blue-600 text-white shadow-xs' : 'bg-[#0c4a7e] text-white shadow-xs')
+                  : (isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100')
+              }`
+            }, r)
+          )),
+          React.createElement('button', {
+            key: 'btn-login',
+            onClick: () => openModal('LOGIN'),
+            className: 'ml-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1 rounded text-xs cursor-pointer shadow-xs'
+          }, 'Login')
+        ])
+      ]),
+
+      // Profile Header Card (Light & Dark)
       React.createElement('div', {
         key: 'profile-card',
-        className: 'bg-[#0c4a7e] text-white p-6 rounded-2xl shadow-xs flex flex-col md:flex-row items-center justify-between gap-6 border-b-4 border-amber-400'
+        className: `p-6 rounded-2xl shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 border-b-4 border-amber-400 transition-colors ${
+          isDark
+            ? 'bg-gradient-to-r from-[#0d2847] via-[#103157] to-[#0a1e36] text-white border-t border-x border-slate-700/60'
+            : 'bg-[#0c4a7e] text-white'
+        }`
       }, [
         React.createElement('div', { key: 'left', className: 'flex items-center space-x-4' }, [
           React.createElement('div', {
             key: 'avatar',
-            className: 'w-16 h-16 rounded-full bg-white text-[#0c4a7e] font-black text-2xl flex items-center justify-center border-2 border-amber-300'
-          }, user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U'),
+            className: `w-16 h-16 rounded-full font-black text-2xl flex items-center justify-center border-2 border-amber-300 shadow-sm ${
+              isDark ? 'bg-slate-800 text-amber-300' : 'bg-white text-[#0c4a7e]'
+            }`
+          }, activeUser.fullName ? activeUser.fullName.charAt(0).toUpperCase() : 'U'),
           React.createElement('div', { key: 'text' }, [
-            React.createElement('h2', { key: 'name', className: 'text-xl font-extrabold' }, user.fullName),
+            React.createElement('h2', { key: 'name', className: 'text-xl font-extrabold text-white' }, activeUser.fullName),
             React.createElement('p', { key: 'role', className: 'text-xs text-amber-300 font-semibold' },
-              `${user.role} • Registered Mobile: +91 ${user.mobileNumber}`
+              `${activeUser.role} • Registered Mobile: +91 ${activeUser.mobileNumber}`
             ),
             React.createElement('p', {
               key: 'inst',
-              className: 'text-xs text-blue-100 mt-1'
+              className: `text-xs mt-1 ${isDark ? 'text-slate-300' : 'text-blue-100'}`
             }, 'Official Account Status: ACTIVE • Verified by Mobile OTP')
           ])
         ]),
 
-        React.createElement('div', { key: 'right', className: 'text-right space-y-1 text-xs text-blue-100' }, [
-          React.createElement('div', { key: 'id' }, `User ID: ${user.id}`),
-          React.createElement('div', { key: 'll' }, `Last Login: ${new Date(user.lastLogin).toLocaleString()}`)
+        React.createElement('div', { key: 'right', className: `text-right space-y-1 text-xs ${isDark ? 'text-slate-300' : 'text-blue-100'}` }, [
+          React.createElement('div', { key: 'id' }, `User ID: ${activeUser.id}`),
+          React.createElement('div', { key: 'll' }, `Last Login: ${new Date(activeUser.lastLogin).toLocaleString()}`)
         ])
       ]),
 
-      // Notice Box in Original Soft Blue
+      // Notice Box (Light & Dark)
       React.createElement('div', {
         key: 'db-notice',
-        className: 'bg-[#e3f2fd] border border-[#bbdefb] rounded-xl p-4 text-xs text-[#0c4a7e] flex items-start space-x-3'
+        className: `rounded-xl p-4 text-xs flex items-start space-x-3 border transition-colors ${
+          isDark
+            ? 'bg-[#0f243d] border-[#1d4472] text-blue-200'
+            : 'bg-[#e3f2fd] border-[#bbdefb] text-[#0c4a7e]'
+        }`
       }, [
         React.createElement('span', { key: 'icon', className: 'text-lg mt-0.5' }, 'ℹ️'),
         React.createElement('div', { key: 'txt' }, [
-          React.createElement('div', { key: 'h', className: 'font-bold text-sm text-[#0c4a7e] mb-1' },
-            'Official Department Data Integration'
-          ),
-          React.createElement('p', { key: 'p', className: 'leading-relaxed text-slate-700' },
-            'The application authentication is active and persistent. Once the official Telangana Department of School Education database / API source is connected by the administrator, your official service records, designation, and institutional assignments will automatically synchronize here.'
-          )
+          React.createElement('div', {
+            key: 'h',
+            className: `font-bold text-sm mb-1 ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}`
+          }, 'Official Department Data Integration'),
+          React.createElement('p', {
+            key: 'p',
+            className: `leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-700'}`
+          }, 'The application authentication is active and persistent. Once the official Telangana Department of School Education database / API source is connected by the administrator, your official service records, designation, and institutional assignments will automatically synchronize here.')
         ])
       ]),
 
-      // Role modules (White Cards, Blue Headings)
-      user.role === 'Teacher' && React.createElement(TeacherModules, { key: 'teacher-mod', user }),
-      user.role === 'School Staff' && React.createElement(SchoolStaffModules, { key: 'staff-mod', user }),
-      user.role === 'Student' && React.createElement(StudentModules, { key: 'student-mod', user }),
-      user.role === 'Officer' && React.createElement(OfficerModules, { key: 'officer-mod', user }),
-      (user.role === 'Parent' || user.role === 'Other authorized role') && React.createElement(ParentModules, { key: 'parent-mod', user })
+      // Role modules
+      activeUser.role === 'Teacher' && React.createElement(TeacherModules, { key: 'teacher-mod', user: activeUser, isDark }),
+      activeUser.role === 'School Staff' && React.createElement(SchoolStaffModules, { key: 'staff-mod', user: activeUser, isDark }),
+      activeUser.role === 'Student' && React.createElement(StudentModules, { key: 'student-mod', user: activeUser, isDark }),
+      activeUser.role === 'Officer' && React.createElement(OfficerModules, { key: 'officer-mod', user: activeUser, isDark }),
+      (activeUser.role === 'Parent' || activeUser.role === 'Other authorized role') && React.createElement(ParentModules, { key: 'parent-mod', user: activeUser, isDark })
     ])
   ]);
 }
 
-function TeacherModules({ user }) {
+function TeacherModules({ user, isDark }) {
   return React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-6' }, [
-    React.createElement('div', { key: 'c1', className: 'bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3' }, [
-      React.createElement('h3', { key: 't', className: 'font-bold text-[#0c4a7e] text-sm flex items-center space-x-2' }, [
+    React.createElement('div', {
+      key: 'c1',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
+      React.createElement('h3', { key: 't', className: `font-bold text-sm flex items-center space-x-2 ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, [
         React.createElement('span', { key: 'i' }, '📋'),
         React.createElement('span', { key: 'txt' }, 'Teacher Transfers & Cadre')
       ]),
-      React.createElement('p', { key: 'desc', className: 'text-xs text-slate-600' },
+      React.createElement('p', { key: 'desc', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` },
         'Access guidelines and prepare application for upcoming teacher transfers in Jangaon District.'
       ),
-      React.createElement('button', { key: 'btn', className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2 rounded-lg text-xs' }, 'View Transfer Guidelines')
+      React.createElement('button', {
+        key: 'btn',
+        className: `w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer ${
+          isDark ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-[#0c4a7e] hover:bg-[#08355b] text-white'
+        }`
+      }, 'View Transfer Guidelines')
     ]),
 
-    React.createElement('div', { key: 'c2', className: 'bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3' }, [
-      React.createElement('h3', { key: 't', className: 'font-bold text-[#0c4a7e] text-sm flex items-center space-x-2' }, [
+    React.createElement('div', {
+      key: 'c2',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
+      React.createElement('h3', { key: 't', className: `font-bold text-sm flex items-center space-x-2 ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, [
         React.createElement('span', { key: 'i' }, '👨‍🎓'),
         React.createElement('span', { key: 'txt' }, 'Attendance & Classroom')
       ]),
-      React.createElement('p', { key: 'desc', className: 'text-xs text-slate-600' },
+      React.createElement('p', { key: 'desc', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` },
         'Daily student attendance logging and continuous comprehensive evaluation (CCE) records.'
       ),
-      React.createElement('button', { key: 'btn-att', className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2 rounded-lg text-xs' }, 'Open Attendance Portal')
+      React.createElement('button', {
+        key: 'btn-att',
+        className: `w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer ${
+          isDark ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-[#0c4a7e] hover:bg-[#08355b] text-white'
+        }`
+      }, 'Open Attendance Portal')
     ]),
 
-    React.createElement('div', { key: 'c3', className: 'bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3' }, [
-      React.createElement('h3', { key: 't', className: 'font-bold text-[#0c4a7e] text-sm flex items-center space-x-2' }, [
+    React.createElement('div', {
+      key: 'c3',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
+      React.createElement('h3', { key: 't', className: `font-bold text-sm flex items-center space-x-2 ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, [
         React.createElement('span', { key: 'i' }, '📚'),
         React.createElement('span', { key: 'txt' }, 'Teaching Resources')
       ]),
-      React.createElement('div', { key: 'list', className: 'space-y-2 text-xs text-slate-600' }, [
-        React.createElement('div', { key: 'd1', className: 'p-2 bg-slate-50 rounded hover:bg-slate-100' }, '› Revised Academic Calendar for 2025-26'),
-        React.createElement('div', { key: 'd2', className: 'p-2 bg-slate-50 rounded hover:bg-slate-100' }, '› Teacher Training Modules & Material')
+      React.createElement('div', { key: 'list', className: 'space-y-2 text-xs' }, [
+        React.createElement('div', {
+          key: 'd1',
+          className: `p-2 rounded transition-colors ${
+            isDark ? 'bg-slate-800/80 text-slate-200 hover:bg-slate-700/80' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
+          }`
+        }, '› Revised Academic Calendar for 2025-26'),
+        React.createElement('div', {
+          key: 'd2',
+          className: `p-2 rounded transition-colors ${
+            isDark ? 'bg-slate-800/80 text-slate-200 hover:bg-slate-700/80' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
+          }`
+        }, '› Teacher Training Modules & Material')
       ]),
-      React.createElement('button', { key: 'btn-dl', className: 'w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2 rounded-lg text-xs border border-slate-300' }, 'Download Academic Circulars')
+      React.createElement('button', {
+        key: 'btn-dl',
+        className: `w-full font-bold py-2 rounded-lg text-xs border transition-all cursor-pointer ${
+          isDark
+            ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-600'
+            : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300'
+        }`
+      }, 'Download Academic Circulars')
     ])
   ]);
 }
 
-function SchoolStaffModules({ user }) {
+function SchoolStaffModules({ user, isDark }) {
   return React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-6' }, [
-    React.createElement('div', { key: 's1', className: 'bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3' }, [
-      React.createElement('h3', { key: 't', className: 'font-bold text-[#0c4a7e] text-sm' }, '🏫 School U-DISE+ Data Center'),
-      React.createElement('p', { key: 'p', className: 'text-xs text-slate-600' }, 'Manage school infrastructure, student strength, and facility audits.')
+    React.createElement('div', {
+      key: 's1',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
+      React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '🏫 School U-DISE+ Data Center'),
+      React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Manage school infrastructure, student strength, and facility audits.'),
+      React.createElement('button', {
+        key: 'btn',
+        className: `w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer ${
+          isDark ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-[#0c4a7e] hover:bg-[#08355b] text-white'
+        }`
+      }, 'Access U-DISE+ Portal')
     ]),
-    React.createElement('div', { key: 's2', className: 'bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3' }, [
-      React.createElement('h3', { key: 't', className: 'font-bold text-[#0c4a7e] text-sm' }, '🍲 Mid-Day Meal (MDM) Ledger'),
-      React.createElement('p', { key: 'p', className: 'text-xs text-slate-600' }, 'Daily nutrition metrics, egg distribution, and grain stock register.')
+    React.createElement('div', {
+      key: 's2',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
+      React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '🍲 Mid-Day Meal (MDM) Ledger'),
+      React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Daily nutrition metrics, egg distribution, and grain stock register.'),
+      React.createElement('button', {
+        key: 'btn',
+        className: `w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer ${
+          isDark ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-[#0c4a7e] hover:bg-[#08355b] text-white'
+        }`
+      }, 'Update MDM Records')
     ]),
-    React.createElement('div', { key: 's3', className: 'bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3' }, [
-      React.createElement('h3', { key: 't', className: 'font-bold text-[#0c4a7e] text-sm' }, '💰 Grants & Utilization'),
-      React.createElement('p', { key: 'p', className: 'text-xs text-slate-600' }, 'Submit Utilization Certificates for composite school maintenance grants.')
+    React.createElement('div', {
+      key: 's3',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
+      React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '💰 Grants & Utilization'),
+      React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Submit Utilization Certificates for composite school maintenance grants.'),
+      React.createElement('button', {
+        key: 'btn',
+        className: `w-full font-bold py-2 rounded-lg text-xs border transition-all cursor-pointer ${
+          isDark ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-600' : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300'
+        }`
+      }, 'Upload UC Document')
     ])
   ]);
 }
 
-function StudentModules({ user }) {
+function StudentModules({ user, isDark }) {
   return React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-6' }, [
-    React.createElement('div', { key: 'st1', className: 'bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3' }, [
-      React.createElement('h3', { key: 't', className: 'font-bold text-[#0c4a7e] text-sm' }, '🎫 SSC Public Examinations'),
-      React.createElement('p', { key: 'p', className: 'text-xs text-slate-600' }, 'View official timetable, examination guidelines, and syllabus updates.')
+    React.createElement('div', {
+      key: 'st1',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
+      React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '🎫 SSC Public Examinations'),
+      React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'View official timetable, examination guidelines, and syllabus updates.'),
+      React.createElement('button', {
+        key: 'btn',
+        className: `w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer ${
+          isDark ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-[#0c4a7e] hover:bg-[#08355b] text-white'
+        }`
+      }, 'Download Hall Ticket Guidelines')
     ]),
-    React.createElement('div', { key: 'st2', className: 'bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3' }, [
-      React.createElement('h3', { key: 't', className: 'font-bold text-[#0c4a7e] text-sm' }, '📊 Academic Schedule & Exams'),
-      React.createElement('p', { key: 'p', className: 'text-xs text-slate-600' }, 'Quarterly formative assessments and model question papers.')
+    React.createElement('div', {
+      key: 'st2',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
+      React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '📊 Academic Schedule & Exams'),
+      React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Quarterly formative assessments and model question papers.'),
+      React.createElement('button', {
+        key: 'btn',
+        className: `w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer ${
+          isDark ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-[#0c4a7e] hover:bg-[#08355b] text-white'
+        }`
+      }, 'View Model Papers')
     ]),
-    React.createElement('div', { key: 'st3', className: 'bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3' }, [
-      React.createElement('h3', { key: 't', className: 'font-bold text-[#0c4a7e] text-sm' }, '📖 Digital Learning Resources'),
-      React.createElement('p', { key: 'p', className: 'text-xs text-slate-600' }, 'Access textbook PDFs and online e-learning content.')
+    React.createElement('div', {
+      key: 'st3',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
+      React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '📖 Digital Learning Resources'),
+      React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Access textbook PDFs and online e-learning content.'),
+      React.createElement('button', {
+        key: 'btn',
+        className: `w-full font-bold py-2 rounded-lg text-xs border transition-all cursor-pointer ${
+          isDark ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-600' : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300'
+        }`
+      }, 'Open Digital Library')
     ])
   ]);
 }
 
-function OfficerModules({ user }) {
+function OfficerModules({ user, isDark }) {
   return React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-6' }, [
-    React.createElement('div', { key: 'o1', className: 'bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3' }, [
-      React.createElement('h3', { key: 't', className: 'font-bold text-[#0c4a7e] text-sm' }, '🏛️ Mandal Inspection Monitoring'),
-      React.createElement('p', { key: 'p', className: 'text-xs text-slate-600' }, 'Oversee school inspections across the 29 mandals of Jangaon District.')
+    React.createElement('div', {
+      key: 'o1',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
+      React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '🏛️ Mandal Inspection Monitoring'),
+      React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Oversee school inspections across the 29 mandals of Jangaon District.'),
+      React.createElement('button', {
+        key: 'btn',
+        className: `w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer ${
+          isDark ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-[#0c4a7e] hover:bg-[#08355b] text-white'
+        }`
+      }, 'Open Mandal Audit Matrix')
     ]),
-    React.createElement('div', { key: 'o2', className: 'bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3' }, [
-      React.createElement('h3', { key: 't', className: 'font-bold text-[#0c4a7e] text-sm' }, '⚖️ Grievance Redressal (PGRS)'),
-      React.createElement('p', { key: 'p', className: 'text-xs text-slate-600' }, 'Review public education petitions and teacher queries.')
+    React.createElement('div', {
+      key: 'o2',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
+      React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '⚖️ Grievance Redressal (PGRS)'),
+      React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Review public education petitions and teacher queries.'),
+      React.createElement('button', {
+        key: 'btn',
+        className: `w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer ${
+          isDark ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-[#0c4a7e] hover:bg-[#08355b] text-white'
+        }`
+      }, 'Resolve Petitions')
     ]),
-    React.createElement('div', { key: 'o3', className: 'bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3' }, [
-      React.createElement('h3', { key: 't', className: 'font-bold text-[#0c4a7e] text-sm' }, '👥 Teacher Vacancy Matrix'),
-      React.createElement('p', { key: 'p', className: 'text-xs text-slate-600' }, 'Monitor cadre strength and teacher pupil ratio across mandals.')
+    React.createElement('div', {
+      key: 'o3',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
+      React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '👥 Teacher Vacancy Matrix'),
+      React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Monitor cadre strength and teacher pupil ratio across mandals.'),
+      React.createElement('button', {
+        key: 'btn',
+        className: `w-full font-bold py-2 rounded-lg text-xs border transition-all cursor-pointer ${
+          isDark ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-600' : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300'
+        }`
+      }, 'View Cadre Analytics')
     ])
   ]);
 }
 
-function ParentModules({ user }) {
+function ParentModules({ user, isDark }) {
   return React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-6' }, [
-    React.createElement('div', { key: 'p1', className: 'bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3' }, [
-      React.createElement('h3', { key: 't', className: 'font-bold text-[#0c4a7e] text-sm' }, '🎒 Ward Academic Progress'),
-      React.createElement('p', { key: 'p', className: 'text-xs text-slate-600' }, 'Track school attendance, term evaluations, and teacher feedback.')
+    React.createElement('div', {
+      key: 'p1',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
+      React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '🎒 Ward Academic Progress'),
+      React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Track school attendance, term evaluations, and teacher feedback.'),
+      React.createElement('button', {
+        key: 'btn',
+        className: `w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer ${
+          isDark ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-[#0c4a7e] hover:bg-[#08355b] text-white'
+        }`
+      }, 'Check Progress Card')
     ]),
-    React.createElement('div', { key: 'p2', className: 'bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3' }, [
-      React.createElement('h3', { key: 't', className: 'font-bold text-[#0c4a7e] text-sm' }, '🍲 Nutrition & Schemes'),
-      React.createElement('p', { key: 'p', className: 'text-xs text-slate-600' }, 'Information regarding Mid-Day Meals, uniforms, and government textbooks.')
+    React.createElement('div', {
+      key: 'p2',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
+      React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '🍲 Nutrition & Schemes'),
+      React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Information regarding Mid-Day Meals, uniforms, and government textbooks.'),
+      React.createElement('button', {
+        key: 'btn',
+        className: `w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer ${
+          isDark ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-[#0c4a7e] hover:bg-[#08355b] text-white'
+        }`
+      }, 'View Scheme Guidelines')
     ]),
-    React.createElement('div', { key: 'p3', className: 'bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3' }, [
-      React.createElement('h3', { key: 't', className: 'font-bold text-[#0c4a7e] text-sm' }, '🤝 SMC Committee Notices'),
-      React.createElement('p', { key: 'p', className: 'text-xs text-slate-600' }, 'Parent-Teacher Meeting agendas and school development resolutions.')
+    React.createElement('div', {
+      key: 'p3',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
+      React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '🤝 SMC Committee Notices'),
+      React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Parent-Teacher Meeting agendas and school development resolutions.'),
+      React.createElement('button', {
+        key: 'btn',
+        className: `w-full font-bold py-2 rounded-lg text-xs border transition-all cursor-pointer ${
+          isDark ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-600' : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300'
+        }`
+      }, 'View Meeting Agendas')
     ])
   ]);
 }
@@ -2010,10 +2353,15 @@ function ParentModules({ user }) {
 // 14. ROOT APP COMPONENT (IMAGE 2: CLEAN LIGHT BACKGROUND #f0f4f8)
 // ==========================================
 function App() {
-  const { currentView, activeModal } = useContext(AuthContext);
+  const { currentView, activeModal, theme } = useContext(AuthContext);
   const [fontScale, setFontScale] = useState('md');
+  const isDark = (theme === 'dark' && currentView === 'DASHBOARD');
 
-  return React.createElement('div', { className: 'min-h-screen flex flex-col justify-between bg-[#f0f4f8]' }, [
+  return React.createElement('div', {
+    className: `min-h-screen flex flex-col justify-between transition-colors duration-200 ${
+      isDark ? 'bg-[#0b1329]' : 'bg-[#f0f4f8]'
+    }`
+  }, [
     React.createElement('div', { key: 'top-nav' }, [
       React.createElement(TopGovtBar, { fontScale, setFontScale }),
       React.createElement(MainHeader)

@@ -41,7 +41,7 @@ async function runTests() {
   console.log("=== STARTING AUTHENTICATION VERIFICATION SUITE ===");
 
   try {
-    const testMobile = '9876501234';
+    const testMobile = '98' + Math.floor(10000000 + Math.random() * 90000000);
 
     // Test 1: Send OTP
     console.log(`\n[Test 1] Dispatching OTP to mobile ${testMobile}...`);

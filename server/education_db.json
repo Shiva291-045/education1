@@ -1,6 +1,56 @@
 {
-  "users": [],
-  "otps": [],
+  "users": [
+    {
+      "id": "USER-1790182985908-5767",
+      "fullName": "S. Ramesh Kumar",
+      "role": "Teacher",
+      "mobileNumber": "9876501234",
+      "passwordHash": "scrypt$247c545a1d7183e17c9aa9e8c013bd71$c3a58a77ee2045258e6a0bf22116469b07750a8d63a9f2544e3c39ff73cfd2863bfa9e1d0a707a42375e9cb5473551d84cb904cfe6575e5c3983cf5f70bd418c",
+      "mobileVerified": true,
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-09-23T17:03:05.908Z",
+      "lastLogin": "2026-09-23T17:03:05.999Z"
+    },
+    {
+      "id": "USER-1790184179929-1956",
+      "fullName": "S. Ramesh Kumar",
+      "role": "Teacher",
+      "mobileNumber": "9889527029",
+      "passwordHash": "scrypt$65dfddb03d4e74743910fd89f1282cc8$6cf5a89384b0cd26e645d131d8f6086f07e2321abf692540f577f5a400e72324e7c12933357b3b3f349a518e147ce77c0aa3324f0b21e8ce941b4839a276f592",
+      "mobileVerified": true,
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-09-23T17:22:59.929Z",
+      "lastLogin": "2026-09-23T17:23:00.055Z"
+    }
+  ],
+  "otps": [
+    {
+      "id": "OTP-1790182985802-3117",
+      "mobileNumber": "9876501234",
+      "otpCode": "937639",
+      "purpose": "REGISTRATION",
+      "expiresAt": 1790183285802,
+      "attempts": 1,
+      "maxAttempts": 3,
+      "verified": true,
+      "createdAt": "2026-09-23T17:03:05.803Z"
+    },
+    {
+      "id": "OTP-1790184179816-5458",
+      "mobileNumber": "9889527029",
+      "otpCode": "432179",
+      "purpose": "REGISTRATION",
+      "expiresAt": 1790184479816,
+      "attempts": 1,
+      "maxAttempts": 3,
+      "verified": true,
+      "createdAt": "2026-09-23T17:22:59.817Z"
+    }
+  ],
   "notifications": [
     {
       "id": "NOTIF-1",
