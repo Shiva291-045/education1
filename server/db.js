@@ -1,12 +1,13 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const DB_FILE = path.join(__dirname, 'education_db.json');
 
-// Initial clean database state: ONLY genuine authentication data
+// Initial clean database state: ONLY genuine authentication data and session store
 const defaultState = {
   users: [],
-  otps: [],
+  sessions: [],
   notifications: [
     {
       id: "NOTIF-1",
@@ -74,7 +75,15 @@ class Database {
           delete parsed.official_records;
         }
         if (!parsed.users) parsed.users = [];
-        if (!parsed.otps) parsed.otps = [];
+        if (!parsed.sessions) parsed.sessions = [];
+        // Remove otps array if present (OTP workflow completely removed)
+        if (parsed.otps) delete parsed.otps;
+
+        // Ensure every user has passkeys array
+        parsed.users.forEach(u => {
+          if (!u.passkeys) u.passkeys = [];
+        });
+
         fs.writeFileSync(DB_FILE, JSON.stringify(parsed, null, 2), 'utf8');
       }
     } catch (err) {
@@ -89,7 +98,10 @@ class Database {
         this.init();
       }
       const raw = fs.readFileSync(DB_FILE, 'utf8');
-      return JSON.parse(raw);
+      const data = JSON.parse(raw);
+      if (!data.sessions) data.sessions = [];
+      if (!data.users) data.users = [];
+      return data;
     } catch (err) {
       console.error('Database read error:', err);
       return defaultState;
@@ -110,11 +122,37 @@ class Database {
   }
 
   // ==========================================
-  // USER AUTHENTICATION PERSISTENCE (GENUINE DATA ONLY)
+  // USER AUTHENTICATION PERSISTENCE
   // ==========================================
   getUserByMobile(mobileNumber) {
     const data = this.read();
-    return data.users.find(u => u.mobileNumber === mobileNumber.trim()) || null;
+    const cleanMobile = (mobileNumber || '').trim().replace(/\D/g, '').slice(-10);
+    return data.users.find(u => {
+      const uMob = (u.mobileNumber || '').replace(/\D/g, '').slice(-10);
+      return uMob === cleanMobile;
+    }) || null;
+  }
+
+  getUserByEmployeeId(employeeId) {
+    const data = this.read();
+    const cleanId = (employeeId || '').trim().toUpperCase();
+    return data.users.find(u => (u.employeeId || '').toUpperCase() === cleanId) || null;
+  }
+
+  getUserByIdentifier(identifier) {
+    if (!identifier) return null;
+    const clean = identifier.trim();
+    // Try employee ID first
+    let user = this.getUserByEmployeeId(clean);
+    if (!user) {
+      // Try mobile number
+      user = this.getUserByMobile(clean);
+    }
+    if (!user) {
+      // Try ID
+      user = this.getUserById(clean);
+    }
+    return user;
   }
 
   getUserById(id) {
@@ -129,10 +167,10 @@ class Database {
       fullName: userData.fullName.trim(),
       role: userData.role,
       mobileNumber: userData.mobileNumber.trim(),
+      employeeId: userData.employeeId ? userData.employeeId.trim().toUpperCase() : null,
       passwordHash: userData.passwordHash,
-      mobileVerified: true,
-      accountStatus: 'ACTIVE',
-      // Official data integration status: Strictly pending until actual government DB is connected
+      accountStatus: userData.accountStatus || 'PENDING_VERIFICATION',
+      passkeys: [],
       officialDataLinked: false,
       officialProfileId: null,
       createdAt: new Date().toISOString(),
@@ -141,6 +179,40 @@ class Database {
     data.users.push(newUser);
     this.write(data);
     return newUser;
+  }
+
+  upsertTeacherUser(employee) {
+    const data = this.read();
+    let user = data.users.find(u => (u.employeeId || '').toUpperCase() === employee.employeeId.toUpperCase());
+    if (!user) {
+      user = {
+        id: `TCH-${employee.employeeId}`,
+        employeeId: employee.employeeId,
+        fullName: employee.fullName,
+        role: 'Teacher',
+        mobileNumber: employee.mobileNumber,
+        accountStatus: 'ACTIVE',
+        officialDataLinked: true,
+        designation: employee.designation,
+        schoolName: employee.schoolName,
+        mandal: employee.mandal,
+        passkeys: [],
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString()
+      };
+      data.users.push(user);
+    } else {
+      user.lastLogin = new Date().toISOString();
+      user.fullName = employee.fullName;
+      user.mobileNumber = employee.mobileNumber;
+      user.accountStatus = employee.accountStatus || 'ACTIVE';
+      user.designation = employee.designation;
+      user.schoolName = employee.schoolName;
+      user.mandal = employee.mandal;
+      if (!user.passkeys) user.passkeys = [];
+    }
+    this.write(data);
+    return user;
   }
 
   updateUser(id, updates) {
@@ -157,57 +229,100 @@ class Database {
   }
 
   // ==========================================
-  // OTP LIFECYCLE (SECURITY & RATE LIMITS)
+  // WEBAUTHN / PASSKEY CREDENTIAL MANAGEMENT
   // ==========================================
-  saveOtp({ mobileNumber, otpCode, purpose }) {
+  addPasskey(userId, passkeyData) {
     const data = this.read();
-    const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes validity
-    const newOtp = {
-      id: `OTP-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`,
-      mobileNumber: mobileNumber.trim(),
-      otpCode,
-      purpose,
-      expiresAt,
-      attempts: 0,
-      maxAttempts: 3,
-      verified: false,
-      createdAt: new Date().toISOString()
-    };
-    // Clear previous pending OTPs for the same mobile and purpose
-    data.otps = data.otps.filter(o => !(o.mobileNumber === mobileNumber.trim() && o.purpose === purpose && !o.verified));
-    data.otps.push(newOtp);
-    this.write(data);
-    return newOtp;
-  }
+    const user = data.users.find(u => u.id === userId);
+    if (!user) return null;
+    if (!user.passkeys) user.passkeys = [];
 
-  getLatestOtp(mobileNumber, purpose) {
-    const data = this.read();
-    const matching = data.otps
-      .filter(o => o.mobileNumber === mobileNumber.trim() && o.purpose === purpose)
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    return matching[0] || null;
-  }
-
-  incrementOtpAttempts(id) {
-    const data = this.read();
-    const otp = data.otps.find(o => o.id === id);
-    if (otp) {
-      otp.attempts = (otp.attempts || 0) + 1;
-      this.write(data);
-      return otp.attempts;
+    // Check if credential ID already exists
+    const existingIndex = user.passkeys.findIndex(p => p.credentialId === passkeyData.credentialId);
+    if (existingIndex >= 0) {
+      user.passkeys[existingIndex] = { ...user.passkeys[existingIndex], ...passkeyData };
+    } else {
+      user.passkeys.push(passkeyData);
     }
-    return 0;
+
+    this.write(data);
+    return user;
   }
 
-  markOtpVerified(id) {
+  getUserPasskeys(userId) {
+    const user = this.getUserById(userId);
+    return (user && user.passkeys) ? user.passkeys : [];
+  }
+
+  getUserByCredentialId(credentialId) {
     const data = this.read();
-    const otp = data.otps.find(o => o.id === id);
-    if (otp) {
-      otp.verified = true;
+    for (const user of data.users) {
+      if (user.passkeys && user.passkeys.some(p => p.credentialId === credentialId)) {
+        return user;
+      }
+    }
+    return null;
+  }
+
+  updatePasskeyCounter(userId, credentialId, newCounter) {
+    const data = this.read();
+    const user = data.users.find(u => u.id === userId);
+    if (!user || !user.passkeys) return false;
+    const pk = user.passkeys.find(p => p.credentialId === credentialId);
+    if (pk) {
+      pk.counter = newCounter;
       this.write(data);
       return true;
     }
     return false;
+  }
+
+  // ==========================================
+  // SERVER-SIDE SESSION MANAGEMENT
+  // ==========================================
+  createSession(userId, role, metadata = {}) {
+    const sessionId = crypto.randomBytes(32).toString('hex');
+    const now = Date.now();
+    const expiresAt = now + (24 * 60 * 60 * 1000); // 24 hours validity
+
+    const session = {
+      sessionId,
+      userId,
+      role,
+      createdAt: new Date(now).toISOString(),
+      expiresAt,
+      metadata
+    };
+
+    const data = this.read();
+    if (!data.sessions) data.sessions = [];
+    // Prune expired sessions
+    data.sessions = data.sessions.filter(s => s.expiresAt > now);
+    data.sessions.push(session);
+    this.write(data);
+    return session;
+  }
+
+  getSession(sessionId) {
+    if (!sessionId) return null;
+    const data = this.read();
+    if (!data.sessions) return null;
+    const session = data.sessions.find(s => s.sessionId === sessionId);
+    if (!session) return null;
+    if (Date.now() > session.expiresAt) {
+      this.destroySession(sessionId);
+      return null;
+    }
+    return session;
+  }
+
+  destroySession(sessionId) {
+    if (!sessionId) return false;
+    const data = this.read();
+    if (!data.sessions) return true;
+    data.sessions = data.sessions.filter(s => s.sessionId !== sessionId);
+    this.write(data);
+    return true;
   }
 
   getPortalData() {

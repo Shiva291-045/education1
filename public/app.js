@@ -7,18 +7,115 @@ const { TelanganaEmblem, TelanganaRisingLogo, PencilBanner, SchoolBuildingGraphi
 // ==========================================
 // 1. AUTH CONTEXT & BACKEND API CLIENT
 // ==========================================
+// ==========================================
+// 1. AUTH CONTEXT & WEBAUTHN / PASSKEY CLIENT
+// ==========================================
 const AuthContext = createContext(null);
+
+// Real WebAuthn Base64URL and ArrayBuffer Converters
+function bufferToBase64Url(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let str = '';
+  for (let i = 0; i < bytes.byteLength; i++) {
+    str += String.fromCharCode(bytes[i]);
+  }
+  return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function base64UrlToBuffer(base64url) {
+  const padding = '='.repeat((4 - (base64url.length % 4)) % 4);
+  const base64 = (base64url + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const raw = atob(base64);
+  const buffer = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) {
+    buffer[i] = raw.charCodeAt(i);
+  }
+  return buffer.buffer;
+}
+
+// Browser WebAuthn API: navigator.credentials.create()
+async function createBrowserPasskey(creationOptions) {
+  if (!window.PublicKeyCredential || !navigator.credentials || !navigator.credentials.create) {
+    throw new Error("WebAuthn / Passkeys are not supported on this browser or platform.");
+  }
+
+  const publicKey = {
+    ...creationOptions,
+    challenge: base64UrlToBuffer(creationOptions.challenge),
+    user: {
+      ...creationOptions.user,
+      id: base64UrlToBuffer(creationOptions.user.id)
+    }
+  };
+
+  if (creationOptions.excludeCredentials) {
+    publicKey.excludeCredentials = creationOptions.excludeCredentials.map(c => ({
+      ...c,
+      id: base64UrlToBuffer(c.id)
+    }));
+  }
+
+  const credential = await navigator.credentials.create({ publicKey });
+  if (!credential) {
+    throw new Error("Passkey creation cancelled or unavailable.");
+  }
+
+  return {
+    id: credential.id,
+    rawId: bufferToBase64Url(credential.rawId),
+    type: credential.type,
+    response: {
+      clientDataJSON: bufferToBase64Url(credential.response.clientDataJSON),
+      attestationObject: bufferToBase64Url(credential.response.attestationObject),
+      transports: (typeof credential.response.getTransports === 'function') ? credential.response.getTransports() : ['internal']
+    }
+  };
+}
+
+// Browser WebAuthn API: navigator.credentials.get()
+async function getBrowserPasskey(requestOptions) {
+  if (!window.PublicKeyCredential || !navigator.credentials || !navigator.credentials.get) {
+    throw new Error("WebAuthn / Passkeys are not supported on this browser or platform.");
+  }
+
+  const publicKey = {
+    ...requestOptions,
+    challenge: base64UrlToBuffer(requestOptions.challenge)
+  };
+
+  if (requestOptions.allowCredentials && requestOptions.allowCredentials.length > 0) {
+    publicKey.allowCredentials = requestOptions.allowCredentials.map(c => ({
+      ...c,
+      id: base64UrlToBuffer(c.id)
+    }));
+  }
+
+  const credential = await navigator.credentials.get({ publicKey });
+  if (!credential) {
+    throw new Error("Passkey verification cancelled.");
+  }
+
+  return {
+    id: credential.id,
+    rawId: bufferToBase64Url(credential.rawId),
+    type: credential.type,
+    response: {
+      clientDataJSON: bufferToBase64Url(credential.response.clientDataJSON),
+      authenticatorData: bufferToBase64Url(credential.response.authenticatorData),
+      signature: bufferToBase64Url(credential.response.signature),
+      userHandle: credential.response.userHandle ? bufferToBase64Url(credential.response.userHandle) : null
+    }
+  };
+}
 
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(() => localStorage.getItem('deo_auth_token'));
   const [loading, setLoading] = useState(true);
-  const [activeModal, setActiveModal] = useState(null); // 'LOGIN' | 'REGISTER' | 'FORGOT' | null
-  const [devOtpNotification, setDevOtpNotification] = useState(null);
+  const [activeModal, setActiveModal] = useState(null); // 'LOGIN' | 'REGISTER' | 'FORGOT' | 'ENROLL_PASSKEY'
+  const [loginInitialTab, setLoginInitialTab] = useState('ADMIN'); // 'ADMIN' | 'TEACHER'
   const [currentView, setCurrentView] = useState('PORTAL'); // 'PORTAL' | 'DASHBOARD'
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('jangaon_portal_theme') || 'light';
-  });
+  const [theme, setTheme] = useState(() => localStorage.getItem('jangaon_portal_theme') || 'light');
+  const [pendingPasskeyEnrollment, setPendingPasskeyEnrollment] = useState(null);
 
   const changeTheme = (newTheme) => {
     setTheme(newTheme);
@@ -32,9 +129,7 @@ function AuthProvider({ children }) {
     }
   };
 
-  const toggleTheme = () => {
-    changeTheme(theme === 'dark' ? 'light' : 'dark');
-  };
+  const toggleTheme = () => changeTheme(theme === 'dark' ? 'light' : 'dark');
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -46,151 +141,206 @@ function AuthProvider({ children }) {
     }
   }, [theme]);
 
+  // Session check via server-side HttpOnly cookie
   useEffect(() => {
     async function checkAuth() {
-      const storedToken = localStorage.getItem('deo_auth_token');
-      if (storedToken) {
-        try {
-          const res = await fetch('/api/auth/me', {
-            headers: { 'Authorization': `Bearer ${storedToken}` }
-          });
-          const data = await res.json();
-          if (data.success && data.user) {
-            setUser(data.user);
-            setToken(storedToken);
-          } else {
-            localStorage.removeItem('deo_auth_token');
-            setToken(null);
-            setUser(null);
-          }
-        } catch (err) {
-          console.error("Auth check error:", err);
+      try {
+        const res = await fetch('/api/auth/me', {
+          credentials: 'include'
+        });
+        const data = await res.json();
+        if (data.success && data.user) {
+          setUser(data.user);
+        } else {
+          setUser(null);
         }
+      } catch (err) {
+        console.error("Auth check error:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
     checkAuth();
   }, []);
 
-  const sendOtp = async (mobileNumber, purpose = 'REGISTRATION') => {
-    try {
-      const res = await fetch('/api/auth/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobileNumber, purpose })
-      });
-      const data = await res.json();
-      if (data.success && data.debugOtp) {
-        setDevOtpNotification({
-          mobile: data.mobileNumber,
-          otp: data.debugOtp,
-          purpose
-        });
-      }
-      return data;
-    } catch (err) {
-      return { success: false, message: "Network connection error. Please try again." };
-    }
-  };
-
-  const verifyOtp = async (mobileNumber, otpCode, purpose = 'REGISTRATION') => {
-    try {
-      const res = await fetch('/api/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobileNumber, otpCode, purpose })
-      });
-      return await res.json();
-    } catch (err) {
-      return { success: false, message: "Network error during OTP verification." };
-    }
-  };
-
+  // 1. Register Administrative Account (Direct: Name, Role, Mobile, Password - Zero OTP)
   const registerUser = async (formData) => {
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(formData)
       });
-      const data = await res.json();
-      if (data.success) {
-        localStorage.setItem('deo_auth_token', data.token);
-        setToken(data.token);
-        setUser(data.user);
-        setDevOtpNotification(null);
-      }
-      return data;
+      return await res.json();
     } catch (err) {
-      return { success: false, message: "Server error during registration." };
+      return { success: false, message: "Network connection error during registration." };
     }
   };
 
-  const loginUser = async (mobileNumber, password) => {
+  // 2. Complete Passkey Enrollment (navigator.credentials.create)
+  const enrollPasskey = async (userId, passkeyOptions) => {
+    try {
+      const cred = await createBrowserPasskey(passkeyOptions);
+      const res = await fetch('/api/auth/webauthn/register-verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ userId, response: cred })
+      });
+      const data = await res.json();
+      if (data.success && data.user) {
+        setUser(data.user);
+        setActiveModal(null);
+        setPendingPasskeyEnrollment(null);
+        setCurrentView('DASHBOARD');
+      }
+      return data;
+    } catch (err) {
+      return { success: false, message: err.message || "Passkey registration failed or cancelled." };
+    }
+  };
+
+  // 3. Login with Passkey (navigator.credentials.get)
+  const loginWithPasskey = async (identifier) => {
+    try {
+      const optRes = await fetch('/api/auth/webauthn/login-options', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ identifier })
+      });
+      const optData = await optRes.json();
+      if (!optData.success) {
+        return optData;
+      }
+
+      const assertion = await getBrowserPasskey(optData.options);
+
+      const verRes = await fetch('/api/auth/webauthn/login-verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          identifier,
+          userId: optData.userId,
+          response: assertion
+        })
+      });
+      const verData = await verRes.json();
+      if (verData.success && verData.user) {
+        setUser(verData.user);
+        setActiveModal(null);
+        setCurrentView('DASHBOARD');
+      }
+      return verData;
+    } catch (err) {
+      return { success: false, message: err.message || "Passkey login failed or was cancelled." };
+    }
+  };
+
+  // 4. Fallback Login with Password
+  const loginWithPassword = async (identifier, password) => {
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobileNumber, password })
+        credentials: 'include',
+        body: JSON.stringify({ identifier, password })
       });
       const data = await res.json();
-      if (data.success) {
-        localStorage.setItem('deo_auth_token', data.token);
-        setToken(data.token);
+      if (data.success && data.user) {
         setUser(data.user);
         setActiveModal(null);
         setCurrentView('DASHBOARD');
       }
       return data;
     } catch (err) {
-      return { success: false, message: "Server error during login." };
+      return { success: false, message: "Network connection error during login." };
     }
   };
 
-  const resetPassword = async (payload) => {
+  // 5. Dedicated Teacher Login (Employee ID + Registered Mobile Number)
+  const loginTeacher = async (employeeId, mobileNumber) => {
     try {
-      const res = await fetch('/api/auth/reset-password', {
+      const res = await fetch('/api/auth/teacher/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        credentials: 'include',
+        body: JSON.stringify({ employeeId, mobileNumber })
+      });
+      const data = await res.json();
+      if (data.success && data.user) {
+        setUser(data.user);
+        if (!data.hasPasskey) {
+          setPendingPasskeyEnrollment({
+            userId: data.user.id,
+            fullName: data.user.fullName,
+            employeeId: data.user.employeeId
+          });
+          setActiveModal('ENROLL_PASSKEY');
+        } else {
+          setActiveModal(null);
+          setCurrentView('DASHBOARD');
+        }
+      }
+      return data;
+    } catch (err) {
+      return { success: false, message: "Connection error during teacher verification." };
+    }
+  };
+
+  // 6. Request Passkey Options for user
+  const requestPasskeyOptions = async (userId) => {
+    try {
+      const res = await fetch('/api/auth/webauthn/register-options', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ userId: userId || (user && user.id) })
       });
       return await res.json();
     } catch (err) {
-      return { success: false, message: "Server error resetting password." };
+      return { success: false, message: "Failed to generate passkey options." };
     }
   };
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     } catch (e) {}
-    localStorage.removeItem('deo_auth_token');
-    setToken(null);
     setUser(null);
     setCurrentView('PORTAL');
   };
 
-  const openModal = (modalName) => setActiveModal(modalName);
-  const closeModal = () => setActiveModal(null);
+  const openModal = (modalName, tab = 'ADMIN') => {
+    setLoginInitialTab(tab);
+    setActiveModal(modalName);
+  };
+  const closeModal = () => {
+    setActiveModal(null);
+    setPendingPasskeyEnrollment(null);
+  };
 
   return React.createElement(AuthContext.Provider, {
     value: {
       user,
-      token,
       loading,
       activeModal,
+      loginInitialTab,
       openModal,
       closeModal,
-      sendOtp,
-      verifyOtp,
       registerUser,
-      loginUser,
-      resetPassword,
+      enrollPasskey,
+      loginWithPasskey,
+      loginWithPassword,
+      loginTeacher,
+      requestPasskeyOptions,
+      pendingPasskeyEnrollment,
+      setPendingPasskeyEnrollment,
       logout,
       currentView,
       setCurrentView,
-      devOtpNotification,
-      setDevOtpNotification,
       theme,
       changeTheme,
       toggleTheme
@@ -1167,50 +1317,141 @@ function OfficialFooter() {
 }
 
 // ==========================================
-// 9. DEV OTP HELPER TOAST
+// 9. ENROLL PASSKEY MODAL (PROMPT FOR DEVICE WEBAUTHN ENROLLMENT)
 // ==========================================
-function DevOtpToast() {
-  const { devOtpNotification, setDevOtpNotification } = useContext(AuthContext);
-  if (!devOtpNotification) return null;
+function EnrollPasskeyModal() {
+  const { closeModal, pendingPasskeyEnrollment, enrollPasskey, requestPasskeyOptions, setCurrentView } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+
+  const handleCreatePasskey = async () => {
+    setErrorMsg('');
+    setLoading(true);
+
+    const userId = pendingPasskeyEnrollment ? pendingPasskeyEnrollment.userId : null;
+    const optRes = await requestPasskeyOptions(userId);
+    if (!optRes.success) {
+      setLoading(false);
+      setErrorMsg(optRes.message || "Failed to initialize passkey options.");
+      return;
+    }
+
+    const regRes = await enrollPasskey(userId, optRes.options);
+    setLoading(false);
+
+    if (regRes.success) {
+      setSuccessMsg("✓ Device Passkey registered successfully!");
+      setTimeout(() => {
+        closeModal();
+        setCurrentView('DASHBOARD');
+      }, 1500);
+    } else {
+      setErrorMsg(regRes.message || "Passkey registration was cancelled or unsupported on this device.");
+    }
+  };
+
+  const handleSkip = () => {
+    closeModal();
+    setCurrentView('DASHBOARD');
+  };
 
   return React.createElement('div', {
-    className: 'fixed bottom-5 right-5 z-50 bg-[#0c4a7e] text-white p-4 rounded-xl shadow-2xl border-2 border-amber-300 max-w-sm animate-bounce'
+    className: 'fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4'
   }, [
-    React.createElement('div', { key: 'head', className: 'flex items-center justify-between mb-1' }, [
-      React.createElement('div', { key: 't', className: 'flex items-center space-x-1.5' }, [
-        React.createElement('span', { key: 'i', className: 'text-amber-300' }, '📱'),
-        React.createElement('span', { key: 'txt', className: 'font-bold text-xs text-amber-300 uppercase tracking-wider' }, 'Govt SMS Gateway Dispatch')
-      ]),
-      React.createElement('button', {
-        key: 'close',
-        onClick: () => setDevOtpNotification(null),
-        className: 'text-blue-200 hover:text-white text-xs font-bold'
-      }, '✕')
-    ]),
-    React.createElement('p', { key: 'msg', className: 'text-xs text-blue-100' },
-      `OTP for +91 ${devOtpNotification.mobile}:`
-    ),
     React.createElement('div', {
-      key: 'code',
-      className: 'my-1.5 text-center bg-[#08355b] py-1.5 px-3 rounded-lg border border-blue-400/30'
+      key: 'enroll-card',
+      className: 'bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md overflow-hidden animate-scale-up'
     }, [
-      React.createElement('span', { key: 'otp-display', className: 'text-2xl font-black tracking-widest text-amber-300 font-mono' },
-        devOtpNotification.otp
-      )
-    ]),
-    React.createElement('p', { key: 'note', className: 'text-[10px] text-blue-200' },
-      'Auto-generated by Telangana SMS Gateway for your mobile number.'
-    )
+      React.createElement('div', {
+        key: 'enroll-head',
+        className: 'bg-[#0c4a7e] text-white px-6 py-4 flex items-center justify-between border-b-2 border-amber-400'
+      }, [
+        React.createElement('div', { key: 'h-info', className: 'flex items-center space-x-3' }, [
+          React.createElement(TelanganaEmblem, { key: 'seal', className: 'w-10 h-10' }),
+          React.createElement('div', { key: 'txt' }, [
+            React.createElement('h3', { key: 't', className: 'text-base font-bold text-white' }, 'Secure with a Passkey'),
+            React.createElement('p', { key: 's', className: 'text-[11px] text-amber-300' }, 'District Educational Office, Jangaon')
+          ])
+        ]),
+        React.createElement('button', {
+          key: 'close',
+          onClick: handleSkip,
+          className: 'text-blue-100 hover:text-white text-lg font-bold p-1 rounded hover:bg-white/10'
+        }, '✕')
+      ]),
+
+      React.createElement('div', { key: 'enroll-body', className: 'p-6 space-y-4 text-center' }, [
+        React.createElement('div', {
+          key: 'icon-wrap',
+          className: 'w-16 h-16 rounded-full bg-[#e3f2fd] text-[#0c4a7e] flex items-center justify-center text-3xl mx-auto border-2 border-blue-200'
+        }, '🔐'),
+
+        React.createElement('div', { key: 'title-desc', className: 'space-y-1' }, [
+          React.createElement('h4', { key: 'h4', className: 'text-base font-bold text-slate-900' },
+            pendingPasskeyEnrollment && pendingPasskeyEnrollment.fullName
+              ? `Welcome, ${pendingPasskeyEnrollment.fullName}`
+              : 'Secure Your Official Account'
+          ),
+          React.createElement('p', { key: 'desc', className: 'text-xs text-slate-600' },
+            'Enable seamless, passwordless login using your device\'s built-in Windows Hello, Touch ID, Face authentication, or Device PIN.'
+          )
+        ]),
+
+        React.createElement('div', {
+          key: 'sec-badge',
+          className: 'bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-left flex items-start space-x-2 text-xs text-emerald-900'
+        }, [
+          React.createElement('span', { key: 'tick', className: 'text-emerald-700 font-bold' }, '🛡️'),
+          React.createElement('p', { key: 'text', className: 'text-[11px] leading-tight text-emerald-800' },
+            'FIDO2 / WebAuthn Standard: Biometric data stays strictly on your device. The portal stores only cryptographic public credentials.'
+          )
+        ]),
+
+        errorMsg && React.createElement('div', {
+          key: 'err-alert',
+          className: 'p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-semibold text-left flex items-center space-x-2'
+        }, [
+          React.createElement('span', { key: 'i' }, '❌'),
+          React.createElement('span', { key: 'm' }, errorMsg)
+        ]),
+
+        successMsg && React.createElement('div', {
+          key: 'succ-alert',
+          className: 'p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold'
+        }, successMsg),
+
+        React.createElement('div', { key: 'actions', className: 'space-y-2 pt-2' }, [
+          React.createElement('button', {
+            key: 'btn-create',
+            type: 'button',
+            disabled: loading,
+            onClick: handleCreatePasskey,
+            className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors shadow-xs disabled:opacity-60 cursor-pointer'
+          }, [
+            loading && React.createElement('div', { key: 'spin', className: 'w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' }),
+            React.createElement('span', { key: 't' }, loading ? 'Opening Device Prompt...' : '🔐 Register Device Passkey')
+          ]),
+
+          React.createElement('button', {
+            key: 'btn-skip',
+            type: 'button',
+            onClick: handleSkip,
+            className: 'w-full text-slate-500 hover:text-slate-800 font-semibold py-2 text-xs cursor-pointer'
+          }, 'Skip for now & Continue to Dashboard →')
+        ])
+      ])
+    ])
   ]);
 }
 
 // ==========================================
-// 10. AUTH MODALS: REGISTRATION WORKFLOW (WHITE & GOVERNMENT BLUE)
+// 10. AUTH MODALS: REGISTRATION WORKFLOW (ZERO OTP + REAL WEBAUTHN PASSKEY)
 // ==========================================
 function RegisterModal() {
-  const { closeModal, openModal, sendOtp, registerUser } = useContext(AuthContext);
+  const { closeModal, openModal, registerUser, enrollPasskey, setCurrentView } = useContext(AuthContext);
 
-  const [step, setStep] = useState('FORM');
+  const [step, setStep] = useState('FORM'); // 'FORM' | 'REGISTER_PASSKEY' | 'SUCCESS'
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -1222,24 +1463,10 @@ function RegisterModal() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
-  const [countdown, setCountdown] = useState(60);
-  const [resendActive, setResendActive] = useState(false);
-  const otpInputRefs = [useRef(), useRef(), useRef(), useRef(), useRef(), useRef()];
+  const [registeredUser, setRegisteredUser] = useState(null);
+  const [passkeyOptions, setPasskeyOptions] = useState(null);
 
-  const [officialResult, setOfficialResult] = useState(null);
-
-  useEffect(() => {
-    let timer;
-    if (step === 'OTP' && countdown > 0) {
-      timer = setInterval(() => setCountdown(c => c - 1), 1000);
-    } else if (countdown === 0) {
-      setResendActive(true);
-    }
-    return () => clearInterval(timer);
-  }, [step, countdown]);
-
-  const handleSendOtp = async (e) => {
+  const handleAccountSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
 
@@ -1262,81 +1489,38 @@ function RegisterModal() {
     }
 
     setLoading(true);
-    const res = await sendOtp(cleanedMobile, 'REGISTRATION');
-    setLoading(false);
-
-    if (res.success) {
-      setStep('OTP');
-      setCountdown(60);
-      setResendActive(false);
-      setSuccessMsg(`OTP sent to +91 ${cleanedMobile}`);
-    } else {
-      setErrorMsg(res.message);
-    }
-  };
-
-  const handleResendOtp = async () => {
-    if (!resendActive) return;
-    setErrorMsg('');
-    setLoading(true);
-    const res = await sendOtp(mobileNumber, 'REGISTRATION');
-    setLoading(false);
-    if (res.success) {
-      setCountdown(60);
-      setResendActive(false);
-      setSuccessMsg("✓ New OTP sent successfully.");
-    } else {
-      setErrorMsg(res.message);
-    }
-  };
-
-  const handleDigitChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return;
-    const newDigits = [...otpDigits];
-    newDigits[index] = value.slice(-1);
-    setOtpDigits(newDigits);
-
-    if (value && index < 5 && otpInputRefs[index + 1].current) {
-      otpInputRefs[index + 1].current.focus();
-    }
-  };
-
-  const handleDigitKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !otpDigits[index] && index > 0) {
-      otpInputRefs[index - 1].current.focus();
-    }
-  };
-
-  const handleVerifyAndCreateAccount = async () => {
-    const fullOtp = otpDigits.join('');
-    if (fullOtp.length !== 6) {
-      setErrorMsg("Please enter all 6 digits of the OTP.");
-      return;
-    }
-
-    setErrorMsg('');
-    setLoading(true);
-    setStep('CHECKING_OFFICIAL');
-
-    const regRes = await registerUser({
+    const res = await registerUser({
       fullName,
       role,
-      mobileNumber,
+      mobileNumber: cleanedMobile,
       password,
-      confirmPassword,
-      otpCode: fullOtp
+      confirmPassword
     });
-
     setLoading(false);
 
-    if (regRes.success) {
-      setOfficialResult(regRes.officialDataResult);
-      setTimeout(() => {
-        setStep('SUCCESS');
-      }, 1500);
+    if (res.success && res.passkeyOptions) {
+      setRegisteredUser(res.user);
+      setPasskeyOptions(res.passkeyOptions);
+      setStep('REGISTER_PASSKEY');
+      setSuccessMsg("Account registered. Please create your device passkey.");
     } else {
-      setStep('OTP');
-      setErrorMsg(regRes.message);
+      setErrorMsg(res.message || "Registration failed. Please try again.");
+    }
+  };
+
+  const handleDevicePasskeyCreate = async () => {
+    if (!registeredUser || !passkeyOptions) return;
+    setErrorMsg('');
+    setLoading(true);
+
+    const enrollRes = await enrollPasskey(registeredUser.id, passkeyOptions);
+    setLoading(false);
+
+    if (enrollRes.success) {
+      setStep('SUCCESS');
+      setSuccessMsg("✓ Passkey Successfully Created & Verified!");
+    } else {
+      setErrorMsg(enrollRes.message || "Passkey registration was cancelled or unsupported on this device.");
     }
   };
 
@@ -1347,6 +1531,7 @@ function RegisterModal() {
       key: 'reg-card',
       className: 'bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-lg overflow-hidden animate-scale-up'
     }, [
+      // Header
       React.createElement('div', {
         key: 'modal-head',
         className: 'bg-[#0c4a7e] text-white px-6 py-4 flex items-center justify-between border-b-2 border-amber-400'
@@ -1365,6 +1550,7 @@ function RegisterModal() {
         }, '✕')
       ]),
 
+      // Body
       React.createElement('div', { key: 'modal-body', className: 'p-6 max-h-[85vh] overflow-y-auto' }, [
         errorMsg && React.createElement('div', {
           key: 'err-alert',
@@ -1382,9 +1568,10 @@ function RegisterModal() {
           React.createElement('span', { key: 'm' }, successMsg)
         ]),
 
+        // STEP 1: Registration Form
         step === 'FORM' && React.createElement('form', {
           key: 'reg-form',
-          onSubmit: handleSendOtp,
+          onSubmit: handleAccountSubmit,
           className: 'space-y-4'
         }, [
           React.createElement('div', { key: 'f-name' }, [
@@ -1410,13 +1597,12 @@ function RegisterModal() {
             }, [
               React.createElement('option', { key: 'apo', value: 'APO' }, 'APO'),
               React.createElement('option', { key: 'deo', value: 'DEO' }, 'DEO'),
-              React.createElement('option', { key: 'meo', value: 'MEO' }, 'MEO'),
-              React.createElement('option', { key: 'tch', value: 'Teacher' }, 'Teacher')
+              React.createElement('option', { key: 'meo', value: 'MEO' }, 'MEO')
             ])
           ]),
 
           React.createElement('div', { key: 'f-mobile' }, [
-            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Mobile Number (for OTP Verification) *'),
+            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Mobile Number *'),
             React.createElement('div', { key: 'wrap', className: 'flex rounded-lg border border-slate-300 overflow-hidden' }, [
               React.createElement('span', { key: 'cc', className: 'bg-slate-100 text-slate-600 px-3 py-2 text-sm font-semibold border-r border-slate-300' }, '+91'),
               React.createElement('input', {
@@ -1463,148 +1649,130 @@ function RegisterModal() {
             React.createElement('input', {
               key: 'cb',
               type: 'checkbox',
-              id: 'show-pwd',
+              id: 'show-reg-pwd',
               checked: showPassword,
               onChange: (e) => setShowPassword(e.target.checked),
               className: 'rounded text-[#0c4a7e]'
             }),
-            React.createElement('label', { key: 'lbl', htmlFor: 'show-pwd' }, 'Show passwords')
+            React.createElement('label', { key: 'lbl', htmlFor: 'show-reg-pwd' }, 'Show passwords')
           ]),
 
           React.createElement('button', {
-            key: 'btn-send-otp',
+            key: 'btn-create-acc',
             type: 'submit',
             disabled: loading,
-            className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors shadow-xs disabled:opacity-60'
+            className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors shadow-xs disabled:opacity-60 cursor-pointer'
           }, [
             loading && React.createElement('div', { key: 'spin', className: 'w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' }),
-            React.createElement('span', { key: 't' }, loading ? 'Validating Mobile...' : 'Send OTP')
+            React.createElement('span', { key: 't' }, loading ? 'Creating Account...' : 'Continue to Register Passkey →')
           ]),
 
-          React.createElement('div', { key: 'switch', className: 'text-center text-xs text-slate-600 pt-2 border-t border-slate-100' }, [
-            React.createElement('span', { key: 't' }, 'Already have an official account? '),
-            React.createElement('button', {
-              key: 'btn-to-login',
-              type: 'button',
-              onClick: () => openModal('LOGIN'),
-              className: 'text-[#0c4a7e] hover:underline font-bold'
-            }, 'Login here')
+          React.createElement('div', { key: 'switch-links', className: 'text-center text-xs text-slate-600 pt-3 border-t border-slate-100 space-y-1.5' }, [
+            React.createElement('div', { key: 'l1' }, [
+              React.createElement('span', { key: 't' }, 'Already have an official account? '),
+              React.createElement('button', {
+                key: 'btn-to-login',
+                type: 'button',
+                onClick: () => openModal('LOGIN', 'ADMIN'),
+                className: 'text-[#0c4a7e] hover:underline font-bold cursor-pointer'
+              }, 'Login here')
+            ]),
+            React.createElement('div', { key: 'l2', className: 'pt-1' }, [
+              React.createElement('span', { key: 't', className: 'text-slate-500' }, 'Are you a Teacher? '),
+              React.createElement('button', {
+                key: 'btn-to-teacher-login',
+                type: 'button',
+                onClick: () => openModal('LOGIN', 'TEACHER'),
+                className: 'text-emerald-700 hover:underline font-bold cursor-pointer'
+              }, 'Teacher Login')
+            ])
           ])
         ]),
 
-        step === 'OTP' && React.createElement('div', {
-          key: 'otp-screen',
-          className: 'space-y-5 text-center'
+        // STEP 2: Real Passkey Registration Prompt
+        step === 'REGISTER_PASSKEY' && React.createElement('div', {
+          key: 'passkey-screen',
+          className: 'space-y-5 text-center py-2'
         }, [
-          React.createElement('div', { key: 'inst' }, [
-            React.createElement('div', { key: 'icon', className: 'w-12 h-12 rounded-full bg-[#e3f2fd] text-[#0c4a7e] flex items-center justify-center text-xl mx-auto mb-2' }, '💬'),
-            React.createElement('h4', { key: 'h4', className: 'text-base font-bold text-slate-900' }, 'Verify Mobile Number'),
-            React.createElement('p', { key: 'p', className: 'text-xs text-slate-500 mt-1' },
-              `Enter the 6-digit OTP sent to your mobile number +91 ${mobileNumber}`
+          React.createElement('div', {
+            key: 'icon-wrap',
+            className: 'w-16 h-16 rounded-full bg-[#e3f2fd] text-[#0c4a7e] flex items-center justify-center text-3xl mx-auto border-2 border-blue-200'
+          }, '🔐'),
+
+          React.createElement('div', { key: 'info-box', className: 'space-y-1' }, [
+            React.createElement('h4', { key: 'h4', className: 'text-base font-bold text-slate-900' }, 'Register Device Passkey'),
+            React.createElement('p', { key: 'desc', className: 'text-xs text-slate-600 max-w-sm mx-auto' },
+              'Authenticate with your device\'s fingerprint, face recognition, Windows Hello, or device PIN to secure your account.'
             )
           ]),
 
           React.createElement('div', {
-            key: 'digit-boxes',
-            className: 'flex justify-center space-x-2 sm:space-x-3'
-          }, otpDigits.map((digit, idx) => React.createElement('input', {
-            key: `otp-${idx}`,
-            ref: otpInputRefs[idx],
-            type: 'text',
-            inputMode: 'numeric',
-            maxLength: 1,
-            value: digit,
-            onChange: (e) => handleDigitChange(idx, e.target.value),
-            onKeyDown: (e) => handleDigitKeyDown(idx, e.target.value),
-            className: 'otp-digit-box'
-          }))),
-
-          React.createElement('div', {
-            key: 'timer-sec',
-            className: 'text-xs text-slate-600 flex items-center justify-center space-x-4'
+            key: 'user-summary',
+            className: 'bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-left space-y-1 max-w-sm mx-auto'
           }, [
-            React.createElement('div', { key: 'count', className: 'flex items-center space-x-1 font-medium' }, [
-              React.createElement('span', { key: 'i' }, '⏱️'),
-              React.createElement('span', { key: 't' }, `Expires in: ${countdown}s`)
-            ]),
-            React.createElement('button', {
-              key: 'btn-resend',
-              type: 'button',
-              disabled: !resendActive || loading,
-              onClick: handleResendOtp,
-              className: `font-bold ${resendActive ? 'text-[#0c4a7e] hover:underline' : 'text-slate-400 cursor-not-allowed'}`
-            }, 'Resend OTP')
+            React.createElement('div', { key: 'un', className: 'font-semibold text-slate-800' }, `Officer: ${registeredUser ? registeredUser.fullName : fullName}`),
+            React.createElement('div', { key: 'ur', className: 'text-slate-600' }, `Role: ${registeredUser ? registeredUser.role : role}`),
+            React.createElement('div', { key: 'um', className: 'text-slate-600' }, `Mobile: +91 ${registeredUser ? registeredUser.mobileNumber : mobileNumber}`)
           ]),
 
-          React.createElement('div', { key: 'otp-actions', className: 'space-y-2 pt-2' }, [
+          React.createElement('div', {
+            key: 'fido-note',
+            className: 'bg-blue-50 border border-blue-200 rounded-xl p-3 text-[11px] text-blue-900 text-left flex items-start space-x-2'
+          }, [
+            React.createElement('span', { key: 'shield', className: 'text-sm' }, '🛡️'),
+            React.createElement('p', { key: 't', className: 'leading-tight' },
+              'WebAuthn / FIDO2 security standard: Your biometric credentials remain safely stored inside your device hardware and are never transmitted to the server.'
+            )
+          ]),
+
+          React.createElement('div', { key: 'actions', className: 'space-y-2 pt-2' }, [
             React.createElement('button', {
-              key: 'btn-verify',
+              key: 'btn-enroll',
               type: 'button',
-              disabled: loading || otpDigits.join('').length !== 6,
-              onClick: handleVerifyAndCreateAccount,
-              className: 'w-full bg-[#007a33] hover:bg-emerald-800 text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors shadow-xs disabled:opacity-50'
+              disabled: loading,
+              onClick: handleDevicePasskeyCreate,
+              className: 'w-full bg-[#007a33] hover:bg-emerald-800 text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors shadow-xs disabled:opacity-60 cursor-pointer'
             }, [
               loading && React.createElement('div', { key: 'spin', className: 'w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' }),
-              React.createElement('span', { key: 't' }, 'Verify OTP & Create Account')
+              React.createElement('span', { key: 't' }, loading ? 'Opening Device Passkey Dialog...' : '🔐 Register Device Passkey')
             ]),
 
             React.createElement('button', {
               key: 'btn-back',
               type: 'button',
               onClick: () => setStep('FORM'),
-              className: 'text-xs text-slate-500 hover:text-slate-800 font-semibold'
-            }, '← Change Mobile Number')
+              className: 'text-xs text-slate-500 hover:text-slate-800 font-semibold cursor-pointer'
+            }, '← Back to Account Details')
           ])
         ]),
 
-        step === 'CHECKING_OFFICIAL' && React.createElement('div', {
-          key: 'checking-screen',
-          className: 'text-center py-8 space-y-4'
-        }, [
-          React.createElement('div', { key: 'badge-ok', className: 'text-[#007a33] font-extrabold text-base flex items-center justify-center space-x-2' }, [
-            React.createElement('span', { key: 'tick', className: 'text-2xl' }, '✓'),
-            React.createElement('span', { key: 't' }, 'Account Created Successfully')
-          ]),
-
-          React.createElement('div', {
-            key: 'radar',
-            className: 'w-16 h-16 border-4 border-[#0c4a7e] border-t-amber-400 rounded-full animate-spin mx-auto my-4'
-          }),
-
-          React.createElement('h4', { key: 'link-txt', className: 'text-base font-bold text-slate-800' },
-            'Checking Official Department Data…'
-          ),
-          React.createElement('p', { key: 'link-sub', className: 'text-xs text-slate-500 max-w-xs mx-auto' },
-            'Querying Department of School Education service abstraction...'
-          )
-        ]),
-
+        // STEP 3: Passkey Success
         step === 'SUCCESS' && React.createElement('div', {
           key: 'success-screen',
-          className: 'space-y-4'
+          className: 'space-y-4 text-center py-2'
         }, [
           React.createElement('div', {
-            key: 'head-badge',
-            className: 'p-3 bg-[#e8f5e9] border border-[#c8e6c9] rounded-xl text-center text-[#2e7d32]'
+            key: 'badge-ok',
+            className: 'p-4 bg-[#e8f5e9] border border-[#c8e6c9] rounded-xl text-center text-[#2e7d32] space-y-1'
           }, [
-            React.createElement('div', { key: 't', className: 'font-extrabold text-sm' }, '✓ Account Created Successfully')
+            React.createElement('div', { key: 'tick', className: 'text-3xl' }, '✓'),
+            React.createElement('div', { key: 't1', className: 'font-extrabold text-base' }, 'Passkey Successfully Created & Verified'),
+            React.createElement('div', { key: 't2', className: 'text-xs text-emerald-800' }, 'Account Created Successfully')
           ]),
 
           React.createElement('div', {
             key: 'unlinked-notice',
-            className: 'bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-900 space-y-2'
+            className: 'bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-900 text-left space-y-1.5'
           }, [
             React.createElement('div', { key: 'warn-head', className: 'font-bold text-sm text-amber-800 flex items-center space-x-1.5' }, [
               React.createElement('span', { key: 'i' }, 'ℹ️'),
-              React.createElement('span', { key: 't' }, 'Official Data Integration Notice')
+              React.createElement('span', { key: 't' }, 'Administrative Verification Status')
             ]),
             React.createElement('p', { key: 'msg', className: 'leading-relaxed font-medium' },
-              officialResult && officialResult.message
-                ? officialResult.message
-                : 'Official department data integration is pending. Your account has been created successfully.'
+              'Official department data integration is pending. Your account and passkey have been secured successfully.'
             ),
             React.createElement('p', { key: 'guide', className: 'text-slate-600 text-[11px]' },
-              'Official records could not be linked yet. You can continue and contact the department for verification.'
+              'You can now access your role dashboard and use your passkey for future sign-ins.'
             )
           ]),
 
@@ -1612,8 +1780,9 @@ function RegisterModal() {
             key: 'btn-go-dash',
             onClick: () => {
               closeModal();
+              setCurrentView('DASHBOARD');
             },
-            className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2.5 rounded-lg text-sm transition-colors shadow-xs flex items-center justify-center space-x-2'
+            className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2.5 rounded-lg text-sm transition-colors shadow-xs flex items-center justify-center space-x-2 cursor-pointer'
           }, [
             React.createElement('span', { key: 't' }, 'Proceed to Dashboard'),
             React.createElement('span', { key: 'a' }, '→')
@@ -1625,31 +1794,101 @@ function RegisterModal() {
 }
 
 // ==========================================
-// 11. AUTH MODALS: LOGIN WORKFLOW
+// 11. AUTH MODALS: LOGIN WORKFLOW (ADMIN & TEACHER SECTIONS WITH REAL PASSKEY)
 // ==========================================
 function LoginModal() {
-  const { closeModal, openModal, loginUser } = useContext(AuthContext);
-  const [mobileNumber, setMobileNumber] = useState('');
-  const [password, setPassword] = useState('');
+  const { closeModal, openModal, loginInitialTab, loginWithPasskey, loginWithPassword, loginTeacher } = useContext(AuthContext);
+
+  const [activeTab, setActiveTab] = useState(loginInitialTab || 'ADMIN'); // 'ADMIN' | 'TEACHER'
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = async (e) => {
+  // Admin inputs
+  const [adminIdentifier, setAdminIdentifier] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [showAdminPassword, setShowAdminPassword] = useState(false);
+
+  // Teacher inputs
+  const [teacherEmployeeId, setTeacherEmployeeId] = useState('');
+  const [teacherMobile, setTeacherMobile] = useState('');
+
+  useEffect(() => {
+    if (loginInitialTab) {
+      setActiveTab(loginInitialTab);
+    }
+  }, [loginInitialTab]);
+
+  // Handle Admin Passkey Login (Primary)
+  const handleAdminPasskeyLogin = async (e) => {
     e.preventDefault();
     setErrorMsg('');
 
-    if (!mobileNumber || !password) {
-      setErrorMsg("Please enter both mobile number and password.");
+    if (!adminIdentifier.trim()) {
+      setErrorMsg("Please enter your Mobile Number or Official User ID.");
       return;
     }
 
     setLoading(true);
-    const res = await loginUser(mobileNumber, password);
+    const res = await loginWithPasskey(adminIdentifier.trim());
     setLoading(false);
 
     if (!res.success) {
-      setErrorMsg(res.message);
+      setErrorMsg(res.message || "Passkey authentication failed.");
+    }
+  };
+
+  // Handle Admin Password Login (Fallback)
+  const handleAdminPasswordLogin = async (e) => {
+    e.preventDefault();
+    setErrorMsg('');
+
+    if (!adminIdentifier.trim() || !adminPassword) {
+      setErrorMsg("Please enter both Mobile Number / User ID and Password.");
+      return;
+    }
+
+    setLoading(true);
+    const res = await loginWithPassword(adminIdentifier.trim(), adminPassword);
+    setLoading(false);
+
+    if (!res.success) {
+      setErrorMsg(res.message || "Invalid credentials.");
+    }
+  };
+
+  // Handle Teacher Initial Verification
+  const handleTeacherLogin = async (e) => {
+    e.preventDefault();
+    setErrorMsg('');
+
+    if (!teacherEmployeeId.trim() || !teacherMobile.trim()) {
+      setErrorMsg("Please enter both Employee ID and Registered Mobile Number.");
+      return;
+    }
+
+    setLoading(true);
+    const res = await loginTeacher(teacherEmployeeId.trim(), teacherMobile.trim());
+    setLoading(false);
+
+    if (!res.success) {
+      setErrorMsg(res.message || "Teacher verification failed.");
+    }
+  };
+
+  // Handle Teacher Passkey Login
+  const handleTeacherPasskeyLogin = async () => {
+    setErrorMsg('');
+    if (!teacherEmployeeId.trim()) {
+      setErrorMsg("Please enter your Employee ID to login with Passkey.");
+      return;
+    }
+
+    setLoading(true);
+    const res = await loginWithPasskey(teacherEmployeeId.trim());
+    setLoading(false);
+
+    if (!res.success) {
+      setErrorMsg(res.message || "Teacher Passkey login failed.");
     }
   };
 
@@ -1660,6 +1899,7 @@ function LoginModal() {
       key: 'login-card',
       className: 'bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md overflow-hidden animate-scale-up'
     }, [
+      // Header
       React.createElement('div', {
         key: 'modal-head',
         className: 'bg-[#0c4a7e] text-white px-6 py-4 flex items-center justify-between border-b-2 border-amber-400'
@@ -1678,7 +1918,35 @@ function LoginModal() {
         }, '✕')
       ]),
 
-      React.createElement('div', { key: 'body', className: 'p-6' }, [
+      // Tabs: Administrative Login vs Teacher Login
+      React.createElement('div', {
+        key: 'login-tabs',
+        className: 'flex border-b border-slate-200 bg-slate-50 text-xs font-bold'
+      }, [
+        React.createElement('button', {
+          key: 'tab-admin',
+          type: 'button',
+          onClick: () => { setActiveTab('ADMIN'); setErrorMsg(''); },
+          className: `flex-1 py-3 px-4 text-center transition-colors cursor-pointer border-b-2 ${
+            activeTab === 'ADMIN'
+              ? 'border-[#0c4a7e] text-[#0c4a7e] bg-white font-extrabold'
+              : 'border-transparent text-slate-500 hover:text-slate-800'
+          }`
+        }, '🏛️ Administrative (APO / DEO / MEO)'),
+        React.createElement('button', {
+          key: 'tab-teacher',
+          type: 'button',
+          onClick: () => { setActiveTab('TEACHER'); setErrorMsg(''); },
+          className: `flex-1 py-3 px-4 text-center transition-colors cursor-pointer border-b-2 ${
+            activeTab === 'TEACHER'
+              ? 'border-[#007a33] text-[#007a33] bg-white font-extrabold'
+              : 'border-transparent text-slate-500 hover:text-slate-800'
+          }`
+        }, '👨‍🏫 Teacher Login')
+      ]),
+
+      // Body
+      React.createElement('div', { key: 'body', className: 'p-6 max-h-[80vh] overflow-y-auto' }, [
         errorMsg && React.createElement('div', {
           key: 'err-alert',
           className: 'mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center space-x-2'
@@ -1687,79 +1955,186 @@ function LoginModal() {
           React.createElement('span', { key: 'm' }, errorMsg)
         ]),
 
-        React.createElement('form', {
-          key: 'login-form',
-          onSubmit: handleLogin,
+        // TAB 1: ADMINISTRATIVE LOGIN
+        activeTab === 'ADMIN' && React.createElement('div', {
+          key: 'admin-section',
           className: 'space-y-4'
         }, [
-          React.createElement('div', { key: 'f-mob' }, [
-            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Registered Mobile Number *'),
-            React.createElement('div', { key: 'wrap', className: 'flex rounded-lg border border-slate-300 overflow-hidden' }, [
-              React.createElement('span', { key: 'cc', className: 'bg-slate-100 text-slate-600 px-3 py-2 text-sm font-semibold border-r border-slate-300' }, '+91'),
-              React.createElement('input', {
-                key: 'i',
-                type: 'tel',
-                maxLength: 10,
-                value: mobileNumber,
-                onChange: (e) => setMobileNumber(e.target.value.replace(/\D/g, '')),
-                placeholder: '10-digit mobile number',
-                required: true,
-                className: 'flex-1 px-3 py-2 text-sm focus:outline-none'
-              })
-            ])
-          ]),
-
-          React.createElement('div', { key: 'f-pwd' }, [
-            React.createElement('div', { key: 'pwd-label-row', className: 'flex items-center justify-between mb-1' }, [
-              React.createElement('label', { key: 'l', className: 'text-xs font-bold text-slate-700' }, 'Password *'),
-              React.createElement('button', {
-                key: 'btn-forgot',
-                type: 'button',
-                onClick: () => openModal('FORGOT'),
-                className: 'text-xs text-[#0c4a7e] hover:underline font-semibold'
-              }, 'Forgot Password?')
-            ]),
+          React.createElement('div', { key: 'f-id' }, [
+            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Mobile Number / Official User ID *'),
             React.createElement('input', {
               key: 'i',
-              type: showPassword ? 'text' : 'password',
-              value: password,
-              onChange: (e) => setPassword(e.target.value),
-              placeholder: 'Enter your password',
+              type: 'text',
+              value: adminIdentifier,
+              onChange: (e) => setAdminIdentifier(e.target.value),
+              placeholder: 'Enter 10-digit mobile or User ID',
               required: true,
               className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-[#0c4a7e]'
             })
           ]),
 
-          React.createElement('div', { key: 'f-toggle', className: 'flex items-center space-x-2 text-xs text-slate-600' }, [
-            React.createElement('input', {
-              key: 'cb',
-              type: 'checkbox',
-              id: 'show-login-pwd',
-              checked: showPassword,
-              onChange: (e) => setShowPassword(e.target.checked),
-              className: 'rounded text-[#0c4a7e]'
-            }),
-            React.createElement('label', { key: 'lbl', htmlFor: 'show-login-pwd' }, 'Show password')
-          ]),
-
+          // Primary Passkey Action
           React.createElement('button', {
-            key: 'btn-submit',
-            type: 'submit',
+            key: 'btn-passkey',
+            type: 'button',
             disabled: loading,
-            className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors shadow-xs disabled:opacity-60'
+            onClick: handleAdminPasskeyLogin,
+            className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors shadow-xs disabled:opacity-60 cursor-pointer'
           }, [
             loading && React.createElement('div', { key: 'spin', className: 'w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' }),
-            React.createElement('span', { key: 't' }, loading ? 'Authenticating...' : 'Login')
+            React.createElement('span', { key: 't' }, loading ? 'Verifying Passkey...' : '🔐 Login with Passkey (Primary)')
+          ]),
+
+          // Divider
+          React.createElement('div', { key: 'div', className: 'flex items-center my-3' }, [
+            React.createElement('div', { key: 'l', className: 'flex-1 border-t border-slate-200' }),
+            React.createElement('span', { key: 't', className: 'px-3 text-[11px] text-slate-400 uppercase font-bold tracking-wider' }, 'or with password'),
+            React.createElement('div', { key: 'r', className: 'flex-1 border-t border-slate-200' })
+          ]),
+
+          // Fallback Password Section
+          React.createElement('form', {
+            key: 'pwd-form',
+            onSubmit: handleAdminPasswordLogin,
+            className: 'space-y-3'
+          }, [
+            React.createElement('div', { key: 'f-pwd' }, [
+              React.createElement('div', { key: 'pwd-label-row', className: 'flex items-center justify-between mb-1' }, [
+                React.createElement('label', { key: 'l', className: 'text-xs font-bold text-slate-700' }, 'Password *'),
+                React.createElement('button', {
+                  key: 'btn-forgot',
+                  type: 'button',
+                  onClick: () => openModal('FORGOT'),
+                  className: 'text-xs text-[#0c4a7e] hover:underline font-semibold'
+                }, 'Forgot Password?')
+              ]),
+              React.createElement('input', {
+                key: 'i',
+                type: showAdminPassword ? 'text' : 'password',
+                value: adminPassword,
+                onChange: (e) => setAdminPassword(e.target.value),
+                placeholder: 'Enter your password',
+                className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-[#0c4a7e]'
+              })
+            ]),
+
+            React.createElement('div', { key: 'f-toggle', className: 'flex items-center space-x-2 text-xs text-slate-600' }, [
+              React.createElement('input', {
+                key: 'cb',
+                type: 'checkbox',
+                id: 'show-admin-pwd',
+                checked: showAdminPassword,
+                onChange: (e) => setShowAdminPassword(e.target.checked),
+                className: 'rounded text-[#0c4a7e]'
+              }),
+              React.createElement('label', { key: 'lbl', htmlFor: 'show-admin-pwd' }, 'Show password')
+            ]),
+
+            React.createElement('button', {
+              key: 'btn-pwd-login',
+              type: 'submit',
+              disabled: loading,
+              className: 'w-full bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold py-2 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors cursor-pointer'
+            }, [
+              React.createElement('span', { key: 't' }, 'Login with Password')
+            ])
           ]),
 
           React.createElement('div', { key: 'switch', className: 'text-center text-xs text-slate-600 pt-3 border-t border-slate-100' }, [
-            React.createElement('span', { key: 't' }, 'New user? Do not have an account? '),
+            React.createElement('span', { key: 't' }, 'New administrative officer? '),
             React.createElement('button', {
               key: 'btn-to-reg',
               type: 'button',
               onClick: () => openModal('REGISTER'),
-              className: 'text-[#0c4a7e] hover:underline font-bold'
+              className: 'text-[#0c4a7e] hover:underline font-bold cursor-pointer'
             }, 'Register now')
+          ])
+        ]),
+
+        // TAB 2: TEACHER LOGIN (EMPLOYEE ID + REGISTERED MOBILE)
+        activeTab === 'TEACHER' && React.createElement('div', {
+          key: 'teacher-section',
+          className: 'space-y-4'
+        }, [
+          React.createElement('div', {
+            key: 'tch-notice',
+            className: 'bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-900 leading-relaxed'
+          }, [
+            React.createElement('span', { key: 'i', className: 'font-bold mr-1.5' }, 'ℹ️'),
+            React.createElement('span', { key: 't' }, 'Government Teachers: Enter your official Employee ID and registered phone number to authenticate directly against department records.')
+          ]),
+
+          React.createElement('form', {
+            key: 'tch-form',
+            onSubmit: handleTeacherLogin,
+            className: 'space-y-4'
+          }, [
+            React.createElement('div', { key: 'f-empid' }, [
+              React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Employee ID *'),
+              React.createElement('input', {
+                key: 'i',
+                type: 'text',
+                value: teacherEmployeeId,
+                onChange: (e) => setTeacherEmployeeId(e.target.value),
+                placeholder: 'e.g. TS-TCH-100234',
+                required: true,
+                className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm uppercase font-mono tracking-wide focus:outline-none focus:border-[#007a33]'
+              })
+            ]),
+
+            React.createElement('div', { key: 'f-mob' }, [
+              React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Registered Mobile Number *'),
+              React.createElement('div', { key: 'wrap', className: 'flex rounded-lg border border-slate-300 overflow-hidden' }, [
+                React.createElement('span', { key: 'cc', className: 'bg-slate-100 text-slate-600 px-3 py-2 text-sm font-semibold border-r border-slate-300' }, '+91'),
+                React.createElement('input', {
+                  key: 'i',
+                  type: 'tel',
+                  maxLength: 10,
+                  value: teacherMobile,
+                  onChange: (e) => setTeacherMobile(e.target.value.replace(/\D/g, '')),
+                  placeholder: '10-digit mobile number',
+                  required: true,
+                  className: 'flex-1 px-3 py-2 text-sm focus:outline-none'
+                })
+              ])
+            ]),
+
+            React.createElement('button', {
+              key: 'btn-continue',
+              type: 'submit',
+              disabled: loading,
+              className: 'w-full bg-[#007a33] hover:bg-emerald-800 text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors shadow-xs disabled:opacity-60 cursor-pointer'
+            }, [
+              loading && React.createElement('div', { key: 'spin', className: 'w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' }),
+              React.createElement('span', { key: 't' }, loading ? 'Verifying Department Record...' : 'Continue to Teacher Portal →')
+            ])
+          ]),
+
+          React.createElement('div', { key: 'div2', className: 'flex items-center my-2' }, [
+            React.createElement('div', { key: 'l', className: 'flex-1 border-t border-slate-200' }),
+            React.createElement('span', { key: 't', className: 'px-3 text-[11px] text-slate-400 uppercase font-bold tracking-wider' }, 'enrolled with passkey?'),
+            React.createElement('div', { key: 'r', className: 'flex-1 border-t border-slate-200' })
+          ]),
+
+          React.createElement('button', {
+            key: 'btn-tch-passkey',
+            type: 'button',
+            disabled: loading,
+            onClick: handleTeacherPasskeyLogin,
+            className: 'w-full bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold py-2 rounded-lg text-xs flex items-center justify-center space-x-2 transition-colors cursor-pointer'
+          }, [
+            React.createElement('span', { key: 'i' }, '🔐'),
+            React.createElement('span', { key: 't' }, 'Login with Teacher Passkey')
+          ]),
+
+          React.createElement('div', { key: 'switch', className: 'text-center text-xs text-slate-600 pt-3 border-t border-slate-100' }, [
+            React.createElement('span', { key: 't' }, 'Are you an administrative officer? '),
+            React.createElement('button', {
+              key: 'btn-to-admin',
+              type: 'button',
+              onClick: () => setActiveTab('ADMIN'),
+              className: 'text-[#0c4a7e] hover:underline font-bold cursor-pointer'
+            }, 'Administrative Login')
           ])
         ])
       ])
@@ -1768,67 +2143,26 @@ function LoginModal() {
 }
 
 // ==========================================
-// 12. AUTH MODALS: FORGOT PASSWORD WORKFLOW
+// 12. AUTH MODALS: OFFICIAL ACCOUNT RECOVERY (NO OTP)
 // ==========================================
 function ForgotPasswordModal() {
-  const { closeModal, openModal, sendOtp, resetPassword } = useContext(AuthContext);
-  const [step, setStep] = useState('MOBILE');
-  const [mobileNumber, setMobileNumber] = useState('');
-  const [otpCode, setOtpCode] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const { closeModal, openModal, loginWithPasskey } = useContext(AuthContext);
+  const [identifier, setIdentifier] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
 
-  const handleSendResetOtp = async (e) => {
+  const handlePasskeyRecovery = async (e) => {
     e.preventDefault();
     setErrorMsg('');
-    const clean = mobileNumber.replace(/\D/g, '');
-    if (!/^[6-9]\d{9}$/.test(clean)) {
-      setErrorMsg("Please enter a valid 10-digit registered mobile number.");
+    if (!identifier.trim()) {
+      setErrorMsg("Please enter your Mobile Number or Official User ID.");
       return;
     }
-
     setLoading(true);
-    const res = await sendOtp(clean, 'FORGOT_PASSWORD');
+    const res = await loginWithPasskey(identifier.trim());
     setLoading(false);
-
-    if (res.success) {
-      setStep('OTP');
-      setSuccessMsg("✓ OTP sent for password reset.");
-    } else {
-      setErrorMsg(res.message);
-    }
-  };
-
-  const handleResetPassword = async (e) => {
-    e.preventDefault();
-    setErrorMsg('');
-
-    if (newPassword.length < 6) {
-      setErrorMsg("Password must be at least 6 characters.");
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setErrorMsg("Passwords do not match.");
-      return;
-    }
-
-    setLoading(true);
-    const res = await resetPassword({
-      mobileNumber,
-      otpCode,
-      newPassword,
-      confirmPassword
-    });
-    setLoading(false);
-
-    if (res.success) {
-      setStep('DONE');
-      setSuccessMsg(res.message);
-    } else {
-      setErrorMsg(res.message);
+    if (!res.success) {
+      setErrorMsg(res.message || "Passkey authentication failed for recovery.");
     }
   };
 
@@ -1843,88 +2177,42 @@ function ForgotPasswordModal() {
         key: 'fp-head',
         className: 'bg-[#0c4a7e] text-white px-6 py-4 flex items-center justify-between border-b-2 border-amber-400'
       }, [
-        React.createElement('h3', { key: 't', className: 'text-base font-bold' }, 'Reset Account Password'),
+        React.createElement('h3', { key: 't', className: 'text-base font-bold' }, 'Official Account Recovery'),
         React.createElement('button', { key: 'c', onClick: closeModal, className: 'text-blue-100 hover:text-white' }, '✕')
       ]),
 
-      React.createElement('div', { key: 'fp-body', className: 'p-6' }, [
+      React.createElement('div', { key: 'fp-body', className: 'p-6 space-y-4' }, [
         errorMsg && React.createElement('div', {
           key: 'err',
-          className: 'mb-4 p-3 rounded-lg bg-red-50 text-red-700 text-xs font-semibold'
+          className: 'p-3 rounded-lg bg-red-50 text-red-700 text-xs font-semibold'
         }, errorMsg),
 
-        successMsg && React.createElement('div', {
-          key: 'succ',
-          className: 'mb-4 p-3 rounded-lg bg-emerald-50 text-emerald-800 text-xs font-semibold'
-        }, successMsg),
-
-        step === 'MOBILE' && React.createElement('form', {
-          key: 'f1',
-          onSubmit: handleSendResetOtp,
-          className: 'space-y-4'
+        React.createElement('div', {
+          key: 'info',
+          className: 'bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-900 leading-relaxed space-y-1'
         }, [
-          React.createElement('p', { key: 'p', className: 'text-xs text-slate-600' },
-            'Enter your registered mobile number to receive a secure OTP to reset your password.'
-          ),
-          React.createElement('div', { key: 'inp' }, [
-            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Mobile Number'),
-            React.createElement('input', {
-              key: 'i',
-              type: 'tel',
-              maxLength: 10,
-              value: mobileNumber,
-              onChange: (e) => setMobileNumber(e.target.value.replace(/\D/g, '')),
-              placeholder: '10-digit mobile number',
-              required: true,
-              className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm'
-            })
+          React.createElement('div', { key: 'h', className: 'font-bold flex items-center space-x-1.5 text-[#0c4a7e]' }, [
+            React.createElement('span', { key: 'i' }, '🛡️'),
+            React.createElement('span', { key: 't' }, 'Secure Passkey Authentication')
           ]),
-          React.createElement('button', {
-            key: 'btn',
-            type: 'submit',
-            disabled: loading,
-            className: 'w-full bg-[#0c4a7e] text-white font-bold py-2 rounded-lg text-sm'
-          }, loading ? 'Sending OTP...' : 'Send Reset OTP')
+          React.createElement('p', { key: 'p' },
+            'For security compliance, passwords can be reset by authenticating with your registered Device Passkey, or by contacting the district education office.'
+          )
         ]),
 
-        step === 'OTP' && React.createElement('form', {
-          key: 'f2',
-          onSubmit: handleResetPassword,
+        React.createElement('form', {
+          key: 'f-rec',
+          onSubmit: handlePasskeyRecovery,
           className: 'space-y-3'
         }, [
-          React.createElement('div', { key: 'inp-otp' }, [
-            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, '6-Digit OTP'),
+          React.createElement('div', { key: 'inp' }, [
+            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Mobile Number / Employee ID'),
             React.createElement('input', {
               key: 'i',
               type: 'text',
-              maxLength: 6,
-              value: otpCode,
-              onChange: (e) => setOtpCode(e.target.value),
-              placeholder: 'Enter 6-digit OTP',
-              required: true,
-              className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-mono text-center tracking-widest'
-            })
-          ]),
-          React.createElement('div', { key: 'inp-np' }, [
-            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'New Password'),
-            React.createElement('input', {
-              key: 'i',
-              type: 'password',
-              value: newPassword,
-              onChange: (e) => setNewPassword(e.target.value),
-              placeholder: 'Min 6 characters',
-              required: true,
-              className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm'
-            })
-          ]),
-          React.createElement('div', { key: 'inp-cp' }, [
-            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Confirm New Password'),
-            React.createElement('input', {
-              key: 'i',
-              type: 'password',
-              value: confirmPassword,
-              onChange: (e) => setConfirmPassword(e.target.value),
-              placeholder: 'Re-enter new password',
+              value: identifier,
+              onChange: (e) => setIdentifier(e.target.value),
+              placeholder: 'Enter 10-digit mobile or Employee ID',
               required: true,
               className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm'
             })
@@ -1933,21 +2221,20 @@ function ForgotPasswordModal() {
             key: 'btn',
             type: 'submit',
             disabled: loading,
-            className: 'w-full bg-[#007a33] text-white font-bold py-2 rounded-lg text-sm'
-          }, loading ? 'Updating...' : 'Update Password')
+            className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center space-x-2'
+          }, [
+            loading && React.createElement('div', { key: 'spin', className: 'w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' }),
+            React.createElement('span', { key: 't' }, loading ? 'Authenticating...' : '🔐 Verify with Device Passkey')
+          ])
         ]),
 
-        step === 'DONE' && React.createElement('div', {
-          key: 'f3',
-          className: 'text-center space-y-4 py-4'
+        React.createElement('div', {
+          key: 'dept-contact',
+          className: 'border-t border-slate-200 pt-3 text-xs text-slate-500 space-y-1'
         }, [
-          React.createElement('div', { key: 'icon', className: 'text-3xl' }, '✅'),
-          React.createElement('p', { key: 'p', className: 'text-sm font-bold text-slate-800' }, 'Password Updated Successfully!'),
-          React.createElement('button', {
-            key: 'btn-login',
-            onClick: () => openModal('LOGIN'),
-            className: 'w-full bg-[#0c4a7e] text-white font-bold py-2 rounded-lg text-sm'
-          }, 'Return to Login')
+          React.createElement('div', { key: 't', className: 'font-semibold text-slate-700' }, 'District Office Support:'),
+          React.createElement('div', { key: 'm' }, '✉️ deo.jangaon@telangana.gov.in'),
+          React.createElement('div', { key: 'p' }, '📞 +91 8678 222 333 (10:00 AM – 5:00 PM)')
         ])
       ])
     ])
@@ -2110,7 +2397,7 @@ function RoleDashboard() {
             React.createElement('p', {
               key: 'inst',
               className: `text-xs mt-1 ${isDark ? 'text-slate-300' : 'text-blue-100'}`
-            }, 'Official Account Status: ACTIVE • Verified by Mobile OTP')
+            }, 'Official Account Status: ACTIVE • Verified by Passkey / Official Records')
           ])
         ]),
 
@@ -2468,8 +2755,7 @@ function App() {
     activeModal === 'REGISTER' && React.createElement(RegisterModal, { key: 'reg-modal' }),
     activeModal === 'LOGIN' && React.createElement(LoginModal, { key: 'login-modal' }),
     activeModal === 'FORGOT' && React.createElement(ForgotPasswordModal, { key: 'forgot-modal' }),
-
-    React.createElement(DevOtpToast, { key: 'otp-toast' })
+    activeModal === 'ENROLL_PASSKEY' && React.createElement(EnrollPasskeyModal, { key: 'enroll-modal' })
   ]);
 }
 
