@@ -18,7 +18,10 @@ try {
   app = express();
   isExpress = true;
 
-  app.use(cors());
+  app.use(cors({
+    origin: (origin, callback) => callback(null, true),
+    credentials: true
+  }));
   app.use(express.json());
 
   // Static files
@@ -66,10 +69,12 @@ try {
   };
 
   const server = http.createServer(async (req, res) => {
-    // CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    const reqOrigin = req.headers.origin || `http://${req.headers.host || 'localhost:5000'}`;
+    // CORS headers supporting credentials
+    res.setHeader('Access-Control-Allow-Origin', reqOrigin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
 
     if (req.method === 'OPTIONS') {
       res.writeHead(204);
@@ -94,6 +99,15 @@ try {
     });
 
     const mockRes = {
+      statusCode: 200,
+      setHeader(name, value) {
+        res.setHeader(name, value);
+        return this;
+      },
+      header(name, value) {
+        res.setHeader(name, value);
+        return this;
+      },
       status(code) {
         this.statusCode = code;
         return this;
@@ -112,24 +126,34 @@ try {
     if (pathname.startsWith('/api/')) {
       req.body = await parseBody();
 
-      if (pathname === '/api/auth/send-otp' && req.method === 'POST') {
-        return authController.sendOtp(req, mockRes);
+      // WebAuthn Passkey Routes
+      if (pathname === '/api/auth/webauthn/register-options' && req.method === 'POST') {
+        return authController.webauthnRegisterOptions(req, mockRes);
       }
-      if (pathname === '/api/auth/verify-otp' && req.method === 'POST') {
-        return authController.verifyOtp(req, mockRes);
+      if (pathname === '/api/auth/webauthn/register-verify' && req.method === 'POST') {
+        return authController.webauthnRegisterVerify(req, mockRes);
       }
+      if (pathname === '/api/auth/webauthn/login-options' && req.method === 'POST') {
+        return authController.webauthnLoginOptions(req, mockRes);
+      }
+      if (pathname === '/api/auth/webauthn/login-verify' && req.method === 'POST') {
+        return authController.webauthnLoginVerify(req, mockRes);
+      }
+
+      // Teacher Login
+      if (pathname === '/api/auth/teacher/login' && req.method === 'POST') {
+        return authController.teacherLogin(req, mockRes);
+      }
+
+      // Registration & Standard Login
       if (pathname === '/api/auth/register' && req.method === 'POST') {
         return authController.register(req, mockRes);
       }
       if (pathname === '/api/auth/login' && req.method === 'POST') {
         return authController.login(req, mockRes);
       }
-      if (pathname === '/api/auth/forgot-password' && req.method === 'POST') {
-        return authController.forgotPassword(req, mockRes);
-      }
-      if (pathname === '/api/auth/reset-password' && req.method === 'POST') {
-        return authController.resetPassword(req, mockRes);
-      }
+
+      // Session & Info
       if (pathname === '/api/auth/me' && req.method === 'GET') {
         return authController.me(req, mockRes);
       }

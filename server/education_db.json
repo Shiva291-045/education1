@@ -1,161 +1,75 @@
 {
   "users": [
     {
-      "id": "USER-1790182985908-5767",
-      "fullName": "S. Ramesh Kumar",
-      "role": "Teacher",
-      "mobileNumber": "9876501234",
-      "passwordHash": "scrypt$247c545a1d7183e17c9aa9e8c013bd71$c3a58a77ee2045258e6a0bf22116469b07750a8d63a9f2544e3c39ff73cfd2863bfa9e1d0a707a42375e9cb5473551d84cb904cfe6575e5c3983cf5f70bd418c",
-      "mobileVerified": true,
-      "accountStatus": "ACTIVE",
-      "officialDataLinked": false,
-      "officialProfileId": null,
-      "createdAt": "2026-09-23T17:03:05.908Z",
-      "lastLogin": "2026-09-23T17:03:05.999Z"
-    },
-    {
-      "id": "USER-1790184179929-1956",
-      "fullName": "S. Ramesh Kumar",
-      "role": "Teacher",
-      "mobileNumber": "9889527029",
-      "passwordHash": "scrypt$65dfddb03d4e74743910fd89f1282cc8$6cf5a89384b0cd26e645d131d8f6086f07e2321abf692540f577f5a400e72324e7c12933357b3b3f349a518e147ce77c0aa3324f0b21e8ce941b4839a276f592",
-      "mobileVerified": true,
-      "accountStatus": "ACTIVE",
-      "officialDataLinked": false,
-      "officialProfileId": null,
-      "createdAt": "2026-09-23T17:22:59.929Z",
-      "lastLogin": "2026-09-23T17:23:00.055Z"
-    },
-    {
-      "id": "USER-1790187002505-1367",
-      "fullName": "S. Ramesh Kumar",
-      "role": "Teacher",
-      "mobileNumber": "9838451373",
-      "passwordHash": "scrypt$f553f44116a6d6a6c060d14adb3021dc$f4a9fc8107e87ddac31611fbd67f51bc058fc1c6993efd6bfb47ea121d552915e30762345591ea47b61cd5cede57d795110b0f06dbab1e59f7a88bbf80c9b80b",
-      "mobileVerified": true,
-      "accountStatus": "ACTIVE",
-      "officialDataLinked": false,
-      "officialProfileId": null,
-      "createdAt": "2026-09-23T18:10:02.505Z",
-      "lastLogin": "2026-09-23T18:10:02.569Z"
-    },
-    {
-      "id": "USER-1790188271851-7301",
-      "fullName": "S. Ramesh Kumar",
-      "role": "Teacher",
-      "mobileNumber": "9824618505",
-      "passwordHash": "scrypt$26e204dbe0ef28f70cfbb6f67b7681dc$6fdc51886542037cbdb33187b8e94d8c3acd32c97ee2f77e7d77e6f3e4b521cd5823d40b9842d010d0381368ee6e69d68426a216864eef7ee175a847f62e9d3b",
-      "mobileVerified": true,
-      "accountStatus": "ACTIVE",
-      "officialDataLinked": false,
-      "officialProfileId": null,
-      "createdAt": "2026-09-23T18:31:11.851Z",
-      "lastLogin": "2026-09-23T18:31:11.900Z"
-    },
-    {
-      "id": "USER-1790188305075-7468",
-      "fullName": "S. Ramesh Kumar",
-      "role": "Teacher",
-      "mobileNumber": "9866052615",
-      "passwordHash": "scrypt$ddf775a1333b42611128c4bbe094061f$538332882e97b9d36d335befaf87a3d291b458ff8950e04098c671218f35c494132f958fc424d4d07c5d663d4a12bd6cb7be1e5cda189e39e9b7b41767419403",
-      "mobileVerified": true,
-      "accountStatus": "ACTIVE",
-      "officialDataLinked": false,
-      "officialProfileId": null,
-      "createdAt": "2026-09-23T18:31:45.075Z",
-      "lastLogin": "2026-09-23T18:31:45.143Z"
-    },
-    {
-      "id": "USER-1790188305206-5840",
+      "id": "USER-1790274371103-3519",
       "fullName": "B. Srinivas Rao",
       "role": "APO",
-      "mobileNumber": "9873409839",
-      "passwordHash": "scrypt$33ddbfefe2bf7c6833257c2bb5b89272$02c021f9ac8aff79ca747df2f20e424e72faa002f3fe77e5d2c1dbd3ee49581e3a00512244d07045e3781c3847d55a1570e1e25f57823f039bda65f57a843c34",
-      "mobileVerified": true,
-      "accountStatus": "ACTIVE",
+      "mobileNumber": "9880185563",
+      "employeeId": null,
+      "passwordHash": "scrypt$2831c8fc15c4246208ca6dce13ef5ae5$4ec53cde85f71bfaa0ab3c340d93d331e79abfb8038c0170b7a8bfa9a675f459ae44a0b7f1c65c3a94d931c4abc8fd1422573975d17b047f6070b08e7b012aae",
+      "accountStatus": "PENDING_VERIFICATION",
+      "passkeys": [
+        {
+          "credentialId": "uyw2F_0naS94CIHDg-07cnhG0x5Rr4WxbFuz1UeTRaY",
+          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEeUYoidRYdvZQd0cH50cSOZetiPU-LOV4Z6eWaDkENCAwPSsAhXh3eA-d_dUK09a0x_wZ2hazErVSfWW6aJCO9w",
+          "counter": 2,
+          "transports": [
+            "internal"
+          ],
+          "createdAt": "2026-09-24T18:26:11.131Z"
+        }
+      ],
       "officialDataLinked": false,
       "officialProfileId": null,
-      "createdAt": "2026-09-23T18:31:45.206Z",
-      "lastLogin": "2026-09-23T18:31:45.206Z"
+      "createdAt": "2026-09-24T18:26:11.103Z",
+      "lastLogin": "2026-09-24T18:26:11.284Z"
+    },
+    {
+      "id": "TCH-TS-TCH-100234",
+      "employeeId": "TS-TCH-100234",
+      "fullName": "K. Sunitha",
+      "role": "Teacher",
+      "mobileNumber": "9876543210",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": true,
+      "designation": "School Assistant (Mathematics)",
+      "schoolName": "Zilla Parishad High School, Jangaon",
+      "mandal": "Jangaon",
+      "passkeys": [],
+      "createdAt": "2026-09-24T18:26:11.185Z",
+      "lastLogin": "2026-09-24T18:26:11.185Z"
     }
   ],
-  "otps": [
+  "sessions": [
     {
-      "id": "OTP-1790182985802-3117",
-      "mobileNumber": "9876501234",
-      "otpCode": "937639",
-      "purpose": "REGISTRATION",
-      "expiresAt": 1790183285802,
-      "attempts": 1,
-      "maxAttempts": 3,
-      "verified": true,
-      "createdAt": "2026-09-23T17:03:05.803Z"
+      "sessionId": "ad27124b99f9dfbc504673ec2a05c25efd6f77e93384284c07b55ce5ea18ca7a",
+      "userId": "USER-1790274371103-3519",
+      "role": "APO",
+      "createdAt": "2026-09-24T18:26:11.137Z",
+      "expiresAt": 1790360771137,
+      "metadata": {
+        "authMethod": "passkey"
+      }
     },
     {
-      "id": "OTP-1790184179816-5458",
-      "mobileNumber": "9889527029",
-      "otpCode": "432179",
-      "purpose": "REGISTRATION",
-      "expiresAt": 1790184479816,
-      "attempts": 1,
-      "maxAttempts": 3,
-      "verified": true,
-      "createdAt": "2026-09-23T17:22:59.817Z"
+      "sessionId": "a1ab579ecdae546dc4acad12979d79b090243266c9d66c1ae833539416045eeb",
+      "userId": "TCH-TS-TCH-100234",
+      "role": "Teacher",
+      "createdAt": "2026-09-24T18:26:11.187Z",
+      "expiresAt": 1790360771187,
+      "metadata": {
+        "authMethod": "teacher_credentials"
+      }
     },
     {
-      "id": "OTP-1790187002432-9952",
-      "mobileNumber": "9838451373",
-      "otpCode": "924848",
-      "purpose": "REGISTRATION",
-      "expiresAt": 1790187302432,
-      "attempts": 1,
-      "maxAttempts": 3,
-      "verified": true,
-      "createdAt": "2026-09-23T18:10:02.432Z"
-    },
-    {
-      "id": "OTP-1790188271798-3038",
-      "mobileNumber": "9824618505",
-      "otpCode": "560961",
-      "purpose": "REGISTRATION",
-      "expiresAt": 1790188571798,
-      "attempts": 1,
-      "maxAttempts": 3,
-      "verified": true,
-      "createdAt": "2026-09-23T18:31:11.798Z"
-    },
-    {
-      "id": "OTP-1790188305007-1755",
-      "mobileNumber": "9866052615",
-      "otpCode": "191495",
-      "purpose": "REGISTRATION",
-      "expiresAt": 1790188605007,
-      "attempts": 1,
-      "maxAttempts": 3,
-      "verified": true,
-      "createdAt": "2026-09-23T18:31:45.007Z"
-    },
-    {
-      "id": "OTP-1790188305162-8734",
-      "mobileNumber": "9873409839",
-      "otpCode": "592701",
-      "purpose": "REGISTRATION",
-      "expiresAt": 1790188605162,
-      "attempts": 1,
-      "maxAttempts": 3,
-      "verified": true,
-      "createdAt": "2026-09-23T18:31:45.162Z"
-    },
-    {
-      "id": "OTP-1790188305213-3713",
-      "mobileNumber": "9835495699",
-      "otpCode": "913914",
-      "purpose": "REGISTRATION",
-      "expiresAt": 1790188605213,
-      "attempts": 0,
-      "maxAttempts": 3,
-      "verified": false,
-      "createdAt": "2026-09-23T18:31:45.213Z"
+      "sessionId": "7a1fd0b86a36ba836f10be34413c383ddd7678f216cc792ade92facd3f4453bf",
+      "userId": "USER-1790274371103-3519",
+      "role": "APO",
+      "createdAt": "2026-09-24T18:26:11.298Z",
+      "expiresAt": 1790360771298,
+      "metadata": {
+        "authMethod": "password"
+      }
     }
   ],
   "notifications": [
