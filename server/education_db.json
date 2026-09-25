@@ -37,7 +37,7 @@
       "mandal": "Jangaon",
       "passkeys": [],
       "createdAt": "2026-09-24T18:26:11.185Z",
-      "lastLogin": "2026-09-25T06:28:58.572Z"
+      "lastLogin": "2026-09-25T06:35:26.306Z"
     },
     {
       "id": "USER-1790274497697-9057",
@@ -320,6 +320,92 @@
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:28:58.485Z",
       "lastLogin": "2026-09-25T06:28:58.485Z"
+    },
+    {
+      "id": "USER-1790318125797-5075",
+      "fullName": "B. Srinivas Rao",
+      "role": "APO",
+      "mobileNumber": "9828126771",
+      "employeeId": null,
+      "passwordHash": "scrypt$b79d2c5ac51136a7deb8c0fa7a4931d0$718f77fa9ae78ac6761cbf82db0feb89c01246c8fd4768261621caf1466f57b27369ffc1ddc15cd842294c487aeec137e0c903ebeec1feb40666410a007aba1d",
+      "accountStatus": "PENDING_VERIFICATION",
+      "passkeys": [
+        {
+          "credentialId": "FmEb2H66-om_znCSu9E7cEwqViYrQKD6xA5mCsuyj18",
+          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE_-kcP5ONYPMaCjFo6pOIi_9yk2bz2YaaQqFuX759eAOcL19wWGJL9uuuKPXaORQ4XZuexyXXjvcCtp5LMLcK0w",
+          "counter": 2,
+          "transports": [
+            "internal"
+          ],
+          "createdAt": "2026-09-25T06:35:25.951Z"
+        }
+      ],
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-09-25T06:35:25.797Z",
+      "lastLogin": "2026-09-25T06:35:26.412Z"
+    },
+    {
+      "id": "USER-1790318125928-5624",
+      "fullName": "Second Officer",
+      "role": "DEO",
+      "mobileNumber": "9720652058",
+      "employeeId": null,
+      "passwordHash": "scrypt$cb901bbb3c35eb57dbae47229aebe8e0$c9d9c8a48d12d63345b524d83dd62968ed905ba37f62f419ceed7502ce2683b00b157334d7259a065788d33bcb3019e0e699cce9b69a615f77b3f251b0e8eca3",
+      "accountStatus": "PENDING_VERIFICATION",
+      "passkeys": [
+        {
+          "credentialId": "r8-0iTX5THU_FUZG0vMXylv9r9zr4tnbua80vuQ53jQ",
+          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEGNykyiofNT-4EqFQhhrOfJe4da7sxf5csFa1mmnceGc6PYe4DYtZraEZmMcesChHG6IzCFIjgZ9ba17LAnWTRw",
+          "counter": 1,
+          "transports": [
+            "internal"
+          ],
+          "createdAt": "2026-09-25T06:35:26.000Z"
+        }
+      ],
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-09-25T06:35:25.928Z",
+      "lastLogin": "2026-09-25T06:35:25.928Z"
+    },
+    {
+      "id": "USER-1790318126088-6356",
+      "fullName": "Root Passkey Officer",
+      "role": "APO",
+      "mobileNumber": "9589773413",
+      "employeeId": null,
+      "passwordHash": "scrypt$3a0149d0925463d7dac9784894f09216$a4cedd163fa47bc6bdcb40308f2d05ed37f9e15c16158c4a23dcff85020ef00a2a0eba3085adb6860a35199a270e3e26915771d7ca82f7af16f9c19659073a4b",
+      "accountStatus": "PENDING_VERIFICATION",
+      "passkeys": [
+        {
+          "credentialId": "srbgOY6G01I9L8jjZzGaWfUEOmuEdG1vPwPYk3q5MF4",
+          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEXIuYqikkIMGpUFtBHKZwwz7oNWLvhtjlT5c-NtNaNgVhnPWxGLp0cIfzCt9ZqL7VbkEZLXgL1-eBsWzlWNxasA",
+          "counter": 1,
+          "transports": [
+            "internal"
+          ],
+          "createdAt": "2026-09-25T06:35:26.131Z"
+        }
+      ],
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-09-25T06:35:26.088Z",
+      "lastLogin": "2026-09-25T06:35:26.088Z"
+    },
+    {
+      "id": "USER-1790318126228-2811",
+      "fullName": "Expired Challenge User",
+      "role": "MEO",
+      "mobileNumber": "9634518273",
+      "employeeId": null,
+      "passwordHash": "scrypt$be9ba2f2e73626f5de15ef9856e287b2$a4e69677f4865f917311b125680fb5697ec36c5026652e09336c3fc2d1de36cfb858cdf5f85fb3364d54f883fbc0a12ce9284277ba6397cdc7e05916b2fd2d20",
+      "accountStatus": "PENDING_VERIFICATION",
+      "passkeys": [],
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-09-25T06:35:26.228Z",
+      "lastLogin": "2026-09-25T06:35:26.228Z"
     }
   ],
   "sessions": [
@@ -489,6 +575,56 @@
       "role": "APO",
       "createdAt": "2026-09-25T06:28:58.663Z",
       "expiresAt": 1790404138663,
+      "metadata": {
+        "authMethod": "password"
+      }
+    },
+    {
+      "sessionId": "533b2f40eb00c92402732a843e5033833721bfce737c59259168b9645861b111",
+      "userId": "USER-1790318125797-5075",
+      "role": "APO",
+      "createdAt": "2026-09-25T06:35:25.959Z",
+      "expiresAt": 1790404525959,
+      "metadata": {
+        "authMethod": "passkey"
+      }
+    },
+    {
+      "sessionId": "8efd4ebb9bce7ba6c63304cc23de88fc2d584cf86f04f41a9ebd7a90a44c749e",
+      "userId": "USER-1790318125928-5624",
+      "role": "DEO",
+      "createdAt": "2026-09-25T06:35:26.008Z",
+      "expiresAt": 1790404526008,
+      "metadata": {
+        "authMethod": "passkey"
+      }
+    },
+    {
+      "sessionId": "ab607cb4198b459ab3078a6f69515768cdda507ccde3b963d0d76acaf3d14620",
+      "userId": "USER-1790318126088-6356",
+      "role": "APO",
+      "createdAt": "2026-09-25T06:35:26.138Z",
+      "expiresAt": 1790404526138,
+      "metadata": {
+        "authMethod": "passkey"
+      }
+    },
+    {
+      "sessionId": "4f3f0bf9761f75b929908646324fc61f0690544a7e70a62b649da2e9c3712780",
+      "userId": "TCH-TS-TCH-100234",
+      "role": "Teacher",
+      "createdAt": "2026-09-25T06:35:26.309Z",
+      "expiresAt": 1790404526309,
+      "metadata": {
+        "authMethod": "teacher_credentials"
+      }
+    },
+    {
+      "sessionId": "4ffeca874a76bb2262e8e0266af009161a6f7b2ccc2cff51ba7b97e127a13545",
+      "userId": "USER-1790318125797-5075",
+      "role": "APO",
+      "createdAt": "2026-09-25T06:35:26.420Z",
+      "expiresAt": 1790404526420,
       "metadata": {
         "authMethod": "password"
       }
@@ -788,6 +924,92 @@
       "consumed": true,
       "consumedAt": "2026-09-25T06:28:58.552Z",
       "enrollmentToken": "420d3b21a4d2d64aa14f69a5952e1bd401d0f78fa5f64ecaeb513f76e6683c7c"
+    },
+    {
+      "userId": "USER-1790318125797-5075",
+      "challenge": "uT-OPWPjRhWODOZO_bl9RlMI2oX4CXUhGQ6QKtpoaXQ",
+      "registrationType": "WEBAUTHN_REGISTRATION",
+      "createdAt": "2026-09-25T06:35:25.799Z",
+      "createdAtIso": "2026-09-25T06:35:25.799Z",
+      "expiresAt": 1790318725799,
+      "expiresAtMs": 1790318725799,
+      "consumed": true,
+      "consumedAt": "2026-09-25T06:35:25.956Z",
+      "enrollmentToken": "3deb96e4914919b0f00458a890b01a23aa9f1cd4ceebb2046d867ccdaad98a02"
+    },
+    {
+      "userId": "USER-1790318125928-5624",
+      "challenge": "5iWudjRzY3sYmF7tS6wfLPdCekmo2cxV2isgEq7loWE",
+      "registrationType": "WEBAUTHN_REGISTRATION",
+      "createdAt": "2026-09-25T06:35:25.931Z",
+      "createdAtIso": "2026-09-25T06:35:25.931Z",
+      "expiresAt": 1790318725931,
+      "expiresAtMs": 1790318725931,
+      "consumed": true,
+      "consumedAt": "2026-09-25T06:35:25.987Z",
+      "enrollmentToken": "887432d34499b0ed2023650dbd1b059447918888bfb7d3480b8d6d6fd61d4ddf",
+      "superseded": true
+    },
+    {
+      "userId": "USER-1790318125928-5624",
+      "challenge": "V4fY9gPaN5cB_j9OAFW5z4G9ovQmVnnSzO0ZefAbKOU",
+      "registrationType": "WEBAUTHN_REGISTRATION",
+      "createdAt": "2026-09-25T06:35:25.985Z",
+      "createdAtIso": "2026-09-25T06:35:25.985Z",
+      "expiresAt": 1790318725985,
+      "expiresAtMs": 1790318725985,
+      "consumed": true,
+      "consumedAt": "2026-09-25T06:35:26.006Z",
+      "enrollmentToken": "8f074d67825152581767940ae8bea34426b3b5283b2606d52ba65b9d0fd1f5f6"
+    },
+    {
+      "userId": "USER-1790318126088-6356",
+      "challenge": "4Ryfy3X6sBeyw7eX9yAManf6uh6vGBY6jctv9LQ5fw0",
+      "registrationType": "WEBAUTHN_REGISTRATION",
+      "createdAt": "2026-09-25T06:35:26.090Z",
+      "createdAtIso": "2026-09-25T06:35:26.090Z",
+      "expiresAt": 1790318726090,
+      "expiresAtMs": 1790318726090,
+      "consumed": true,
+      "consumedAt": "2026-09-25T06:35:26.103Z",
+      "enrollmentToken": "fe589e73b1a4b80c603a963a02b532f7e51852ba8c2152a8ccec0ba9f37e873f",
+      "superseded": true
+    },
+    {
+      "userId": "USER-1790318126088-6356",
+      "challenge": "Jh-p8irNoJncA_DNA5atFwGBxImQzmMNoAfE66GWKjI",
+      "registrationType": "WEBAUTHN_REGISTRATION",
+      "createdAt": "2026-09-25T06:35:26.101Z",
+      "createdAtIso": "2026-09-25T06:35:26.101Z",
+      "expiresAt": 1790318726101,
+      "expiresAtMs": 1790318726101,
+      "consumed": true,
+      "consumedAt": "2026-09-25T06:35:26.136Z",
+      "enrollmentToken": "fbd1c9e0730a591f31cdefa8be4566be46678b12fa5d0e47de94b9d2406c6d2a"
+    },
+    {
+      "userId": "USER-1790318126228-2811",
+      "challenge": "GT6t2Rbsf4NrFW2R-7tMW21xYHrPgLN9Oj2F09mCBQg",
+      "registrationType": "WEBAUTHN_REGISTRATION",
+      "createdAt": "2026-09-25T06:35:26.231Z",
+      "createdAtIso": "2026-09-25T06:35:26.231Z",
+      "expiresAt": 1790318125250,
+      "expiresAtMs": 1790318726231,
+      "consumed": false,
+      "consumedAt": null,
+      "enrollmentToken": "23c9df06ceddf8883da1190462ef293610759e74f684c55cb44f5593339e6ef9"
+    },
+    {
+      "userId": "USER-1790318125797-5075",
+      "challenge": "r85sa0jpsNlNUSxpxD_-Q0iMNgQLmtTLPxUi0rP6tKc",
+      "registrationType": "WEBAUTHN_AUTHENTICATION",
+      "createdAt": "2026-09-25T06:35:26.266Z",
+      "createdAtIso": "2026-09-25T06:35:26.266Z",
+      "expiresAt": 1790318726266,
+      "expiresAtMs": 1790318726266,
+      "consumed": true,
+      "consumedAt": "2026-09-25T06:35:26.295Z",
+      "enrollmentToken": "7e7fd5898d186284a5473265786ba0c2cf603994a03c382b57e28c54a716fabb"
     }
   ]
 }
