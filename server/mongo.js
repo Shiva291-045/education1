@@ -1,3 +1,9 @@
+const dns = require('dns');
+try {
+  // Ensure reliable DNS resolution for MongoDB Atlas SRV records on Windows
+  dns.setServers(['8.8.8.8', '1.1.1.1', ...dns.getServers()]);
+} catch (e) {}
+
 const { loadEnv } = require('./loadEnv');
 loadEnv();
 
