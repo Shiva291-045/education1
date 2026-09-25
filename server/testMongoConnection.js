@@ -1,3 +1,8 @@
+const dns = require('dns');
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1', ...dns.getServers()]);
+} catch (e) {}
+
 const { MongoClient } = require('mongodb');
 const { loadEnv } = require('./loadEnv');
 
