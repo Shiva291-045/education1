@@ -10,6 +10,7 @@ const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 const db = require('./db');
 const mongo = require('./mongo');
 const authController = require('./controllers/authController');
+const teacherController = require('./controllers/teacherController');
 const authConfig = require('./config/authConfig');
 
 async function bootServer(startListening) {
@@ -250,6 +251,16 @@ try {
         await authController.linkStatus(req, mockRes);
         return;
       }
+      // Teacher Service Record
+      if (pathname === '/api/teacher/service-record' && req.method === 'GET') {
+        await teacherController.getServiceRecord(req, mockRes);
+        return;
+      }
+      if (pathname === '/api/teacher/preview-record' && req.method === 'GET') {
+        await teacherController.getPreviewRecord(req, mockRes);
+        return;
+      }
+
       if (pathname === '/api/portal-data' && req.method === 'GET') {
         await authController.portalData(req, mockRes);
         return;

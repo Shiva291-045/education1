@@ -42,6 +42,28 @@ const DEV_TEST_EMPLOYEES = [
     mandal: "Jangaon",
     accountStatus: "ACTIVE",
     isDevTestData: true
+  },
+  {
+    employeeId: "2126324",
+    mobileNumber: "9700391515",
+    fullName: "P. Suresh Babu",
+    role: "Teacher",
+    designation: "SA PHY SCI",
+    schoolName: "MPUPS Rolliakal",
+    mandal: "Parvathagiri",
+    accountStatus: "ACTIVE",
+    isDevTestData: true
+  },
+  {
+    employeeId: "TS-TCH-2126324",
+    mobileNumber: "9700391515",
+    fullName: "P. Suresh Babu",
+    role: "Teacher",
+    designation: "SA PHY SCI",
+    schoolName: "MPUPS Rolliakal",
+    mandal: "Parvathagiri",
+    accountStatus: "ACTIVE",
+    isDevTestData: true
   }
 ];
 
