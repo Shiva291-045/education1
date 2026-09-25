@@ -16,12 +16,16 @@ const authConfig = require('./config/authConfig');
 async function bootServer(startListening) {
   try {
     await mongo.connectMongo();
+    if (mongo.isMongoConnected()) {
+      await mongo.initialSeedIfEmpty(db.read());
+      await db.syncFromMongo();
+    }
   } catch (err) {
     if (process.env.NODE_ENV === 'production' && mongo.isMongoConfigured()) {
       console.error('[MongoDB] Required in production but unavailable. Exiting.');
       process.exit(1);
     }
-    console.warn('[MongoDB] Unavailable. Using on-disk WebAuthn challenge persistence.');
+    console.warn('[MongoDB] Unavailable. Using local persistence.');
   }
   startListening();
 }
