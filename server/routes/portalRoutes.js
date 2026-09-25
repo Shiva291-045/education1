@@ -5,6 +5,10 @@ const authController = require('../controllers/authController');
 // Portal Data & Statistics Routes
 router.get('/portal-data', (req, res) => authController.portalData(req, res));
 router.get('/official/link-status', (req, res) => authController.linkStatus(req, res));
+router.post('/passkey/register/start', (req, res) => authController.passkeyRegisterStart(req, res));
+router.post('/passkey/register/finish', (req, res) => authController.passkeyRegisterFinish(req, res));
+router.post('/passkey/login/start', (req, res) => authController.passkeyLoginStart(req, res));
+router.post('/passkey/login/finish', (req, res) => authController.passkeyLoginFinish(req, res));
 
 // Search schools endpoint for "Find a School" search widget
 router.get('/schools/search', (req, res) => {

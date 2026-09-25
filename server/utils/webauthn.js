@@ -82,40 +82,39 @@ function decodeCbor(buf) {
   return { result, bytesRead: offset };
 }
 
-// In-memory challenge store with automatic 5-minute expiry
-const challenges = new Map();
-
-function storeChallenge(key, challenge) {
-  challenges.set(key, {
-    challenge,
-    expiresAt: Date.now() + 5 * 60 * 1000 // 5 minutes validity
-  });
+function originsMatch(clientOrigin, expectedOrigins) {
+  if (!clientOrigin || !expectedOrigins || expectedOrigins.length === 0) return false;
+  const normalizedClient = String(clientOrigin).replace(/\/$/, '');
+  return expectedOrigins.some((origin) => String(origin).replace(/\/$/, '') === normalizedClient);
 }
 
-function getAndClearChallenge(key) {
-  const item = challenges.get(key);
-  if (!item) return null;
-  challenges.delete(key);
-  if (Date.now() > item.expiresAt) return null;
-  return item.challenge;
-}
-
-// Periodically clean up expired challenges
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, item] of challenges.entries()) {
-    if (now > item.expiresAt) {
-      challenges.delete(key);
-    }
+function extractClientChallenge(response) {
+  if (!response || !response.clientDataJSON) return null;
+  try {
+    const clientDataRaw = Buffer.from(response.clientDataJSON, 'base64url').toString('utf8');
+    const clientData = JSON.parse(clientDataRaw);
+    return clientData.challenge || null;
+  } catch {
+    return null;
   }
-}, 60 * 1000).unref();
+}
 
 /**
  * Generate Registration Options (navigator.credentials.create)
+ * The caller must persist `challenge` before returning options to the browser.
  */
-function generateRegistrationOptions({ user, rpName = 'DEO Jangaon Education Portal', rpId = 'localhost' }) {
-  const challenge = crypto.randomBytes(32).toString('base64url');
-  storeChallenge(`reg_${user.id}`, challenge);
+function generateRegistrationOptions({
+  user,
+  challenge,
+  rpName = 'DEO Jangaon Education Portal',
+  rpId
+}) {
+  if (!challenge) {
+    throw new Error('A server-persisted WebAuthn challenge is required.');
+  }
+  if (!rpId) {
+    throw new Error('WebAuthn rpId is required.');
+  }
 
   return {
     challenge,
@@ -124,14 +123,14 @@ function generateRegistrationOptions({ user, rpName = 'DEO Jangaon Education Por
       id: rpId
     },
     user: {
-      id: Buffer.from(user.id).toString('base64url'),
+      id: Buffer.from(String(user.id)).toString('base64url'),
       name: user.employeeId || user.mobileNumber || user.id,
       displayName: user.fullName || user.id
     },
     pubKeyCredParams: [
       { type: 'public-key', alg: -7 } // ES256 (P-256 with SHA-256)
     ],
-    timeout: 60000,
+    timeout: 10 * 60 * 1000,
     attestation: 'none',
     authenticatorSelection: {
       userVerification: 'preferred',
@@ -143,10 +142,16 @@ function generateRegistrationOptions({ user, rpName = 'DEO Jangaon Education Por
 /**
  * Verify Registration Response (attestationObject + clientDataJSON)
  */
-function verifyRegistration({ response, expectedChallenge, expectedRpId = 'localhost', expectedOrigins = ['http://localhost:5000', 'https://localhost:5000', 'http://127.0.0.1:5000'] }) {
+function verifyRegistration({ response, expectedChallenge, expectedRpId, expectedOrigins }) {
   try {
+    if (!expectedChallenge) {
+      return { success: false, message: 'Challenge not found.' };
+    }
+    if (!expectedRpId) {
+      return { success: false, message: 'WebAuthn verification failed.' };
+    }
     if (!response || !response.clientDataJSON || !response.attestationObject) {
-      return { success: false, message: 'Missing clientDataJSON or attestationObject.' };
+      return { success: false, message: 'WebAuthn verification failed.' };
     }
 
     // 1. Verify Client Data
@@ -154,19 +159,16 @@ function verifyRegistration({ response, expectedChallenge, expectedRpId = 'local
     const clientData = JSON.parse(clientDataRaw);
 
     if (clientData.type !== 'webauthn.create') {
-      return { success: false, message: `Invalid clientData type: ${clientData.type}` };
+      return { success: false, message: 'WebAuthn verification failed.' };
     }
 
     if (clientData.challenge !== expectedChallenge) {
-      return { success: false, message: 'Challenge mismatch.' };
+      return { success: false, message: 'WebAuthn verification failed.' };
     }
 
-    // Verify origin
-    if (expectedOrigins && expectedOrigins.length > 0) {
-      const originMatch = expectedOrigins.some(o => clientData.origin.startsWith(o) || o.startsWith(clientData.origin));
-      if (!originMatch) {
-        console.warn(`[WebAuthn] Origin mismatch. Client reported: ${clientData.origin}`);
-      }
+    if (!originsMatch(clientData.origin, expectedOrigins)) {
+      console.warn('[WebAuthn] Origin mismatch for registration.');
+      return { success: false, message: 'WebAuthn verification failed.' };
     }
 
     // 2. Decode Attestation Object
@@ -183,11 +185,8 @@ function verifyRegistration({ response, expectedChallenge, expectedRpId = 'local
     const expectedRpIdHash = crypto.createHash('sha256').update(expectedRpId).digest();
     const rpIdHash = authData.slice(0, 32);
     if (!rpIdHash.equals(expectedRpIdHash)) {
-      // In development localhost variations might occur, check also localhost
-      const localRpIdHash = crypto.createHash('sha256').update('localhost').digest();
-      if (!rpIdHash.equals(localRpIdHash)) {
-        return { success: false, message: 'rpIdHash mismatch.' };
-      }
+      console.warn('[WebAuthn] RP ID hash mismatch for registration.');
+      return { success: false, message: 'WebAuthn verification failed.' };
     }
 
     // Byte 32: flags
@@ -250,21 +249,25 @@ function verifyRegistration({ response, expectedChallenge, expectedRpId = 'local
       }
     };
   } catch (err) {
-    console.error('[WebAuthn] Verification error:', err);
-    return { success: false, message: `Verification failed: ${err.message}` };
+    console.error('[WebAuthn] Verification error:', err.message);
+    return { success: false, message: 'WebAuthn verification failed.' };
   }
 }
 
 /**
  * Generate Authentication Options (navigator.credentials.get)
  */
-function generateAuthenticationOptions({ user, passkeys = [], rpId = 'localhost' }) {
-  const challenge = crypto.randomBytes(32).toString('base64url');
-  storeChallenge(`auth_${user.id}`, challenge);
+function generateAuthenticationOptions({ user, passkeys = [], rpId, challenge }) {
+  if (!challenge) {
+    throw new Error('A server-persisted WebAuthn challenge is required.');
+  }
+  if (!rpId) {
+    throw new Error('WebAuthn rpId is required.');
+  }
 
   return {
     challenge,
-    timeout: 60000,
+    timeout: 10 * 60 * 1000,
     rpId,
     allowCredentials: passkeys.map(p => ({
       type: 'public-key',
@@ -278,10 +281,13 @@ function generateAuthenticationOptions({ user, passkeys = [], rpId = 'localhost'
 /**
  * Verify Authentication Assertion (signature verification)
  */
-function verifyAuthentication({ response, credential, expectedChallenge, expectedRpId = 'localhost', expectedOrigins = ['http://localhost:5000', 'https://localhost:5000', 'http://127.0.0.1:5000'] }) {
+function verifyAuthentication({ response, credential, expectedChallenge, expectedRpId, expectedOrigins }) {
   try {
+    if (!expectedChallenge || !expectedRpId) {
+      return { success: false, message: 'WebAuthn verification failed.' };
+    }
     if (!response || !response.clientDataJSON || !response.authenticatorData || !response.signature) {
-      return { success: false, message: 'Missing assertion response fields.' };
+      return { success: false, message: 'WebAuthn verification failed.' };
     }
 
     // 1. Verify Client Data
@@ -289,15 +295,26 @@ function verifyAuthentication({ response, credential, expectedChallenge, expecte
     const clientData = JSON.parse(clientDataRaw);
 
     if (clientData.type !== 'webauthn.get') {
-      return { success: false, message: `Invalid assertion clientData type: ${clientData.type}` };
+      return { success: false, message: 'WebAuthn verification failed.' };
     }
 
     if (clientData.challenge !== expectedChallenge) {
-      return { success: false, message: 'Assertion challenge mismatch.' };
+      return { success: false, message: 'WebAuthn verification failed.' };
+    }
+
+    if (!originsMatch(clientData.origin, expectedOrigins)) {
+      console.warn('[WebAuthn] Origin mismatch for authentication.');
+      return { success: false, message: 'WebAuthn verification failed.' };
     }
 
     // 2. Authenticator Data
     const authData = Buffer.from(response.authenticatorData, 'base64url');
+    const expectedRpIdHash = crypto.createHash('sha256').update(expectedRpId).digest();
+    if (!authData.slice(0, 32).equals(expectedRpIdHash)) {
+      console.warn('[WebAuthn] RP ID hash mismatch for authentication.');
+      return { success: false, message: 'WebAuthn verification failed.' };
+    }
+
     const flags = authData[32];
     const upFlag = (flags & 0x01) !== 0;
 
@@ -332,17 +349,17 @@ function verifyAuthentication({ response, credential, expectedChallenge, expecte
       counter: signCount
     };
   } catch (err) {
-    console.error('[WebAuthn] Assertion verification error:', err);
-    return { success: false, message: `Assertion verification failed: ${err.message}` };
+    console.error('[WebAuthn] Assertion verification error:', err.message);
+    return { success: false, message: 'WebAuthn verification failed.' };
   }
 }
 
 module.exports = {
-  storeChallenge,
-  getAndClearChallenge,
   generateRegistrationOptions,
   verifyRegistration,
   generateAuthenticationOptions,
   verifyAuthentication,
-  decodeCbor
+  decodeCbor,
+  originsMatch,
+  extractClientChallenge
 };

@@ -12,6 +12,14 @@ const { TelanganaEmblem, TelanganaRisingLogo, PencilBanner, SchoolBuildingGraphi
 // ==========================================
 const AuthContext = createContext(null);
 
+const API_BASE = (typeof window !== 'undefined' && window.PORTAL_API_BASE)
+  ? String(window.PORTAL_API_BASE).replace(/\/$/, '')
+  : '';
+
+function apiUrl(path) {
+  return `${API_BASE}${path}`;
+}
+
 // Real WebAuthn Base64URL and ArrayBuffer Converters
 function bufferToBase64Url(buffer) {
   const bytes = new Uint8Array(buffer);
@@ -145,7 +153,7 @@ function AuthProvider({ children }) {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const res = await fetch('/api/auth/me', {
+        const res = await fetch(apiUrl('/api/auth/me'), {
           credentials: 'include'
         });
         const data = await res.json();
@@ -166,7 +174,7 @@ function AuthProvider({ children }) {
   // 1. Register Administrative Account (Direct: Name, Role, Mobile, Password - Zero OTP)
   const registerUser = async (formData) => {
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch(apiUrl('/api/auth/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -182,11 +190,19 @@ function AuthProvider({ children }) {
   const enrollPasskey = async (userId, passkeyOptions) => {
     try {
       const cred = await createBrowserPasskey(passkeyOptions);
-      const res = await fetch('/api/auth/webauthn/register-verify', {
+      const attestation = {
+        id: cred.id,
+        rawId: cred.rawId,
+        type: cred.type,
+        clientDataJSON: cred.response.clientDataJSON,
+        attestationObject: cred.response.attestationObject,
+        transports: cred.response.transports
+      };
+      const res = await fetch(apiUrl('/passkey/register/finish'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ userId, response: cred })
+        body: JSON.stringify({ userId, response: attestation })
       });
       const data = await res.json();
       if (data.success && data.user) {
@@ -204,7 +220,7 @@ function AuthProvider({ children }) {
   // 3. Login with Passkey (navigator.credentials.get)
   const loginWithPasskey = async (identifier) => {
     try {
-      const optRes = await fetch('/api/auth/webauthn/login-options', {
+      const optRes = await fetch(apiUrl('/passkey/login/start'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -216,15 +232,24 @@ function AuthProvider({ children }) {
       }
 
       const assertion = await getBrowserPasskey(optData.options);
+      const assertionPayload = {
+        id: assertion.id,
+        rawId: assertion.rawId,
+        type: assertion.type,
+        clientDataJSON: assertion.response.clientDataJSON,
+        authenticatorData: assertion.response.authenticatorData,
+        signature: assertion.response.signature,
+        userHandle: assertion.response.userHandle
+      };
 
-      const verRes = await fetch('/api/auth/webauthn/login-verify', {
+      const verRes = await fetch(apiUrl('/passkey/login/finish'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
           identifier,
           userId: optData.userId,
-          response: assertion
+          response: assertionPayload
         })
       });
       const verData = await verRes.json();
@@ -242,7 +267,7 @@ function AuthProvider({ children }) {
   // 4. Fallback Login with Password
   const loginWithPassword = async (identifier, password) => {
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(apiUrl('/api/auth/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -263,7 +288,7 @@ function AuthProvider({ children }) {
   // 5. Dedicated Teacher Login (Employee ID + Registered Mobile Number)
   const loginTeacher = async (employeeId, mobileNumber) => {
     try {
-      const res = await fetch('/api/auth/teacher/login', {
+      const res = await fetch(apiUrl('/api/auth/teacher/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -293,7 +318,7 @@ function AuthProvider({ children }) {
   // 6. Request Passkey Options for user
   const requestPasskeyOptions = async (userId) => {
     try {
-      const res = await fetch('/api/auth/webauthn/register-options', {
+      const res = await fetch(apiUrl('/passkey/register/start'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -307,7 +332,7 @@ function AuthProvider({ children }) {
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+      await fetch(apiUrl('/api/auth/logout'), { method: 'POST', credentials: 'include' });
     } catch (e) {}
     setUser(null);
     setCurrentView('PORTAL');

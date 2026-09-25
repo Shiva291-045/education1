@@ -8,6 +8,7 @@ const DB_FILE = path.join(__dirname, 'education_db.json');
 const defaultState = {
   users: [],
   sessions: [],
+  webauthnChallenges: [],
   notifications: [
     {
       id: "NOTIF-1",
@@ -76,6 +77,7 @@ class Database {
         }
         if (!parsed.users) parsed.users = [];
         if (!parsed.sessions) parsed.sessions = [];
+        if (!parsed.webauthnChallenges) parsed.webauthnChallenges = [];
         // Remove otps array if present (OTP workflow completely removed)
         if (parsed.otps) delete parsed.otps;
 
@@ -101,6 +103,7 @@ class Database {
       const data = JSON.parse(raw);
       if (!data.sessions) data.sessions = [];
       if (!data.users) data.users = [];
+      if (!data.webauthnChallenges) data.webauthnChallenges = [];
       return data;
     } catch (err) {
       console.error('Database read error:', err);
@@ -331,6 +334,66 @@ class Database {
       statistics: data.statistics,
       notifications: data.notifications
     };
+  }
+
+  // ==========================================
+  // WEBAUTHN CHALLENGE PERSISTENCE
+  // ==========================================
+  saveChallenge(challengeDoc) {
+    const data = this.read();
+    if (!data.webauthnChallenges) data.webauthnChallenges = [];
+    const nowIso = new Date().toISOString();
+    data.webauthnChallenges.forEach((item) => {
+      if (
+        item.userId === challengeDoc.userId
+        && item.registrationType === challengeDoc.registrationType
+        && !item.consumed
+      ) {
+        item.consumed = true;
+        item.consumedAt = nowIso;
+        item.superseded = true;
+      }
+    });
+    data.webauthnChallenges.push(challengeDoc);
+    this.write(data);
+    return challengeDoc;
+  }
+
+  getChallenge(userId, registrationType) {
+    const data = this.read();
+    const matches = (data.webauthnChallenges || []).filter((item) => (
+      String(item.userId) === String(userId) && item.registrationType === registrationType
+    ));
+    matches.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+    const active = matches.find((item) => !item.consumed);
+    return active || matches[0] || null;
+  }
+
+  getChallengeByEnrollmentToken(token) {
+    if (!token) return null;
+    const data = this.read();
+    return (data.webauthnChallenges || []).find((item) => item.enrollmentToken === token) || null;
+  }
+
+  getChallengeByValue(challenge) {
+    if (!challenge) return null;
+    const data = this.read();
+    return (data.webauthnChallenges || []).find((item) => item.challenge === challenge) || null;
+  }
+
+  consumeChallenge(userId, challenge, registrationType) {
+    const data = this.read();
+    if (!data.webauthnChallenges) return false;
+    const found = data.webauthnChallenges.find((item) => (
+      String(item.userId) === String(userId)
+      && item.challenge === challenge
+      && item.registrationType === registrationType
+    ));
+    if (!found) return false;
+    found.consumed = true;
+    found.consumedAt = new Date().toISOString();
+    this.write(data);
+    return true;
   }
 }
 

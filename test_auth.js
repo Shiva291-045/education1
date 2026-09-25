@@ -26,14 +26,15 @@ function request(method, path, body = null, headers = {}) {
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
         let cookie = null;
-        if (res.headers['set-cookie']) {
-          const raw = res.headers['set-cookie'];
-          cookie = Array.isArray(raw) ? raw[0].split(';')[0] : raw.split(';')[0];
+        const setCookie = res.headers['set-cookie'];
+        if (setCookie) {
+          const raw = Array.isArray(setCookie) ? setCookie : [setCookie];
+          cookie = raw.map((item) => String(item).split(';')[0]).join('; ');
         }
         try {
-          resolve({ status: res.statusCode, data: JSON.parse(data), cookie });
+          resolve({ status: res.statusCode, data: JSON.parse(data), cookie, headers: res.headers });
         } catch {
-          resolve({ status: res.statusCode, data, cookie });
+          resolve({ status: res.statusCode, data, cookie, headers: res.headers });
         }
       });
     });
@@ -79,6 +80,64 @@ function encodeCbor(val) {
     return Buffer.concat(parts);
   }
   throw new Error("Unsupported type for test CBOR: " + typeof val);
+}
+
+function buildRegistrationAttestation(challenge, { origin = 'http://localhost:5000', rpId = 'localhost' } = {}) {
+  const { publicKey, privateKey } = crypto.generateKeyPairSync('ec', { namedCurve: 'prime256v1' });
+  const jwk = publicKey.export({ format: 'jwk' });
+  const xCoord = Buffer.from(jwk.x, 'base64url');
+  const yCoord = Buffer.from(jwk.y, 'base64url');
+
+  const coseKeyMap = new Map();
+  coseKeyMap.set(1, 2);
+  coseKeyMap.set(3, -7);
+  coseKeyMap.set(-1, 1);
+  coseKeyMap.set(-2, xCoord);
+  coseKeyMap.set(-3, yCoord);
+  const coseKeyBytes = encodeCbor(coseKeyMap);
+
+  const rpIdHash = crypto.createHash('sha256').update(rpId).digest();
+  const flags = Buffer.from([0x45]);
+  const signCount = Buffer.alloc(4);
+  signCount.writeUInt32BE(1, 0);
+  const aaguid = Buffer.alloc(16, 0);
+  const credentialId = crypto.randomBytes(32);
+  const credIdLen = Buffer.alloc(2);
+  credIdLen.writeUInt16BE(credentialId.length, 0);
+
+  const authData = Buffer.concat([
+    rpIdHash,
+    flags,
+    signCount,
+    aaguid,
+    credIdLen,
+    credentialId,
+    coseKeyBytes
+  ]);
+
+  const attestationMap = new Map();
+  attestationMap.set('fmt', 'none');
+  attestationMap.set('attStmt', new Map());
+  attestationMap.set('authData', authData);
+  const attestationObject = encodeCbor(attestationMap);
+
+  const clientDataJSON = JSON.stringify({
+    type: 'webauthn.create',
+    challenge,
+    origin
+  });
+
+  return {
+    credentialId,
+    privateKey,
+    payload: {
+      id: credentialId.toString('base64url'),
+      rawId: credentialId.toString('base64url'),
+      clientDataJSON: Buffer.from(clientDataJSON).toString('base64url'),
+      attestationObject: attestationObject.toString('base64url'),
+      transports: ['internal']
+    }
+  };
 }
 
 async function runTests() {
@@ -131,65 +190,65 @@ async function runTests() {
     // Test 3: Real WebAuthn Passkey Registration Verification
     // -------------------------------------------------------------
     console.log("\n[Test 3] Performing real WebAuthn Passkey registration verification...");
-    // Generate real P-256 key pair
-    const { publicKey, privateKey } = crypto.generateKeyPairSync('ec', { namedCurve: 'prime256v1' });
-    const jwk = publicKey.export({ format: 'jwk' });
-    const xCoord = Buffer.from(jwk.x, 'base64url');
-    const yCoord = Buffer.from(jwk.y, 'base64url');
 
-    // Build COSE key map: { 1: 2 (EC2), 3: -7 (ES256), -1: 1 (P-256), -2: x, -3: y }
-    const coseKeyMap = new Map();
-    coseKeyMap.set(1, 2);
-    coseKeyMap.set(3, -7);
-    coseKeyMap.set(-1, 1);
-    coseKeyMap.set(-2, xCoord);
-    coseKeyMap.set(-3, yCoord);
-    const coseKeyBytes = encodeCbor(coseKeyMap);
-
-    // Build authenticator data
-    const rpIdHash = crypto.createHash('sha256').update('localhost').digest();
-    const flags = Buffer.from([0x45]); // UP (0x01) + UV (0x04) + AT (0x40) = 0x45
-    const signCount = Buffer.alloc(4);
-    signCount.writeUInt32BE(1, 0);
-    const aaguid = Buffer.alloc(16, 0);
-    const credentialId = crypto.randomBytes(32);
-    const credIdLen = Buffer.alloc(2);
-    credIdLen.writeUInt16BE(credentialId.length, 0);
-
-    const authData = Buffer.concat([
-      rpIdHash,
-      flags,
-      signCount,
-      aaguid,
-      credIdLen,
-      credentialId,
-      coseKeyBytes
-    ]);
-
-    // Build attestationObject CBOR: { fmt: "none", attStmt: {}, authData: authData }
-    const attestationMap = new Map();
-    attestationMap.set('fmt', 'none');
-    attestationMap.set('attStmt', new Map());
-    attestationMap.set('authData', authData);
-    const attestationObject = encodeCbor(attestationMap);
-
-    // Build clientDataJSON
-    const clientDataJSON = JSON.stringify({
-      type: 'webauthn.create',
-      challenge: regChallenge,
-      origin: 'http://localhost:5000'
+    const missingChallengeRes = await request('POST', '/api/auth/webauthn/register-verify', {
+      userId: 'USER-does-not-exist',
+      response: buildRegistrationAttestation('not-a-real-challenge').payload
     });
+    if (missingChallengeRes.data.success || !/not found|expired|User account not found/i.test(JSON.stringify(missingChallengeRes.data))) {
+      throw new Error("Expected missing challenge/user to be rejected: " + JSON.stringify(missingChallengeRes.data));
+    }
+    console.log("✓ Missing challenge rejected:", missingChallengeRes.data.message);
+
+    const originMismatch = buildRegistrationAttestation(regChallenge, { origin: 'https://evil.example' });
+    const originRes = await request('POST', '/api/auth/webauthn/register-verify', {
+      userId: createdUserId,
+      response: originMismatch.payload
+    }, regRes.cookie ? { Cookie: regRes.cookie } : {});
+    if (originRes.data.success) {
+      throw new Error("Origin mismatch was incorrectly accepted.");
+    }
+    console.log("✓ Origin mismatch rejected:", originRes.data.message);
+
+    const rpMismatch = buildRegistrationAttestation(regChallenge, { rpId: 'evil.example' });
+    const rpRes = await request('POST', '/api/auth/webauthn/register-verify', {
+      userId: createdUserId,
+      response: rpMismatch.payload
+    }, regRes.cookie ? { Cookie: regRes.cookie } : {});
+    if (rpRes.data.success) {
+      throw new Error("RP ID mismatch was incorrectly accepted.");
+    }
+    console.log("✓ RP ID mismatch rejected:", rpRes.data.message);
+
+    const secondAdminMobile = '97' + Math.floor(10000000 + Math.random() * 90000000);
+    const secondReg = await request('POST', '/api/auth/register', {
+      fullName: 'Second Officer',
+      role: 'DEO',
+      mobileNumber: secondAdminMobile,
+      password: 'OfficialPassword2025!',
+      confirmPassword: 'OfficialPassword2025!'
+    });
+    if (!secondReg.data.success) {
+      throw new Error("Second registration failed: " + JSON.stringify(secondReg.data));
+    }
+    const crossUserAttest = buildRegistrationAttestation(regChallenge);
+    const crossUserRes = await request('POST', '/api/auth/webauthn/register-verify', {
+      userId: secondReg.data.user.id,
+      response: crossUserAttest.payload
+    });
+    if (crossUserRes.data.success) {
+      throw new Error("Cross-user challenge reuse was incorrectly accepted.");
+    }
+    console.log("✓ User mismatch rejected:", crossUserRes.data.message);
+
+    const registration = buildRegistrationAttestation(regChallenge);
+    const credentialId = registration.credentialId;
+    const privateKey = registration.privateKey;
 
     const verifyPasskeyRes = await request('POST', '/api/auth/webauthn/register-verify', {
       userId: createdUserId,
-      response: {
-        id: credentialId.toString('base64url'),
-        rawId: credentialId.toString('base64url'),
-        clientDataJSON: Buffer.from(clientDataJSON).toString('base64url'),
-        attestationObject: attestationObject.toString('base64url'),
-        transports: ['internal']
-      }
-    });
+      response: registration.payload
+    }, regRes.cookie ? { Cookie: regRes.cookie } : {});
 
     if (!verifyPasskeyRes.data.success) {
       throw new Error("Passkey registration verification failed: " + JSON.stringify(verifyPasskeyRes.data));
@@ -197,6 +256,106 @@ async function runTests() {
     console.log("✓ WebAuthn Passkey cryptographically verified and registered!");
     console.log("✓ Session established:", verifyPasskeyRes.data.sessionId);
     console.log("✓ Cookie received:", verifyPasskeyRes.cookie);
+
+    const reuseRes = await request('POST', '/api/auth/webauthn/register-verify', {
+      userId: createdUserId,
+      response: registration.payload
+    }, regRes.cookie ? { Cookie: regRes.cookie } : {});
+    if (reuseRes.data.success || !/consumed|not found|expired/i.test(String(reuseRes.data.message || ''))) {
+      throw new Error("Expected consumed challenge reuse to be rejected: " + JSON.stringify(reuseRes.data));
+    }
+    console.log("✓ Reused challenge rejected:", reuseRes.data.message);
+
+    const aliasStart = await request('POST', '/api/passkey/register/start', {
+      userId: secondReg.data.user.id
+    }, secondReg.cookie ? { Cookie: secondReg.cookie } : {});
+    if (!aliasStart.data.success || !aliasStart.data.options || !aliasStart.data.options.challenge) {
+      throw new Error("Alias /api/passkey/register/start failed: " + JSON.stringify(aliasStart.data));
+    }
+    const aliasAttest = buildRegistrationAttestation(aliasStart.data.options.challenge);
+    const aliasFinish = await request('POST', '/api/passkey/register/finish', {
+      userId: secondReg.data.user.id,
+      response: aliasAttest.payload
+    }, aliasStart.cookie ? { Cookie: aliasStart.cookie } : {});
+    if (!aliasFinish.data.success) {
+      throw new Error("Alias /api/passkey/register/finish failed: " + JSON.stringify(aliasFinish.data));
+    }
+    console.log("✓ /api/passkey/register/start and /finish aliases verified.");
+
+    // Test root /passkey/register/start and /passkey/register/finish endpoints
+    console.log("\n[Test 3b] Testing root /passkey/register/start and /finish (with challenge preservation)...");
+    const thirdAdminMobile = '95' + Math.floor(10000000 + Math.random() * 90000000);
+    const thirdReg = await request('POST', '/api/auth/register', {
+      fullName: 'Root Passkey Officer',
+      role: 'APO',
+      mobileNumber: thirdAdminMobile,
+      password: 'OfficialPassword2025!',
+      confirmPassword: 'OfficialPassword2025!'
+    });
+    if (!thirdReg.data.success) {
+      throw new Error("Third registration failed: " + JSON.stringify(thirdReg.data));
+    }
+
+    const rootStart = await request('POST', '/passkey/register/start', {
+      userId: thirdReg.data.user.id
+    }, thirdReg.cookie ? { Cookie: thirdReg.cookie } : {});
+    if (!rootStart.data.success || !rootStart.data.options || !rootStart.data.options.challenge) {
+      throw new Error("Root /passkey/register/start failed: " + JSON.stringify(rootStart.data));
+    }
+    console.log("✓ Root /passkey/register/start generated challenge:", rootStart.data.options.challenge);
+
+    // Verify that a failed verification attempt does NOT delete or consume the challenge
+    const badAttest = buildRegistrationAttestation('invalid-nonmatching-challenge');
+    const failedAttempt = await request('POST', '/passkey/register/finish', {
+      userId: thirdReg.data.user.id,
+      response: badAttest.payload
+    }, rootStart.cookie ? { Cookie: rootStart.cookie } : {});
+    if (failedAttempt.data.success) {
+      throw new Error("Invalid attestation was unexpectedly accepted!");
+    }
+    console.log("✓ Failed verification correctly rejected:", failedAttempt.data.message);
+
+    // Subsequent retry with the exact stored challenge MUST succeed
+    const validRootAttest = buildRegistrationAttestation(rootStart.data.options.challenge);
+    const retryFinish = await request('POST', '/passkey/register/finish', {
+      userId: thirdReg.data.user.id,
+      response: validRootAttest.payload
+    }, rootStart.cookie ? { Cookie: rootStart.cookie } : {});
+    if (!retryFinish.data.success) {
+      throw new Error("Subsequent passkey registration retry failed: " + JSON.stringify(retryFinish.data));
+    }
+    console.log("✓ Challenge preserved across failure; retry succeeded on /passkey/register/finish!");
+
+    const expiredRegMobile = '96' + Math.floor(10000000 + Math.random() * 90000000);
+    const expiredReg = await request('POST', '/api/auth/register', {
+      fullName: 'Expired Challenge User',
+      role: 'MEO',
+      mobileNumber: expiredRegMobile,
+      password: 'OfficialPassword2025!',
+      confirmPassword: 'OfficialPassword2025!'
+    });
+    if (!expiredReg.data.success) {
+      throw new Error("Expired-challenge registration failed: " + JSON.stringify(expiredReg.data));
+    }
+    const db = require('./server/db');
+    const data = db.read();
+    const row = (data.webauthnChallenges || []).find((item) => item.challenge === expiredReg.data.passkeyOptions.challenge);
+    if (!row) {
+      throw new Error("Expected persisted challenge for expiration test.");
+    }
+    row.consumed = false;
+    row.consumedAt = null;
+    row.expiresAt = Date.now() - 1000;
+    db.write(data);
+    const expiredAttest = buildRegistrationAttestation(expiredReg.data.passkeyOptions.challenge);
+    const expiredRes = await request('POST', '/api/auth/webauthn/register-verify', {
+      userId: expiredReg.data.user.id,
+      response: expiredAttest.payload
+    }, expiredReg.cookie ? { Cookie: expiredReg.cookie } : {});
+    if (expiredRes.data.success || !/expired/i.test(String(expiredRes.data.message || ''))) {
+      throw new Error("Expected expired challenge to be rejected: " + JSON.stringify(expiredRes.data));
+    }
+    console.log("✓ Expired challenge rejected:", expiredRes.data.message);
 
     let sessionCookie = verifyPasskeyRes.cookie;
 
@@ -222,7 +381,7 @@ async function runTests() {
     const clientDataHash = crypto.createHash('sha256').update(Buffer.from(loginClientDataJSON)).digest();
 
     const loginAuthData = Buffer.concat([
-      rpIdHash,
+      crypto.createHash('sha256').update('localhost').digest(),
       Buffer.from([0x05]), // UP + UV
       Buffer.from([0, 0, 0, 2]) // signCount: 2
     ]);
