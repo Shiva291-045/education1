@@ -276,8 +276,18 @@ function AuthProvider({ children }) {
       const data = await res.json();
       if (data.success && data.user) {
         setUser(data.user);
-        setActiveModal(null);
-        setCurrentView('DASHBOARD');
+        if (!data.user.hasPasskey) {
+          setPendingPasskeyEnrollment({
+            userId: data.user.id,
+            fullName: data.user.fullName,
+            mobileNumber: data.user.mobileNumber,
+            employeeId: data.user.employeeId
+          });
+          setActiveModal('ENROLL_PASSKEY');
+        } else {
+          setActiveModal(null);
+          setCurrentView('DASHBOARD');
+        }
       }
       return data;
     } catch (err) {
