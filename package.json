@@ -17,5 +17,8 @@
     "role-based-dashboard"
   ],
   "author": "District Educational Office, Jangaon",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^7.6.0"
+  }
 }

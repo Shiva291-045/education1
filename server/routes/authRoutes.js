@@ -11,8 +11,12 @@ router.post('/teacher/login', (req, res) => authController.teacherLogin(req, res
 // Real WebAuthn / Passkey routes
 router.post('/webauthn/register-options', (req, res) => authController.webauthnRegisterOptions(req, res));
 router.post('/webauthn/register-verify', (req, res) => authController.webauthnRegisterVerify(req, res));
-router.post('/webauthn/login-options', (req, res) => authController.webauthnLoginOptions(req, res));
-router.post('/webauthn/login-verify', (req, res) => authController.webauthnLoginVerify(req, res));
+router.post('/passkey/register/start', (req, res) => authController.passkeyRegisterStart(req, res));
+router.post('/passkey/register/finish', (req, res) => authController.passkeyRegisterFinish(req, res));
+router.post('/webauthn/login-options', (req, res) => authController.passkeyLoginStart(req, res));
+router.post('/webauthn/login-verify', (req, res) => authController.passkeyLoginFinish(req, res));
+router.post('/passkey/login/start', (req, res) => authController.passkeyLoginStart(req, res));
+router.post('/passkey/login/finish', (req, res) => authController.passkeyLoginFinish(req, res));
 
 // Fallback Password Login
 router.post('/login', (req, res) => authController.login(req, res));

@@ -1,7 +1,9 @@
 const db = require('../db');
 const officialDataService = require('../services/officialDataService');
 const webauthn = require('../utils/webauthn');
+const challengeService = require('../services/challengeService');
 const { hashPassword, verifyPassword } = require('../utils/security');
+const authConfig = require('../config/authConfig');
 
 // Sanitize user: NEVER leak passwordHash or raw credential private data
 function sanitizeUser(user) {
@@ -20,17 +22,11 @@ function sanitizeUser(user) {
   return safeUser;
 }
 
-// Cookie helper: Extract session ID from cookie or Authorization header
+const PENDING_PASSKEY_COOKIE = 'deo_webauthn_pending';
+
 function getSessionIdFromReq(req) {
-  const cookieHeader = req.headers.cookie;
-  if (cookieHeader) {
-    const cookies = cookieHeader.split(';').map(c => c.trim());
-    for (const c of cookies) {
-      if (c.startsWith('deo_session_id=')) {
-        return c.substring('deo_session_id='.length);
-      }
-    }
-  }
+  const fromCookie = authConfig.getCookie(req, 'deo_session_id');
+  if (fromCookie) return fromCookie;
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
     return authHeader.split(' ')[1];
@@ -38,33 +34,134 @@ function getSessionIdFromReq(req) {
   return null;
 }
 
-// Cookie helper: Set secure session cookie
-function setSessionCookie(res, sessionId) {
-  const cookieVal = `deo_session_id=${sessionId}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400`;
-  if (typeof res.setHeader === 'function') {
-    res.setHeader('Set-Cookie', cookieVal);
-  } else if (typeof res.header === 'function') {
-    res.header('Set-Cookie', cookieVal);
+function setSessionCookie(res, sessionId, req) {
+  authConfig.appendSetCookie(res, authConfig.buildCookie('deo_session_id', sessionId, { maxAgeSeconds: 86400, req }));
+}
+
+function clearSessionCookie(res, req) {
+  authConfig.appendSetCookie(res, authConfig.buildCookie('deo_session_id', '', { clear: true, req }));
+}
+
+function setPendingPasskeyCookie(res, token, req) {
+  authConfig.appendSetCookie(res, authConfig.buildCookie(PENDING_PASSKEY_COOKIE, token, { maxAgeSeconds: 10 * 60, req }));
+}
+
+function clearPendingPasskeyCookie(res, req) {
+  authConfig.appendSetCookie(res, authConfig.buildCookie(PENDING_PASSKEY_COOKIE, '', { clear: true, req }));
+}
+
+function extractAttestationResponse(body) {
+  if (!body) return {};
+  if (body.clientDataJSON && body.attestationObject) {
+    return body;
   }
-}
-
-// Cookie helper: Clear session cookie
-function clearSessionCookie(res) {
-  const cookieVal = `deo_session_id=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`;
-  if (typeof res.setHeader === 'function') {
-    res.setHeader('Set-Cookie', cookieVal);
+  const payload = body.response || body;
+  if (payload.clientDataJSON && payload.attestationObject) {
+    return {
+      id: body.id || payload.id,
+      rawId: body.rawId || payload.rawId,
+      transports: payload.transports || body.transports,
+      ...payload
+    };
   }
+  if (payload.response && payload.response.clientDataJSON) {
+    return {
+      id: payload.id || body.id,
+      rawId: payload.rawId || body.rawId,
+      transports: payload.response.transports || payload.transports || body.transports,
+      ...payload.response
+    };
+  }
+  return payload;
 }
 
-// RP ID from request host
-function getRpId(req) {
-  const host = req.headers.host || 'localhost';
-  return host.split(':')[0];
+function extractAssertionResponse(body) {
+  if (!body) return {};
+  if (body.clientDataJSON && body.authenticatorData) {
+    return body;
+  }
+  const payload = body.response || body;
+  if (payload.clientDataJSON && payload.authenticatorData) {
+    return {
+      id: body.id || payload.id,
+      rawId: body.rawId || payload.rawId,
+      ...payload
+    };
+  }
+  if (payload.response && payload.response.clientDataJSON) {
+    return {
+      id: payload.id || body.id,
+      rawId: payload.rawId || body.rawId,
+      ...payload.response
+    };
+  }
+  return payload;
 }
 
-function getOrigin(req) {
-  const proto = req.headers['x-forwarded-proto'] || 'http';
-  return `${proto}://${req.headers.host || 'localhost:5000'}`;
+async function resolvePasskeyUserId(req, registrationType, boundChallenge) {
+  let bodyUserId = req.body && req.body.userId ? String(req.body.userId).trim() : null;
+  if (!bodyUserId && req.body) {
+    const ident = req.body.identifier || req.body.mobileNumber || req.body.employeeId;
+    if (ident) {
+      const foundUser = db.getUserByIdentifier(ident) || db.getUserByMobile(ident);
+      if (foundUser) {
+        bodyUserId = String(foundUser.id);
+      }
+    }
+  }
+
+  const sessionId = getSessionIdFromReq(req);
+  const session = sessionId ? db.getSession(sessionId) : null;
+
+  let trustedUserId = null;
+  if (session && session.userId) {
+    trustedUserId = String(session.userId);
+  } else {
+    const pendingToken = authConfig.getCookie(req, PENDING_PASSKEY_COOKIE);
+    if (pendingToken) {
+      const bound = await challengeService.getByEnrollmentToken(pendingToken);
+      if (bound && bound.userId) {
+        if (!registrationType || bound.registrationType === registrationType) {
+          trustedUserId = String(bound.userId);
+        }
+      }
+    }
+  }
+
+  if (boundChallenge && boundChallenge.userId) {
+    const challengeUserId = String(boundChallenge.userId);
+    if (registrationType && boundChallenge.registrationType !== registrationType) {
+      return { error: 'Challenge not found.', status: 400 };
+    }
+    if (trustedUserId && trustedUserId !== challengeUserId) {
+      return { error: 'User mismatch.', status: 403 };
+    }
+    if (bodyUserId && bodyUserId !== challengeUserId) {
+      return { error: 'User mismatch.', status: 403 };
+    }
+    return { userId: challengeUserId };
+  }
+
+  if (trustedUserId) {
+    if (bodyUserId && bodyUserId !== trustedUserId) {
+      return { error: 'User mismatch.', status: 403 };
+    }
+    return { userId: trustedUserId };
+  }
+
+  if (bodyUserId) {
+    return { userId: bodyUserId };
+  }
+
+  return { error: 'Missing or invalid session.', status: 401 };
+}
+
+function challengeErrorStatus(stored) {
+  if (!stored || stored.valid) return 400;
+  if (stored.error === 'CHALLENGE_NOT_FOUND') return 400;
+  if (stored.error === 'CHALLENGE_EXPIRED') return 400;
+  if (stored.error === 'CHALLENGE_ALREADY_CONSUMED') return 400;
+  return 400;
 }
 
 class AuthController {
@@ -146,12 +243,15 @@ class AuthController {
       });
 
       // 4. Generate genuine WebAuthn Registration Options for browser passkey creation
-      const rpId = getRpId(req);
+      const rpId = authConfig.getWebAuthnRpId(req);
+      const stored = await challengeService.createRegistrationChallenge(newUser.id);
       const passkeyOptions = webauthn.generateRegistrationOptions({
         user: newUser,
+        challenge: stored.challenge,
         rpName: 'District Educational Office, Jangaon',
         rpId
       });
+      setPendingPasskeyCookie(res, stored.enrollmentToken, req);
 
       return res.status(201).json({
         success: true,
@@ -171,28 +271,36 @@ class AuthController {
    */
   async webauthnRegisterOptions(req, res) {
     try {
-      const { userId } = req.body;
-      const targetUserId = userId || (req.session && req.session.userId);
-
-      if (!targetUserId) {
-        return res.status(400).json({ success: false, message: "User ID is required." });
+      const resolved = await resolvePasskeyUserId(req, challengeService.REGISTRATION_TYPE);
+      if (resolved.error) {
+        return res.status(resolved.status).json({ success: false, message: resolved.error });
       }
 
-      const user = db.getUserById(targetUserId);
+      const user = db.getUserById(resolved.userId);
       if (!user) {
         return res.status(404).json({ success: false, message: "User not found." });
       }
 
-      const rpId = getRpId(req);
+      const rpId = authConfig.getWebAuthnRpId(req);
+      const stored = await challengeService.createRegistrationChallenge(user.id);
       const options = webauthn.generateRegistrationOptions({
         user,
+        challenge: stored.challenge,
         rpName: 'District Educational Office, Jangaon',
         rpId
       });
+      setPendingPasskeyCookie(res, stored.enrollmentToken, req);
 
-      return res.status(200).json({ success: true, options });
+      return res.status(200).json({
+        success: true,
+        options,
+        challenge: stored.challenge,
+        userId: user.id,
+        enrollmentToken: stored.enrollmentToken,
+        ...options
+      });
     } catch (err) {
-      console.error('Error in webauthnRegisterOptions:', err);
+      console.error('Error in webauthnRegisterOptions:', err.message);
       return res.status(500).json({ success: false, message: "Error generating passkey options." });
     }
   }
@@ -203,48 +311,70 @@ class AuthController {
    */
   async webauthnRegisterVerify(req, res) {
     try {
-      const { userId, response } = req.body;
-
-      if (!userId || !response) {
-        return res.status(400).json({ success: false, message: "Missing userId or passkey response." });
+      const response = extractAttestationResponse(req.body);
+      if (!response || !response.clientDataJSON || !response.attestationObject) {
+        return res.status(400).json({ success: false, message: "WebAuthn verification failed." });
       }
 
-      const user = db.getUserById(userId);
+      const clientChallenge = webauthn.extractClientChallenge(response);
+      let challengeDoc = clientChallenge
+        ? await challengeService.findByChallengeValue(clientChallenge)
+        : null;
+
+      const resolved = await resolvePasskeyUserId(req, challengeService.REGISTRATION_TYPE, challengeDoc);
+      if (resolved.error) {
+        return res.status(resolved.status).json({ success: false, message: resolved.error });
+      }
+
+      if (!challengeDoc) {
+        challengeDoc = await challengeService.findStoredChallenge(resolved.userId, challengeService.REGISTRATION_TYPE);
+      }
+
+      const stored = challengeService.validateChallengeDoc(challengeDoc);
+      if (!stored.valid) {
+        console.warn(`[WebAuthn] Registration challenge rejected: ${stored.error}`);
+        return res.status(challengeErrorStatus(stored)).json({
+          success: false,
+          message: stored.message
+        });
+      }
+
+      if (String(challengeDoc.userId) !== String(resolved.userId)) {
+        return res.status(403).json({ success: false, message: 'User mismatch.' });
+      }
+      if (challengeDoc.registrationType !== challengeService.REGISTRATION_TYPE) {
+        return res.status(400).json({ success: false, message: 'Challenge not found.' });
+      }
+
+      const user = db.getUserById(resolved.userId);
       if (!user) {
         return res.status(404).json({ success: false, message: "User account not found." });
       }
 
-      const expectedChallenge = webauthn.getAndClearChallenge(`reg_${userId}`);
-      if (!expectedChallenge) {
-        return res.status(400).json({
-          success: false,
-          message: "Passkey challenge expired or not found. Please try registration again."
-        });
-      }
-
-      const rpId = getRpId(req);
-      const origin = getOrigin(req);
+      const rpId = authConfig.getWebAuthnRpId(req);
+      const expectedOrigins = authConfig.getExpectedOrigins(req);
 
       const verification = webauthn.verifyRegistration({
         response,
-        expectedChallenge,
+        expectedChallenge: stored.challenge,
         expectedRpId: rpId,
-        expectedOrigins: [origin, `http://${rpId}:5000`, `https://${rpId}:5000`, `http://localhost:5000`, `http://127.0.0.1:5000`]
+        expectedOrigins
       });
 
       if (!verification.success) {
+        console.warn('[WebAuthn] Registration verification failed; challenge left unconsumed.');
         return res.status(400).json({
           success: false,
-          message: verification.message || "Cryptographic passkey verification failed."
+          message: verification.message || "WebAuthn verification failed."
         });
       }
 
-      // Store passkey credential securely
       db.addPasskey(user.id, verification.credential);
+      await challengeService.consumeChallenge(user.id, stored.challenge, challengeService.REGISTRATION_TYPE);
 
-      // Create authenticated server session
       const session = db.createSession(user.id, user.role, { authMethod: 'passkey' });
-      setSessionCookie(res, session.sessionId);
+      setSessionCookie(res, session.sessionId, req);
+      clearPendingPasskeyCookie(res, req);
 
       const updatedUser = db.getUserById(user.id);
       return res.status(200).json({
@@ -254,7 +384,7 @@ class AuthController {
         sessionId: session.sessionId
       });
     } catch (err) {
-      console.error('Error in webauthnRegisterVerify:', err);
+      console.error('Error in webauthnRegisterVerify:', err.message);
       return res.status(500).json({ success: false, message: "Passkey registration verification failed." });
     }
   }
@@ -288,17 +418,21 @@ class AuthController {
         });
       }
 
-      const rpId = getRpId(req);
+      const rpId = authConfig.getWebAuthnRpId(req);
+      const stored = await challengeService.createLoginChallenge(user.id);
       const options = webauthn.generateAuthenticationOptions({
         user,
         passkeys,
-        rpId
+        rpId,
+        challenge: stored.challenge
       });
 
       return res.status(200).json({
         success: true,
         options,
-        userId: user.id
+        challenge: stored.challenge,
+        userId: user.id,
+        ...options
       });
     } catch (err) {
       console.error('Error in webauthnLoginOptions:', err);
@@ -312,24 +446,34 @@ class AuthController {
    */
   async webauthnLoginVerify(req, res) {
     try {
-      const { identifier, userId, response } = req.body;
+      const { identifier, userId } = req.body || {};
 
-      if (!response || !response.id) {
+      const assertion = extractAssertionResponse(req.body);
+      if (!assertion || !assertion.id) {
         return res.status(400).json({ success: false, message: "Missing passkey authentication response." });
+      }
+
+      const clientChallenge = webauthn.extractClientChallenge(assertion);
+      const challengeDoc = clientChallenge
+        ? await challengeService.findByChallengeValue(clientChallenge)
+        : null;
+      if (challengeDoc && challengeDoc.registrationType !== challengeService.AUTHENTICATION_TYPE) {
+        return res.status(400).json({ success: false, message: 'Challenge not found.' });
       }
 
       // Find user
       let user = null;
-      if (userId) user = db.getUserById(userId);
+      if (challengeDoc && challengeDoc.userId) user = db.getUserById(challengeDoc.userId);
+      if (!user && userId) user = db.getUserById(userId);
       if (!user && identifier) user = db.getUserByIdentifier(identifier);
-      if (!user) user = db.getUserByCredentialId(response.id);
+      if (!user) user = db.getUserByCredentialId(assertion.id);
 
       if (!user) {
         return res.status(404).json({ success: false, message: "User account not found." });
       }
 
       const passkeys = db.getUserPasskeys(user.id);
-      const credential = passkeys.find(p => p.credentialId === response.id);
+      const credential = passkeys.find(p => p.credentialId === assertion.id);
 
       if (!credential) {
         return res.status(401).json({
@@ -338,39 +482,45 @@ class AuthController {
         });
       }
 
-      const expectedChallenge = webauthn.getAndClearChallenge(`auth_${user.id}`);
-      if (!expectedChallenge) {
-        return res.status(400).json({
+      const stored = challengeDoc
+        ? challengeService.validateChallengeDoc(challengeDoc)
+        : await challengeService.getValidLoginChallenge(user.id);
+      if (!stored.valid) {
+        console.warn(`[WebAuthn] Login challenge rejected: ${stored.error}`);
+        return res.status(challengeErrorStatus(stored)).json({
           success: false,
-          message: "Authentication challenge expired. Please retry passkey login."
+          message: stored.message
         });
       }
+      if (challengeDoc && String(challengeDoc.userId) !== String(user.id)) {
+        return res.status(403).json({ success: false, message: 'User mismatch.' });
+      }
 
-      const rpId = getRpId(req);
-      const origin = getOrigin(req);
+      const rpId = authConfig.getWebAuthnRpId(req);
+      const expectedOrigins = authConfig.getExpectedOrigins(req);
 
       const verification = webauthn.verifyAuthentication({
-        response,
+        response: assertion,
         credential,
-        expectedChallenge,
+        expectedChallenge: stored.challenge,
         expectedRpId: rpId,
-        expectedOrigins: [origin, `http://${rpId}:5000`, `https://${rpId}:5000`, `http://localhost:5000`, `http://127.0.0.1:5000`]
+        expectedOrigins
       });
 
       if (!verification.success) {
         return res.status(401).json({
           success: false,
-          message: verification.message || "Passkey cryptographic assertion failed."
+          message: verification.message || "WebAuthn verification failed."
         });
       }
 
-      // Update counter and last login
       db.updatePasskeyCounter(user.id, credential.credentialId, verification.counter);
       db.updateUserLastLogin(user.id);
+      await challengeService.consumeLoginChallenge(user.id, stored.challenge);
 
       // Create authenticated server session
       const session = db.createSession(user.id, user.role, { authMethod: 'passkey' });
-      setSessionCookie(res, session.sessionId);
+      setSessionCookie(res, session.sessionId, req);
 
       const updatedUser = db.getUserById(user.id);
       return res.status(200).json({
@@ -380,7 +530,7 @@ class AuthController {
         sessionId: session.sessionId
       });
     } catch (err) {
-      console.error('Error in webauthnLoginVerify:', err);
+      console.error('Error in webauthnLoginVerify:', err.message);
       return res.status(500).json({ success: false, message: "Passkey authentication failed." });
     }
   }
@@ -416,7 +566,7 @@ class AuthController {
 
       // Create session
       const session = db.createSession(user.id, 'Teacher', { authMethod: 'teacher_credentials' });
-      setSessionCookie(res, session.sessionId);
+      setSessionCookie(res, session.sessionId, req);
 
       const updatedUser = db.getUserById(user.id);
       const hasPasskey = (user.passkeys && user.passkeys.length > 0);
@@ -477,7 +627,7 @@ class AuthController {
       const updatedUser = db.getUserById(user.id);
 
       const session = db.createSession(updatedUser.id, updatedUser.role, { authMethod: 'password' });
-      setSessionCookie(res, session.sessionId);
+      setSessionCookie(res, session.sessionId, req);
 
       return res.status(200).json({
         success: true,
@@ -532,7 +682,7 @@ class AuthController {
       if (sessionId) {
         db.destroySession(sessionId);
       }
-      clearSessionCookie(res);
+      clearSessionCookie(res, req);
       return res.status(200).json({
         success: true,
         message: "✓ Logged out successfully."
@@ -573,6 +723,23 @@ class AuthController {
     } catch (err) {
       return res.status(500).json({ success: false, message: "Server error." });
     }
+  }
+
+  // Explicit passkey methods for /passkey/register/start and /passkey/register/finish
+  async passkeyRegisterStart(req, res) {
+    return this.webauthnRegisterOptions(req, res);
+  }
+
+  async passkeyRegisterFinish(req, res) {
+    return this.webauthnRegisterVerify(req, res);
+  }
+
+  async passkeyLoginStart(req, res) {
+    return this.webauthnLoginOptions(req, res);
+  }
+
+  async passkeyLoginFinish(req, res) {
+    return this.webauthnLoginVerify(req, res);
   }
 }
 
