@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+const teacherController = require('../controllers/teacherController');
+
+// Teacher Service Record Routes
+router.get('/teacher/service-record', (req, res) => teacherController.getServiceRecord(req, res));
+router.get('/teacher/preview-record', (req, res) => teacherController.getPreviewRecord(req, res));
 
 // Portal Data & Statistics Routes
 router.get('/portal-data', (req, res) => authController.portalData(req, res));

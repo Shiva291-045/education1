@@ -37,7 +37,7 @@
       "mandal": "Jangaon",
       "passkeys": [],
       "createdAt": "2026-09-24T18:26:11.185Z",
-      "lastLogin": "2026-09-25T06:35:26.306Z"
+      "lastLogin": "2026-09-25T07:01:39.132Z"
     },
     {
       "id": "USER-1790317400944-5418",
@@ -392,6 +392,35 @@
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:35:26.228Z",
       "lastLogin": "2026-09-25T06:35:26.228Z"
+    },
+    {
+      "id": "USER-1790318289428-5356",
+      "fullName": "Shiva",
+      "role": "APO",
+      "mobileNumber": "9032713064",
+      "employeeId": null,
+      "passwordHash": "scrypt$8de4a3f83b0a9b9df0ab5bd589a304cc$4e8e8c55d772100482db43a957b6dd8bf43223c44ec3ab80605b2df3544cacb433b16b3aaa35b60ed0c47c9401ad4f2d7124913efd411fe77f9cb4dffec12def",
+      "accountStatus": "PENDING_VERIFICATION",
+      "passkeys": [],
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-09-25T06:38:09.428Z",
+      "lastLogin": "2026-09-25T06:38:09.428Z"
+    },
+    {
+      "id": "TCH-2126324",
+      "employeeId": "2126324",
+      "fullName": "P. Suresh Babu",
+      "role": "Teacher",
+      "mobileNumber": "9700391515",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": true,
+      "designation": "SA PHY SCI",
+      "schoolName": "MPUPS Rolliakal",
+      "mandal": "Parvathagiri",
+      "passkeys": [],
+      "createdAt": "2026-09-25T07:01:39.098Z",
+      "lastLogin": "2026-09-25T07:01:39.098Z"
     }
   ],
   "sessions": [
@@ -613,6 +642,26 @@
       "expiresAt": 1790404526420,
       "metadata": {
         "authMethod": "password"
+      }
+    },
+    {
+      "sessionId": "2891683651cd15706327e7e8e013ac686fdf792ac9b3a5be20b69bb981cb5827",
+      "userId": "TCH-2126324",
+      "role": "Teacher",
+      "createdAt": "2026-09-25T07:01:39.102Z",
+      "expiresAt": 1790406099102,
+      "metadata": {
+        "authMethod": "teacher_credentials"
+      }
+    },
+    {
+      "sessionId": "5947ed770def6af314926511783b564a987fb75df70a9c26f46acaaab3c9976f",
+      "userId": "TCH-TS-TCH-100234",
+      "role": "Teacher",
+      "createdAt": "2026-09-25T07:01:39.135Z",
+      "expiresAt": 1790406099135,
+      "metadata": {
+        "authMethod": "teacher_credentials"
       }
     }
   ],
@@ -996,6 +1045,18 @@
       "consumed": true,
       "consumedAt": "2026-09-25T06:35:26.295Z",
       "enrollmentToken": "7e7fd5898d186284a5473265786ba0c2cf603994a03c382b57e28c54a716fabb"
+    },
+    {
+      "userId": "USER-1790318289428-5356",
+      "challenge": "dEo7YE_pFy7b5wdsSDnQMbLE4me5TRUFDxyvV_KZ4GQ",
+      "registrationType": "WEBAUTHN_REGISTRATION",
+      "createdAt": "2026-09-25T06:38:09.433Z",
+      "createdAtIso": "2026-09-25T06:38:09.433Z",
+      "expiresAt": 1790318889433,
+      "expiresAtMs": 1790318889433,
+      "consumed": false,
+      "consumedAt": null,
+      "enrollmentToken": "ff56f53783ba645b113c85618ff8cd80c2428fa590e9e59279cb8e6304dfe6cf"
     }
   ]
 }
