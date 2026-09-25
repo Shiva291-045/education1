@@ -181,6 +181,10 @@ class Database {
     };
     data.users.push(newUser);
     this.write(data);
+    try {
+      const mongo = require('./mongo');
+      mongo.syncUserToMongo(newUser);
+    } catch (e) {}
     return newUser;
   }
 
@@ -215,6 +219,10 @@ class Database {
       if (!user.passkeys) user.passkeys = [];
     }
     this.write(data);
+    try {
+      const mongo = require('./mongo');
+      mongo.syncUserToMongo(user);
+    } catch (e) {}
     return user;
   }
 
@@ -224,6 +232,10 @@ class Database {
     if (index === -1) return null;
     data.users[index] = { ...data.users[index], ...updates };
     this.write(data);
+    try {
+      const mongo = require('./mongo');
+      mongo.syncUserToMongo(data.users[index]);
+    } catch (e) {}
     return data.users[index];
   }
 
@@ -249,6 +261,10 @@ class Database {
     }
 
     this.write(data);
+    try {
+      const mongo = require('./mongo');
+      mongo.syncUserToMongo(user);
+    } catch (e) {}
     return user;
   }
 
@@ -275,6 +291,10 @@ class Database {
     if (pk) {
       pk.counter = newCounter;
       this.write(data);
+      try {
+        const mongo = require('./mongo');
+        mongo.syncUserToMongo(user);
+      } catch (e) {}
       return true;
     }
     return false;
@@ -303,6 +323,10 @@ class Database {
     data.sessions = data.sessions.filter(s => s.expiresAt > now);
     data.sessions.push(session);
     this.write(data);
+    try {
+      const mongo = require('./mongo');
+      mongo.syncSessionToMongo(session);
+    } catch (e) {}
     return session;
   }
 
@@ -325,7 +349,47 @@ class Database {
     if (!data.sessions) return true;
     data.sessions = data.sessions.filter(s => s.sessionId !== sessionId);
     this.write(data);
+    try {
+      const mongo = require('./mongo');
+      mongo.removeSessionFromMongo(sessionId);
+    } catch (e) {}
     return true;
+  }
+
+  async syncFromMongo() {
+    try {
+      const mongo = require('./mongo');
+      if (!mongo.isMongoConnected()) return;
+      const state = await mongo.loadFromMongo();
+      if (!state) return;
+      const data = this.read();
+      let changed = false;
+      if (Array.isArray(state.users) && state.users.length > 0) {
+        state.users.forEach(u => {
+          const idx = data.users.findIndex(existing => existing.id === u.id);
+          if (idx >= 0) {
+            data.users[idx] = { ...data.users[idx], ...u };
+          } else {
+            data.users.push(u);
+          }
+          changed = true;
+        });
+      }
+      if (Array.isArray(state.sessions) && state.sessions.length > 0) {
+        state.sessions.forEach(s => {
+          if (!data.sessions.some(existing => existing.sessionId === s.sessionId)) {
+            data.sessions.push(s);
+            changed = true;
+          }
+        });
+      }
+      if (changed) {
+        this.write(data);
+        console.log(`[MongoDB] Synchronized ${data.users.length} users with MongoDB Atlas.`);
+      }
+    } catch (err) {
+      console.warn('[MongoDB] Sync error:', err.message);
+    }
   }
 
   getPortalData() {

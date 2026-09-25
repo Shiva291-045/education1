@@ -35,9 +35,20 @@
       "designation": "School Assistant (Mathematics)",
       "schoolName": "Zilla Parishad High School, Jangaon",
       "mandal": "Jangaon",
-      "passkeys": [],
+      "passkeys": [
+        {
+          "credentialId": "NpqDEeDNUfWKRy5FWsDUPg",
+          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELW2ML7LmAgtq_kR4TMwStPJ2uFCodq29HNTkRJ6FJURkRasnvMd3AXXDXU5vHmdV91pCClA0jdQmW8om9lmxRw",
+          "counter": 0,
+          "transports": [
+            "hybrid",
+            "internal"
+          ],
+          "createdAt": "2026-09-25T07:04:49.387Z"
+        }
+      ],
       "createdAt": "2026-09-24T18:26:11.185Z",
-      "lastLogin": "2026-09-25T07:01:39.132Z"
+      "lastLogin": "2026-09-25T07:04:35.020Z"
     },
     {
       "id": "USER-1790317400944-5418",
@@ -663,6 +674,26 @@
       "metadata": {
         "authMethod": "teacher_credentials"
       }
+    },
+    {
+      "sessionId": "e1777f2042d8af3de7355ddee6b138e0b21e268fdf6d3c9f93863d6884288273",
+      "userId": "TCH-TS-TCH-100234",
+      "role": "Teacher",
+      "createdAt": "2026-09-25T07:04:35.027Z",
+      "expiresAt": 1790406275027,
+      "metadata": {
+        "authMethod": "teacher_credentials"
+      }
+    },
+    {
+      "sessionId": "e2c314e5c5a3aa7259a1964740ffb47fd3fe92333c6392b8de25aea2743f5bbf",
+      "userId": "TCH-TS-TCH-100234",
+      "role": "Teacher",
+      "createdAt": "2026-09-25T07:04:49.408Z",
+      "expiresAt": 1790406289408,
+      "metadata": {
+        "authMethod": "passkey"
+      }
     }
   ],
   "notifications": [
@@ -1057,6 +1088,18 @@
       "consumed": false,
       "consumedAt": null,
       "enrollmentToken": "ff56f53783ba645b113c85618ff8cd80c2428fa590e9e59279cb8e6304dfe6cf"
+    },
+    {
+      "userId": "TCH-TS-TCH-100234",
+      "challenge": "mT4_1R3Kify0LUkg2AS1jg3lu6WAnuxaP8nD6UdCzt4",
+      "registrationType": "WEBAUTHN_REGISTRATION",
+      "createdAt": "2026-09-25T07:04:38.008Z",
+      "createdAtIso": "2026-09-25T07:04:38.008Z",
+      "expiresAt": 1790320478008,
+      "expiresAtMs": 1790320478008,
+      "consumed": true,
+      "consumedAt": "2026-09-25T07:04:49.400Z",
+      "enrollmentToken": "0175b58e3f424cca5c457f52c1b2a97a8859b140c8580c7434a376b1a9951285"
     }
   ]
 }

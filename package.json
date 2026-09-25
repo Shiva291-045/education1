@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server/index.js",
     "server": "node server/index.js",
-    "dev": "node server/index.js"
+    "dev": "node server/index.js",
+    "test:mongo": "node server/testMongoConnection.js"
   },
   "keywords": [
     "telangana",
