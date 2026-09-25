@@ -40,20 +40,6 @@
       "lastLogin": "2026-09-25T06:35:26.306Z"
     },
     {
-      "id": "USER-1790274497697-9057",
-      "fullName": "Shiva",
-      "role": "APO",
-      "mobileNumber": "9032713064",
-      "employeeId": null,
-      "passwordHash": "scrypt$eaf890be4f2bf624106af8d1fcc16d47$4aa80d7f2dcdb6ae65804ec9018a5b1fc60e63377eb91f0e27a0e0897ce93ae516367daf5ec4941360e49b8ce738b47e72a974ba0cd493cc6ce5ec50cfa7d523",
-      "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [],
-      "officialDataLinked": false,
-      "officialProfileId": null,
-      "createdAt": "2026-09-24T18:28:17.697Z",
-      "lastLogin": "2026-09-24T18:28:17.698Z"
-    },
-    {
       "id": "USER-1790317400944-5418",
       "fullName": "B. Srinivas Rao",
       "role": "APO",
