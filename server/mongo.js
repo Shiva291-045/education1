@@ -112,7 +112,8 @@ async function syncUserToMongo(userDoc) {
   if (!mongoDb || !userDoc || !userDoc.id) return;
   try {
     const col = mongoDb.collection('users');
-    await col.updateOne({ id: userDoc.id }, { $set: userDoc }, { upsert: true });
+    const { _id, ...cleanDoc } = userDoc;
+    await col.updateOne({ id: userDoc.id }, { $set: cleanDoc }, { upsert: true });
   } catch (err) {
     console.error('[MongoDB] Error saving user to Atlas:', err.message);
   }
