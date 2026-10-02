@@ -134,6 +134,12 @@ body.font-scale-lg {
   vertical-align: middle;
 }
 
+@media screen {
+  .print-only-doc {
+    display: none !important;
+  }
+}
+
 @media print {
   @page {
     size: A4 portrait;
@@ -151,9 +157,17 @@ body.font-scale-lg {
     visibility: hidden;
   }
 
+  .print-only-doc,
   #teacher-service-record-document,
   #teacher-service-record-document * {
-    visibility: visible;
+    visibility: visible !important;
+    display: block !important;
+  }
+
+  #teacher-service-record-digital,
+  #teacher-service-record-digital * {
+    display: none !important;
+    visibility: hidden !important;
   }
 
   #teacher-service-record-document {

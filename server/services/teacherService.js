@@ -79,19 +79,19 @@ const SAMPLE_RECORD_2126324 = {
       optional2: "PHYSICS",
       optional3: "CHEMISTRY",
       universityOrBoard: "BIE",
-      yearPassed: "1996",
-      percentage: "53"
+      yearPassed: "1995",
+      percentage: "60"
     },
     {
       qualification: "Degree B.A./B.Sc/B.Com",
       branch: "B.Sc",
       degreeOrMedium: "TELUGU",
-      optional1: "—",
-      optional2: "—",
-      optional3: "—",
+      optional1: "MATHS",
+      optional2: "PHYSICS",
+      optional3: "CHEMISTRY",
       universityOrBoard: "KU",
-      yearPassed: "2000",
-      percentage: "72"
+      yearPassed: "1998",
+      percentage: "63"
     },
     {
       qualification: "Additional Degree",
@@ -108,29 +108,29 @@ const SAMPLE_RECORD_2126324 = {
       qualification: "Post Graduation",
       branch: "M.Sc",
       degreeOrMedium: "—",
-      optional1: "MATHEMATICS",
-      optional2: "—",
+      optional1: "—",
+      optional2: "MATHEMATICS",
       optional3: "—",
       universityOrBoard: "SVU",
       yearPassed: "2016",
-      percentage: "62"
+      percentage: "60"
     },
     {
       qualification: "Additional PG",
       branch: "M.Sc",
       degreeOrMedium: "—",
-      optional1: "PSYCHOLOGY",
-      optional2: "—",
+      optional1: "—",
+      optional2: "PSYCHOLOGY",
       optional3: "—",
       universityOrBoard: "KU",
       yearPassed: "2017",
-      percentage: "64"
+      percentage: "68"
     }
   ],
 
   professionalQualifications: [
     {
-      qualification: "D.Ed / TTC / Spl SPEED",
+      qualification: "D.ED / TTC / Spl DPED",
       degree: "—",
       medium: "—",
       method1: "—",
@@ -140,14 +140,14 @@ const SAMPLE_RECORD_2126324 = {
       percentage: "—"
     },
     {
-      qualification: "B.Ed / Spl B.Ed",
+      qualification: "B.Ed / B.P.Ed",
       degree: "B.Ed",
       medium: "TELUGU",
       method1: "MATHS",
-      method2: "PHY.SCI.",
+      method2: "PHY.SCI",
       university: "KU",
-      yearPassed: "2002",
-      percentage: "68"
+      yearPassed: "2000",
+      percentage: "71"
     },
     {
       qualification: "Additional (B.Ed / Spl B.Ed)",
@@ -160,7 +160,7 @@ const SAMPLE_RECORD_2126324 = {
       percentage: "—"
     },
     {
-      qualification: "M.Ed / Spl M.Ed",
+      qualification: "M.Ed / M.P.Ed",
       degree: "M.Ed",
       medium: "—",
       method1: "—",
