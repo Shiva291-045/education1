@@ -171,6 +171,7 @@ class Database {
       role: userData.role,
       mobileNumber: userData.mobileNumber.trim(),
       employeeId: userData.employeeId ? userData.employeeId.trim().toUpperCase() : null,
+      mandal: userData.mandal ? userData.mandal.trim().toUpperCase() : null,
       passwordHash: userData.passwordHash,
       accountStatus: userData.accountStatus || 'PENDING_VERIFICATION',
       passkeys: [],

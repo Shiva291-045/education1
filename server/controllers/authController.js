@@ -172,7 +172,7 @@ class AuthController {
    */
   async register(req, res) {
     try {
-      const { fullName, role, mobileNumber, password, confirmPassword } = req.body;
+      const { fullName, role, mobileNumber, password, confirmPassword, mandal } = req.body;
 
       // 1. Validation
       if (!fullName || fullName.trim().length < 3) {
@@ -238,6 +238,7 @@ class AuthController {
         fullName,
         role,
         mobileNumber: cleanMobile,
+        mandal: role === 'MEO' ? (mandal || 'JANGAON').trim().toUpperCase() : null,
         passwordHash,
         accountStatus: 'PENDING_VERIFICATION'
       });

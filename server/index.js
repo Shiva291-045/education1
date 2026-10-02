@@ -11,6 +11,7 @@ const db = require('./db');
 const mongo = require('./mongo');
 const authController = require('./controllers/authController');
 const teacherController = require('./controllers/teacherController');
+const schoolStrengthController = require('./controllers/schoolStrengthController');
 const authConfig = require('./config/authConfig');
 
 async function bootServer(startListening) {
@@ -64,6 +65,7 @@ try {
 
   // Routes
   const authRoutes = require('./routes/authRoutes');
+  const portalRoutes = require('./routes/portalRoutes');
   // Passkey direct routes (root and /api)
   app.post(['/passkey/register/start', '/api/passkey/register/start'], (req, res) => authController.passkeyRegisterStart(req, res));
   app.post(['/passkey/register/finish', '/api/passkey/register/finish'], (req, res) => authController.passkeyRegisterFinish(req, res));
@@ -278,6 +280,27 @@ try {
           { name: "MPPS Primary School, Station Ghanpur", type: "Primary", mandal: "Station Ghanpur", medium: "Telugu" }
         ];
         return mockRes.json({ success: true, count: schools.length, schools });
+      }
+
+      // Schools Strength Analytics Routes
+      if (pathname === '/api/schools/strength' && req.method === 'GET') {
+        await schoolStrengthController.getStrengthDashboard(req, mockRes);
+        return;
+      }
+      if (pathname.startsWith('/api/schools/strength/mandal/') && req.method === 'GET') {
+        const mandalParam = pathname.replace('/api/schools/strength/mandal/', '');
+        await schoolStrengthController.getMandalStrength(req, mockRes, mandalParam);
+        return;
+      }
+      if (pathname.startsWith('/api/schools/strength/mandal/') && req.method === 'PUT') {
+        const mandalParam = pathname.replace('/api/schools/strength/mandal/', '');
+        await schoolStrengthController.updateMandal(req, mockRes, mandalParam);
+        return;
+      }
+      if (pathname.startsWith('/api/schools/strength/district/') && req.method === 'PUT') {
+        const codeParam = pathname.replace('/api/schools/strength/district/', '');
+        await schoolStrengthController.updateDistrict(req, mockRes, codeParam);
+        return;
       }
 
       return mockRes.status(404).json({ success: false, message: 'Route not found' });

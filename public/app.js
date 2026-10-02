@@ -534,7 +534,15 @@ function MainHeader() {
         React.createElement('span', { key: 'stu', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Students ▾'),
         React.createElement('span', { key: 'exam', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Examinations ▾'),
         React.createElement('span', { key: 'notif', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Notifications'),
-        React.createElement('span', { key: 'contact', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Contact')
+        React.createElement('span', { key: 'contact', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Contact'),
+        React.createElement('button', {
+          key: 'nav-strength',
+          onClick: () => setCurrentView('STRENGTH_DASHBOARD'),
+          className: 'flex items-center space-x-1 text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-md border border-emerald-300 transition-colors cursor-pointer shadow-xs'
+        }, [
+          React.createElement('span', { key: 'i' }, '📊'),
+          React.createElement('span', { key: 't' }, 'Schools Strength')
+        ])
       ]),
 
       // Right Action Buttons (Matching Reference Image)
@@ -1493,6 +1501,7 @@ function RegisterModal() {
 
   const [fullName, setFullName] = useState('');
   const [role, setRole] = useState('APO');
+  const [mandal, setMandal] = useState('JANGAON');
   const [mobileNumber, setMobileNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -1527,6 +1536,7 @@ function RegisterModal() {
     const res = await registerUser({
       fullName,
       role,
+      mandal: role === 'MEO' ? mandal : undefined,
       mobileNumber: cleanedMobile,
       password,
       confirmPassword
@@ -1634,6 +1644,20 @@ function RegisterModal() {
               React.createElement('option', { key: 'deo', value: 'DEO' }, 'DEO'),
               React.createElement('option', { key: 'meo', value: 'MEO' }, 'MEO')
             ])
+          ]),
+
+          role === 'MEO' && React.createElement('div', { key: 'f-mandal' }, [
+            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Assigned Mandal (Strict Role-Based Access) *'),
+            React.createElement('select', {
+              key: 'sel-mandal',
+              value: mandal,
+              onChange: (e) => setMandal(e.target.value),
+              className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:border-[#0c4a7e] font-semibold text-[#0c4a7e]'
+            }, [
+              "BACHANNAPETA", "CHILPUR", "DEVARUPPALA", "GANPUR (STN)",
+              "JANGAON", "KODAKANDLA", "LINGALAGHANPUR", "NARMETTA",
+              "PALAKURTHI", "RAGHUNATHPALLE", "THARIGOPPULA", "ZAFFERGADH"
+            ].map(m => React.createElement('option', { key: m, value: m }, m)))
           ]),
 
           React.createElement('div', { key: 'f-mobile' }, [
@@ -2282,15 +2306,18 @@ function ForgotPasswordModal() {
 function RoleDashboard() {
   const { user, setCurrentView, theme, changeTheme, openModal } = useContext(AuthContext);
   const [previewRole, setPreviewRole] = useState('APO');
+  const [previewMandal, setPreviewMandal] = useState('JANGAON');
   const [teacherView, setTeacherView] = useState('OVERVIEW');
+  const [officerTab, setOfficerTab] = useState('OVERVIEW');
 
   const isDark = (theme === 'dark');
 
   // If user is authenticated, use their account; otherwise allow guest preview
   const activeUser = user || {
     id: 'DEMO-PREVIEW',
-    fullName: 'Preview Visitor',
+    fullName: `Preview ${previewRole} Officer`,
     role: previewRole,
+    mandal: previewRole === 'MEO' ? previewMandal : null,
     mobileNumber: '9876543210',
     accountStatus: 'PREVIEW_MODE',
     lastLogin: new Date().toISOString()
@@ -2355,6 +2382,34 @@ function RoleDashboard() {
             }, [
               React.createElement('span', { key: 'i' }, '📜'),
               React.createElement('span', { key: 't' }, 'My Service Record')
+            ])
+          ]),
+          (activeUser.role === 'APO' || activeUser.role === 'DEO' || activeUser.role === 'MEO' || activeUser.role === 'Officer') && React.createElement('div', {
+            key: 'officer-tabs',
+            className: `ml-2 inline-flex items-center p-0.5 rounded-lg border text-xs font-semibold ${
+              isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-100 border-slate-300'
+            }`
+          }, [
+            React.createElement('button', {
+              key: 'btn-tab-off-ov',
+              onClick: () => setOfficerTab('OVERVIEW'),
+              className: `px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                officerTab === 'OVERVIEW'
+                  ? 'bg-[#0c4a7e] text-white shadow-xs font-bold'
+                  : (isDark ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-900')
+              }`
+            }, 'Overview'),
+            React.createElement('button', {
+              key: 'btn-tab-off-str',
+              onClick: () => setOfficerTab('STRENGTH_ANALYTICS'),
+              className: `flex items-center space-x-1 px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                officerTab === 'STRENGTH_ANALYTICS'
+                  ? 'bg-emerald-700 text-white shadow-xs font-bold'
+                  : (isDark ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-900')
+              }`
+            }, [
+              React.createElement('span', { key: 'i' }, '📊'),
+              React.createElement('span', { key: 't' }, 'Schools Strength Analytics')
             ])
           ])
         ]),
@@ -2424,6 +2479,7 @@ function RoleDashboard() {
               onClick: () => {
                 setPreviewRole(r);
                 if (r !== 'Teacher') setTeacherView('OVERVIEW');
+                setOfficerTab('OVERVIEW');
               },
               className: `px-2.5 py-1 rounded text-xs font-semibold transition-all cursor-pointer ${
                 previewRole === r
@@ -2432,6 +2488,18 @@ function RoleDashboard() {
               }`
             }, r)
           )),
+          previewRole === 'MEO' && React.createElement('select', {
+            key: 'prev-mandal-sel',
+            value: previewMandal,
+            onChange: (e) => setPreviewMandal(e.target.value),
+            className: `px-2 py-0.5 rounded text-xs font-bold border ${
+              isDark ? 'bg-slate-800 text-amber-300 border-slate-600' : 'bg-white text-[#0c4a7e] border-slate-300'
+            }`
+          }, [
+            "JANGAON", "BACHANNAPETA", "CHILPUR", "DEVARUPPALA", "GANPUR (STN)",
+            "KODAKANDLA", "LINGALAGHANPUR", "NARMETTA", "PALAKURTHI",
+            "RAGHUNATHPALLE", "THARIGOPPULA", "ZAFFERGADH"
+          ].map(m => React.createElement('option', { key: m, value: m }, `Mandal: ${m}`))),
           React.createElement('button', {
             key: 'btn-login',
             onClick: () => openModal('LOGIN'),
@@ -2459,7 +2527,7 @@ function RoleDashboard() {
           React.createElement('div', { key: 'text' }, [
             React.createElement('h2', { key: 'name', className: 'text-xl font-extrabold text-white' }, activeUser.fullName),
             React.createElement('p', { key: 'role', className: 'text-xs text-amber-300 font-semibold' },
-              `${activeUser.role} • Registered Mobile: +91 ${activeUser.mobileNumber}`
+              `${activeUser.role}${activeUser.mandal ? ` (${activeUser.mandal} Mandal)` : ''} • Registered Mobile: +91 ${activeUser.mobileNumber}`
             ),
             React.createElement('p', {
               key: 'inst',
@@ -2474,7 +2542,7 @@ function RoleDashboard() {
         ])
       ]),
 
-      // Body View: either Teacher Service Record Document OR Standard Role Modules
+      // Body View: Teacher Service Record OR School Strength Analytics OR Standard Role Modules
       (activeUser.role === 'Teacher' && teacherView === 'SERVICE_RECORD')
         ? (typeof window !== 'undefined' && window.TeacherServiceRecordView
             ? React.createElement(window.TeacherServiceRecordView, {
@@ -2484,6 +2552,18 @@ function RoleDashboard() {
                 isDark: isDark
               })
             : React.createElement('div', { key: 'ts-load-err', className: 'p-8 text-center text-sm font-semibold text-slate-600' }, 'Loading Teacher Service Record...')
+          )
+        : ((activeUser.role === 'APO' || activeUser.role === 'DEO' || activeUser.role === 'MEO' || activeUser.role === 'Officer') && officerTab === 'STRENGTH_ANALYTICS')
+        ? (typeof window !== 'undefined' && window.SchoolStrengthDashboardView
+            ? React.createElement(window.SchoolStrengthDashboardView, {
+                key: 'school-strength-dash',
+                onBack: () => setOfficerTab('OVERVIEW'),
+                user: activeUser,
+                isDark: isDark,
+                previewMandal: previewMandal,
+                onMandalChange: setPreviewMandal
+              })
+            : React.createElement('div', { key: 'str-load-err', className: 'p-8 text-center text-sm font-semibold text-slate-600' }, 'Loading Schools & Strength Analytics...')
           )
         : React.createElement(React.Fragment, { key: 'dashboard-standard-modules' }, [
             // Notice Box (Light & Dark)
@@ -2515,7 +2595,12 @@ function RoleDashboard() {
               isDark,
               onOpenServiceRecord: () => setTeacherView('SERVICE_RECORD')
             }),
-            (activeUser.role === 'APO' || activeUser.role === 'DEO' || activeUser.role === 'MEO' || activeUser.role === 'Officer') && React.createElement(OfficerModules, { key: 'officer-mod', user: activeUser, isDark }),
+            (activeUser.role === 'APO' || activeUser.role === 'DEO' || activeUser.role === 'MEO' || activeUser.role === 'Officer') && React.createElement(OfficerModules, {
+              key: 'officer-mod',
+              user: activeUser,
+              isDark,
+              onOpenStrengthAnalytics: () => setOfficerTab('STRENGTH_ANALYTICS')
+            }),
             activeUser.role === 'School Staff' && React.createElement(SchoolStaffModules, { key: 'staff-mod', user: activeUser, isDark }),
             activeUser.role === 'Student' && React.createElement(StudentModules, { key: 'student-mod', user: activeUser, isDark }),
             (activeUser.role === 'Parent' || activeUser.role === 'Other authorized role') && React.createElement(ParentModules, { key: 'parent-mod', user: activeUser, isDark })
@@ -2756,8 +2841,36 @@ function StudentModules({ user, isDark }) {
   ]);
 }
 
-function OfficerModules({ user, isDark }) {
-  return React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-6' }, [
+function OfficerModules({ user, isDark, onOpenStrengthAnalytics }) {
+  return React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6' }, [
+    // PRIMARY MODULE: Schools & Student Strength Analytics
+    React.createElement('div', {
+      key: 'o-strength',
+      className: `p-5 rounded-2xl border-2 transition-all space-y-3 relative overflow-hidden flex flex-col justify-between ${
+        isDark ? 'bg-[#131f37] border-sky-500/80 shadow-lg text-slate-100 ring-1 ring-sky-500/30' : 'bg-gradient-to-br from-white to-sky-50/70 border-sky-400 shadow-md text-slate-800 ring-1 ring-sky-300/40'
+      }`
+    }, [
+      React.createElement('div', { key: 'badge', className: 'flex items-center justify-between' }, [
+        React.createElement('span', { className: 'px-2 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 uppercase tracking-wider' }, 'Official Data Integration'),
+        React.createElement('span', { className: 'text-xl' }, '📊')
+      ]),
+      React.createElement('div', { key: 'body' }, [
+        React.createElement('h3', { className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '📊 Schools & Strength Analytics'),
+        React.createElement('p', { className: `text-xs mt-1 leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}` },
+          user.role === 'MEO'
+            ? `Access and update official strength particulars for ${user.mandal || 'your assigned mandal'}.`
+            : 'Access district-wide school strength particulars, class/stage breakdowns (PS, UPS, HS, Inter), and mandal matrices.'
+        )
+      ]),
+      React.createElement('button', {
+        key: 'btn',
+        onClick: onOpenStrengthAnalytics,
+        className: 'w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer bg-[#0c4a7e] hover:bg-[#08355b] text-white flex items-center justify-center space-x-1.5'
+      }, [
+        React.createElement('span', { key: 'i' }, '📈'),
+        React.createElement('span', { key: 't' }, 'Open Schools & Strength Analytics')
+      ])
+    ]),
     React.createElement('div', {
       key: 'o1',
       className: `p-5 rounded-2xl border transition-all space-y-3 ${
@@ -2765,9 +2878,10 @@ function OfficerModules({ user, isDark }) {
       }`
     }, [
       React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '🏛️ Mandal Inspection Monitoring'),
-      React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Oversee school inspections across the 29 mandals of Jangaon District.'),
+      React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Oversee school inspections across the 12 mandals of Jangaon District.'),
       React.createElement('button', {
         key: 'btn',
+        onClick: onOpenStrengthAnalytics,
         className: `w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer ${
           isDark ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-[#0c4a7e] hover:bg-[#08355b] text-white'
         }`
@@ -2860,7 +2974,7 @@ function ParentModules({ user, isDark }) {
 // 14. ROOT APP COMPONENT (IMAGE 2: CLEAN LIGHT BACKGROUND #f0f4f8)
 // ==========================================
 function App() {
-  const { currentView, activeModal, theme } = useContext(AuthContext);
+  const { user, currentView, setCurrentView, activeModal, theme } = useContext(AuthContext);
   const [fontScale, setFontScale] = useState('md');
   const isDark = (theme === 'dark' && currentView === 'DASHBOARD');
 
@@ -2882,6 +2996,15 @@ function App() {
           React.createElement(QuickServices),
           React.createElement(PortalCardsGrid)
         ])
+      ) : currentView === 'STRENGTH_DASHBOARD' ? (
+        (typeof window !== 'undefined' && window.SchoolStrengthDashboardView)
+          ? React.createElement(window.SchoolStrengthDashboardView, {
+              key: 'strength-view-direct',
+              user: user || { role: 'DEO', fullName: 'District Educational Officer' },
+              isDark: (theme === 'dark'),
+              onBack: () => setCurrentView('PORTAL')
+            })
+          : React.createElement('div', { className: 'p-8 text-center text-sm font-semibold' }, 'Loading School Strength Dashboard...')
       ) : (
         React.createElement(RoleDashboard, { key: 'dash-view' })
       )
