@@ -123,15 +123,65 @@ body.font-scale-lg {
 }
 
 .service-record-paper table {
-  border-collapse: collapse;
-  width: 100%;
+  border-collapse: collapse !important;
+  width: 100% !important;
+  table-layout: fixed !important;
 }
 
 .service-record-paper th,
 .service-record-paper td {
-  border: 1px solid #334155;
-  padding: 3px 5px;
-  vertical-align: middle;
+  border: 1px solid #1e293b !important;
+  padding: 3px 4px !important;
+  vertical-align: top !important;
+  box-sizing: border-box !important;
+}
+
+/* Eerie subtle light-blue / light-green aesthetic styling */
+.eerie-portal-wrapper {
+  background: radial-gradient(circle at 50% 0%, rgba(20, 184, 166, 0.08) 0%, rgba(56, 189, 248, 0.05) 30%, transparent 70%);
+}
+
+.eerie-card-light {
+  background: linear-gradient(145deg, #ffffff 0%, #f4faf9 50%, #eff8f7 100%);
+  border: 1px solid rgba(20, 184, 166, 0.28);
+  box-shadow: 0 4px 20px -3px rgba(13, 148, 136, 0.08), 0 0 0 1px rgba(56, 189, 248, 0.06);
+}
+
+.eerie-card-dark {
+  background: linear-gradient(145deg, #0c202a 0%, #091a24 50%, #06141c 100%);
+  border: 1px solid rgba(45, 212, 191, 0.25);
+  box-shadow: 0 4px 25px -4px rgba(45, 212, 191, 0.12), inset 0 1px 0 0 rgba(45, 212, 191, 0.15);
+}
+
+.eerie-field-box {
+  background: #f0f8f7;
+  border: 1px solid rgba(20, 184, 166, 0.22);
+  transition: all 0.2s ease;
+}
+
+.eerie-field-box:hover {
+  border-color: rgba(13, 148, 136, 0.45);
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.15);
+}
+
+.dark .eerie-field-box {
+  background: rgba(11, 34, 45, 0.7);
+  border: 1px solid rgba(45, 212, 191, 0.2);
+}
+
+.dark .eerie-field-box:hover {
+  border-color: rgba(45, 212, 191, 0.5);
+  box-shadow: 0 0 14px rgba(45, 212, 191, 0.22);
+}
+
+.eerie-banner-gradient {
+  background: linear-gradient(135deg, #051821 0%, #082935 45%, #0b343f 75%, #061e29 100%);
+  border-bottom: 3px solid #2dd4bf;
+  box-shadow: 0 8px 30px -4px rgba(13, 148, 136, 0.35);
+}
+
+.eerie-badge-glow {
+  box-shadow: 0 0 10px rgba(45, 212, 191, 0.35);
 }
 
 @media screen {
@@ -143,7 +193,7 @@ body.font-scale-lg {
 @media print {
   @page {
     size: A4 portrait;
-    margin: 8mm 10mm;
+    margin: 6mm 8mm;
   }
   
   html, body {
@@ -151,16 +201,21 @@ body.font-scale-lg {
     color: #000000 !important;
     margin: 0 !important;
     padding: 0 !important;
+    width: 100% !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   body * {
     visibility: hidden;
   }
 
-  .print-only-doc,
   #teacher-service-record-document,
   #teacher-service-record-document * {
     visibility: visible !important;
+  }
+
+  .print-only-doc {
     display: block !important;
   }
 
@@ -170,17 +225,75 @@ body.font-scale-lg {
     visibility: hidden !important;
   }
 
-  #teacher-service-record-document {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100% !important;
+  #root,
+  #root > div,
+  main {
     margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    min-height: 0 !important;
+    height: auto !important;
+    display: block !important;
+    overflow: visible !important;
+  }
+
+  #teacher-service-record-document {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
     padding: 0 !important;
     background: #ffffff !important;
     color: #000000 !important;
     box-shadow: none !important;
     border: none !important;
+  }
+
+  /* Fixed table grid layout rules - strictly preserves columns and rows in print */
+  #teacher-service-record-document table {
+    display: table !important;
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+    margin: 0 0 6px 0 !important;
+  }
+
+  #teacher-service-record-document thead {
+    display: table-header-group !important;
+  }
+
+  #teacher-service-record-document tbody {
+    display: table-row-group !important;
+  }
+
+  #teacher-service-record-document tr {
+    display: table-row !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  #teacher-service-record-document th {
+    display: table-cell !important;
+    vertical-align: middle !important;
+    border: 1px solid #1e293b !important;
+    padding: 2.5px 3.5px !important;
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    font-size: 8.5px !important;
+    font-weight: 800 !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+
+  #teacher-service-record-document td {
+    display: table-cell !important;
+    vertical-align: top !important;
+    border: 1px solid #1e293b !important;
+    padding: 2.5px 3.5px !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-size: 9.5px !important;
+    box-sizing: border-box !important;
   }
 
   .no-print,
@@ -192,18 +305,23 @@ body.font-scale-lg {
   }
 
   .official-page-break {
-    page-break-after: always !important;
-    break-after: page !important;
-    height: 0;
+    page-break-before: always !important;
+    break-before: page !important;
+    height: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
-    display: block;
+    display: block !important;
+    clear: both !important;
   }
 
   .service-record-page {
     box-shadow: none !important;
-    margin-bottom: 0 !important;
+    margin: 0 auto !important;
+    padding: 4mm 6mm !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    border: 1px solid #1e293b !important;
   }
 }

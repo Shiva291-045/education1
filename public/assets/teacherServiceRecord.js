@@ -16,22 +16,22 @@
   // DIGITAL SCREEN LAYOUT COMPONENTS
   // ==========================================
 
-  // Modern Digital Data Field Box
+  // Modern Digital Data Field Box with Subtle Light-Blue / Light-Green Styling
   function DigitalField({ label, value, colSpan, highlight, badge, isDark }) {
     const isSpecialBadge = badge || (value === 'YES' || value === 'Married' || value === 'PLAIN');
     const isNegativeBadge = (value === 'NO');
 
     return React.createElement('div', {
-      className: `p-3.5 rounded-xl border transition-all flex flex-col justify-between ${
+      className: `p-3.5 rounded-xl border transition-all flex flex-col justify-between eerie-field-box ${
         highlight
-          ? (isDark ? 'bg-amber-950/20 border-amber-500/40 text-amber-200' : 'bg-amber-50/70 border-amber-300/80 text-amber-950')
-          : (isDark ? 'bg-slate-800/60 border-slate-700/70 text-slate-100 hover:border-slate-600' : 'bg-slate-50 border-slate-200/80 text-slate-800 hover:border-slate-300')
+          ? (isDark ? 'bg-[#0c2f3d]/90 border-teal-400/60 text-teal-200 shadow-[0_0_12px_rgba(45,212,191,0.2)]' : 'bg-[#e6f7f5] border-teal-400/80 text-teal-950 shadow-xs')
+          : (isDark ? 'text-slate-100' : 'text-slate-800')
       } ${colSpan ? `sm:col-span-${colSpan}` : ''}`
     }, [
       React.createElement('div', {
         key: 'lbl',
         className: `text-[11px] font-bold uppercase tracking-wider mb-1.5 leading-tight ${
-          isDark ? 'text-slate-400' : 'text-slate-500'
+          isDark ? 'text-teal-300/80' : 'text-teal-800/80'
         }`
       }, label),
       React.createElement('div', {
@@ -43,8 +43,8 @@
               key: 'sp-badge',
               className: `px-2.5 py-0.5 rounded-full text-xs font-black inline-flex items-center gap-1 ${
                 value === 'YES'
-                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-900/60 dark:text-emerald-200 dark:border-emerald-700'
-                  : 'bg-blue-100 text-[#0c4a7e] border border-blue-200 dark:bg-blue-900/60 dark:text-blue-200 dark:border-blue-700'
+                  ? 'bg-teal-100 text-teal-900 border border-teal-300 dark:bg-teal-950/80 dark:text-teal-200 dark:border-teal-700'
+                  : 'bg-cyan-100 text-[#0c4a7e] border border-cyan-200 dark:bg-cyan-950/70 dark:text-cyan-200 dark:border-cyan-700'
               }`
             }, [
               value === 'YES' ? '✓ ' : '',
@@ -57,7 +57,7 @@
             }, safeVal(value))
           : React.createElement('span', {
               key: 'plain-val',
-              className: `text-sm sm:text-base font-bold tracking-tight leading-snug break-words ${
+              className: `text-sm sm:text-base font-extrabold tracking-tight leading-snug break-words ${
                 isDark ? 'text-white' : 'text-slate-900'
               }`
             }, safeVal(value))
@@ -69,36 +69,36 @@
   function DigitalCard({ id, title, icon, subtitle, badge, action, children, isDark }) {
     return React.createElement('div', {
       id: id,
-      className: `p-5 sm:p-6 rounded-2xl border transition-all shadow-xs ${
+      className: `p-5 sm:p-6 rounded-2xl transition-all shadow-xs ${
         isDark
-          ? 'bg-[#131f37] border-slate-700/80 text-slate-100'
-          : 'bg-white border-slate-200 text-slate-800'
+          ? 'eerie-card-dark text-slate-100'
+          : 'eerie-card-light text-slate-800'
       }`
     }, [
       // Card Header
       React.createElement('div', {
         key: 'card-head',
         className: `flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-5 border-b gap-2 ${
-          isDark ? 'border-slate-700/80' : 'border-slate-200/80'
+          isDark ? 'border-teal-500/20' : 'border-teal-500/15'
         }`
       }, [
         React.createElement('div', { key: 'head-left', className: 'flex items-center space-x-3' }, [
           React.createElement('div', {
             key: 'icon-wrap',
-            className: `w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0 ${
-              isDark ? 'bg-slate-800 text-sky-400' : 'bg-blue-50 text-[#0c4a7e]'
+            className: `w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0 border ${
+              isDark ? 'bg-[#0a2733] border-teal-500/30 text-teal-300' : 'bg-teal-50 border-teal-200 text-teal-700'
             }`
           }, icon || '📋'),
           React.createElement('div', { key: 'title-wrap' }, [
             React.createElement('h3', {
               key: 'title',
               className: `text-base font-extrabold tracking-wide ${
-                isDark ? 'text-white' : 'text-[#0c4a7e]'
+                isDark ? 'text-white' : 'text-[#083344]'
               }`
             }, title),
             subtitle && React.createElement('p', {
               key: 'sub',
-              className: `text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`
+              className: `text-xs ${isDark ? 'text-teal-300/70' : 'text-teal-700/80'}`
             }, subtitle)
           ])
         ]),
@@ -107,8 +107,8 @@
             key: 'bdg',
             className: `text-[11px] font-bold px-2.5 py-1 rounded-full border ${
               isDark
-                ? 'bg-slate-800 text-slate-300 border-slate-700'
-                : 'bg-slate-100 text-slate-600 border-slate-200'
+                ? 'bg-[#08222d] text-teal-300 border-teal-700/60'
+                : 'bg-teal-50 text-teal-800 border-teal-200'
             }`
           }, badge),
           action
@@ -125,22 +125,23 @@
   function PrintCell({ label, value, colSpan, className = '', highlight = false }) {
     return React.createElement('td', {
       colSpan: colSpan || 1,
-      className: `border border-slate-700 p-1.5 text-left align-top ${highlight ? 'bg-slate-50' : 'bg-white'} ${className}`
+      className: `border border-slate-700 p-1 text-left align-top ${highlight ? 'bg-slate-50' : 'bg-white'} ${className}`,
+      style: { boxSizing: 'border-box', verticalAlign: 'top' }
     }, [
       React.createElement('div', {
         key: 'lbl',
-        className: 'text-[9px] uppercase font-bold text-slate-600 tracking-wider leading-none mb-0.5'
+        className: 'text-[8px] uppercase font-bold text-slate-700 tracking-wider leading-none mb-0.5'
       }, label),
       React.createElement('div', {
         key: 'val',
-        className: 'text-[11px] font-semibold text-slate-900 leading-tight break-words'
+        className: 'text-[9.5px] font-semibold text-slate-900 leading-tight break-words'
       }, safeVal(value))
     ]);
   }
 
   function PrintSectionHeading({ title }) {
     return React.createElement('div', {
-      className: 'bg-slate-100 border border-slate-700 px-2 py-1 text-[10px] font-black text-slate-900 uppercase tracking-wider mb-[-1px]'
+      className: 'bg-slate-100 border border-slate-700 px-2 py-1 text-[9.5px] font-black text-slate-900 uppercase tracking-wider mb-[-1px]'
     }, title);
   }
 
@@ -243,7 +244,7 @@
       : null;
 
     return React.createElement('div', {
-      className: 'w-full py-4 px-2 sm:px-4'
+      className: 'w-full py-4 px-2 sm:px-4 eerie-portal-wrapper'
     }, [
 
       // ==============================================================
@@ -252,7 +253,9 @@
       React.createElement('div', {
         key: 'screen-action-bar',
         className: `no-print max-w-6xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl border transition-colors shadow-xs ${
-          isDark ? 'bg-[#131f37] border-slate-700/80 text-white' : 'bg-white border-slate-200 text-slate-800'
+          isDark
+            ? 'bg-gradient-to-r from-[#0a202b] to-[#06151d] border-teal-500/30 text-white'
+            : 'bg-gradient-to-r from-white via-[#f0fbf9] to-[#ebf7f6] border-teal-500/25 text-slate-800'
         }`
       }, [
         React.createElement('div', { key: 'left', className: 'flex items-center space-x-3 flex-wrap gap-y-2' }, [
@@ -261,8 +264,8 @@
             onClick: onBack,
             className: `flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors cursor-pointer ${
               isDark
-                ? 'bg-slate-800 border-slate-600 text-slate-200 hover:bg-slate-700'
-                : 'bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200'
+                ? 'bg-[#0c2633] border-teal-600/40 text-teal-200 hover:bg-[#0f3244]'
+                : 'bg-teal-50 border-teal-200 text-teal-800 hover:bg-teal-100'
             }`
           }, [
             React.createElement('span', { key: 'a' }, '←'),
@@ -270,7 +273,7 @@
           ]),
           React.createElement('span', {
             key: 'badge-ro',
-            className: 'bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2.5 py-1 rounded-full border border-emerald-300 flex items-center space-x-1'
+            className: 'bg-teal-100/90 text-teal-900 text-[11px] font-bold px-2.5 py-1 rounded-full border border-teal-300 dark:bg-teal-950/80 dark:text-teal-200 dark:border-teal-700/80 flex items-center space-x-1'
           }, [
             React.createElement('span', { key: 'dot' }, '🔒'),
             React.createElement('span', { key: 't' }, 'Official Record • Verified & View Only')
@@ -280,12 +283,12 @@
         React.createElement('div', { key: 'right', className: 'flex items-center space-x-3' }, [
           React.createElement('span', {
             key: 'print-tip',
-            className: `text-[11px] hidden md:inline ${isDark ? 'text-slate-400' : 'text-slate-500'}`
+            className: `text-[11px] hidden md:inline font-medium ${isDark ? 'text-teal-300/70' : 'text-teal-700/80'}`
           }, 'Official 2-Page A4 Ready'),
           React.createElement('button', {
             key: 'btn-print',
             onClick: handlePrint,
-            className: 'flex items-center space-x-2 bg-[#0c4a7e] hover:bg-[#08355b] text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition-all cursor-pointer'
+            className: 'flex items-center space-x-2 bg-gradient-to-r from-[#0d9488] via-[#0f766e] to-[#044e54] hover:from-[#14b8a6] hover:to-[#0f766e] text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition-all cursor-pointer'
           }, [
             React.createElement('span', { key: 'icn' }, '🖨'),
             React.createElement('span', { key: 't' }, 'Print / Save as PDF')
@@ -303,11 +306,11 @@
       }, [
 
         // ------------------------------------------------------------
-        // PROFILE HERO BANNER CARD
+        // PROFILE HERO BANNER CARD (EERIE BIOLUMINESCENT ACCENTS)
         // ------------------------------------------------------------
         React.createElement('div', {
           key: 'hero-banner',
-          className: 'p-6 sm:p-8 rounded-3xl shadow-md border-b-4 border-amber-400 bg-gradient-to-r from-[#0c4a7e] via-[#103b66] to-[#08355b] text-white relative overflow-hidden'
+          className: 'p-6 sm:p-8 rounded-3xl shadow-lg border-b-4 border-[#2dd4bf] eerie-banner-gradient text-white relative overflow-hidden'
         }, [
           React.createElement('div', {
             key: 'hero-content',
@@ -317,14 +320,14 @@
             React.createElement('div', { key: 'hero-left', className: 'flex items-start sm:items-center space-x-4 sm:space-x-5' }, [
               React.createElement('div', {
                 key: 'avatar',
-                className: 'w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 border-2 border-amber-400 flex flex-col items-center justify-center text-amber-300 font-black text-2xl sm:text-3xl flex-shrink-0 shadow-inner'
+                className: 'w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#0c2e3b]/80 border-2 border-[#2dd4bf] flex flex-col items-center justify-center text-teal-300 font-black text-2xl sm:text-3xl flex-shrink-0 shadow-[0_0_20px_rgba(45,212,191,0.35)]'
               }, [
                 TelanganaEmblem
                   ? React.createElement(TelanganaEmblem, { key: 'emblem', className: 'w-12 h-12 drop-shadow-sm' })
                   : 'TS'
               ]),
               React.createElement('div', { key: 'hero-titles', className: 'space-y-1' }, [
-                React.createElement('div', { key: 'top-dept', className: 'text-[11px] font-bold text-amber-300 uppercase tracking-widest' },
+                React.createElement('div', { key: 'top-dept', className: 'text-[11px] font-bold text-teal-300 uppercase tracking-widest' },
                   `${record.department || 'School Education Department'} • ${record.district || 'Warangal District'}`
                 ),
                 React.createElement('h1', { key: 't-name', className: 'text-2xl sm:text-3xl font-extrabold tracking-tight text-white' },
@@ -333,15 +336,15 @@
                 React.createElement('div', { key: 'pills', className: 'flex flex-wrap items-center gap-2 pt-1' }, [
                   React.createElement('span', {
                     key: 'p-desig',
-                    className: 'bg-amber-400 text-slate-950 text-xs font-black px-2.5 py-0.5 rounded-md uppercase'
+                    className: 'bg-[#2dd4bf] text-slate-950 text-xs font-black px-2.5 py-0.5 rounded-md uppercase shadow-xs'
                   }, personal.designation || 'SA PHY SCI'),
                   React.createElement('span', {
                     key: 'p-code',
-                    className: 'bg-white/20 text-white text-xs font-semibold px-2.5 py-0.5 rounded-md'
+                    className: 'bg-[#082b36] border border-teal-500/40 text-teal-100 text-xs font-semibold px-2.5 py-0.5 rounded-md'
                   }, `Treasury ID: ${record.treasuryCode || personal.treasuryCode || '2126324'}`),
                   React.createElement('span', {
                     key: 'p-school',
-                    className: 'text-xs text-blue-200 font-medium'
+                    className: 'text-xs text-teal-200 font-medium'
                   }, `🏫 ${working.schoolName || 'MPUPS ROLLIAKAI'} (${working.mandal || 'Parvathagiri'})`)
                 ])
               ])
@@ -352,12 +355,12 @@
               React.createElement('button', {
                 key: 'banner-print',
                 onClick: handlePrint,
-                className: 'bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-black text-xs px-5 py-2.5 rounded-xl shadow-md flex items-center justify-center space-x-2 cursor-pointer transition-all'
+                className: 'bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-slate-950 font-black text-xs px-5 py-2.5 rounded-xl shadow-lg eerie-badge-glow flex items-center justify-center space-x-2 cursor-pointer transition-all'
               }, [
                 React.createElement('span', { key: 'i' }, '🖨'),
                 React.createElement('span', { key: 't' }, 'Print Official Register / Save PDF')
               ]),
-              React.createElement('div', { key: 'sub-note', className: 'text-[11px] text-blue-200' },
+              React.createElement('div', { key: 'sub-note', className: 'text-[11px] text-teal-200/90' },
                 'Telangana School Education Service Register'
               )
             ])
@@ -488,7 +491,7 @@
           React.createElement('div', {
             key: 'tbl-e-wrap',
             className: `overflow-x-auto rounded-xl border ${
-              isDark ? 'border-slate-700/80 bg-slate-900/40' : 'border-slate-200 bg-white'
+              isDark ? 'border-teal-500/25 bg-[#081a24]/60' : 'border-teal-500/20 bg-white'
             }`
           }, [
             React.createElement('table', {
@@ -497,7 +500,7 @@
             }, [
               React.createElement('thead', {
                 key: 'th-e',
-                className: `${isDark ? 'bg-slate-800/90 text-slate-300 border-slate-700' : 'bg-slate-100 text-slate-700 border-slate-200'} border-b text-[11px] font-black uppercase tracking-wider`
+                className: `${isDark ? 'bg-[#092430] text-teal-200 border-teal-800/60' : 'bg-teal-50/90 text-teal-900 border-teal-200'} border-b text-[11px] font-black uppercase tracking-wider`
               }, [
                 React.createElement('tr', { key: 'hr' }, [
                   React.createElement('th', { key: 'q', className: 'p-3.5' }, 'Qualification'),
@@ -513,13 +516,13 @@
               ]),
               React.createElement('tbody', {
                 key: 'tb-e',
-                className: `divide-y ${isDark ? 'divide-slate-800 text-slate-200' : 'divide-slate-100 text-slate-800'}`
+                className: `divide-y ${isDark ? 'divide-slate-800 text-slate-200' : 'divide-teal-100 text-slate-800'}`
               }, academic.map((row, idx) => (
                 React.createElement('tr', {
                   key: `row-${idx}`,
                   className: `transition-colors ${
-                    isDark ? 'hover:bg-slate-800/50' : 'hover:bg-blue-50/40'
-                  } ${idx % 2 === 1 ? (isDark ? 'bg-slate-900/30' : 'bg-slate-50/50') : ''}`
+                    isDark ? 'hover:bg-[#0c2f3d]/50' : 'hover:bg-teal-50/40'
+                  } ${idx % 2 === 1 ? (isDark ? 'bg-[#081f2b]/40' : 'bg-[#f4faf9]/60') : ''}`
                 }, [
                   React.createElement('td', { key: 'q', className: 'p-3.5 font-bold text-slate-900 dark:text-white' }, row.qualification),
                   React.createElement('td', { key: 'b', className: 'p-3.5' }, safeVal(row.branch)),
@@ -527,7 +530,7 @@
                   React.createElement('td', { key: 'o1', className: 'p-3.5 font-medium' }, safeVal(row.optional1)),
                   React.createElement('td', { key: 'o2', className: 'p-3.5 font-medium' }, safeVal(row.optional2)),
                   React.createElement('td', { key: 'o3', className: 'p-3.5 font-medium' }, safeVal(row.optional3)),
-                  React.createElement('td', { key: 'u', className: 'p-3.5 font-semibold text-[#0c4a7e] dark:text-sky-300' }, safeVal(row.universityOrBoard)),
+                  React.createElement('td', { key: 'u', className: `p-3.5 font-semibold ${isDark ? 'text-teal-300' : 'text-teal-800'}` }, safeVal(row.universityOrBoard)),
                   React.createElement('td', { key: 'y', className: 'p-3.5 text-center font-bold' }, safeVal(row.yearPassed)),
                   React.createElement('td', { key: 'p', className: 'p-3.5 text-center font-extrabold' },
                     row.percentage && row.percentage !== '—' ? `${row.percentage}%` : '—'
@@ -553,7 +556,7 @@
           React.createElement('div', {
             key: 'tbl-f-wrap',
             className: `overflow-x-auto rounded-xl border ${
-              isDark ? 'border-slate-700/80 bg-slate-900/40' : 'border-slate-200 bg-white'
+              isDark ? 'border-teal-500/25 bg-[#081a24]/60' : 'border-teal-500/20 bg-white'
             }`
           }, [
             React.createElement('table', {
@@ -562,7 +565,7 @@
             }, [
               React.createElement('thead', {
                 key: 'th-f',
-                className: `${isDark ? 'bg-slate-800/90 text-slate-300 border-slate-700' : 'bg-slate-100 text-slate-700 border-slate-200'} border-b text-[11px] font-black uppercase tracking-wider`
+                className: `${isDark ? 'bg-[#092430] text-teal-200 border-teal-800/60' : 'bg-teal-50/90 text-teal-900 border-teal-200'} border-b text-[11px] font-black uppercase tracking-wider`
               }, [
                 React.createElement('tr', { key: 'hr' }, [
                   React.createElement('th', { key: 'q', className: 'p-3.5' }, 'Qualification'),
@@ -577,20 +580,20 @@
               ]),
               React.createElement('tbody', {
                 key: 'tb-f',
-                className: `divide-y ${isDark ? 'divide-slate-800 text-slate-200' : 'divide-slate-100 text-slate-800'}`
+                className: `divide-y ${isDark ? 'divide-slate-800 text-slate-200' : 'divide-teal-100 text-slate-800'}`
               }, professional.map((row, idx) => (
                 React.createElement('tr', {
                   key: `row-${idx}`,
                   className: `transition-colors ${
-                    isDark ? 'hover:bg-slate-800/50' : 'hover:bg-blue-50/40'
-                  } ${idx % 2 === 1 ? (isDark ? 'bg-slate-900/30' : 'bg-slate-50/50') : ''}`
+                    isDark ? 'hover:bg-[#0c2f3d]/50' : 'hover:bg-teal-50/40'
+                  } ${idx % 2 === 1 ? (isDark ? 'bg-[#081f2b]/40' : 'bg-[#f4faf9]/60') : ''}`
                 }, [
                   React.createElement('td', { key: 'q', className: 'p-3.5 font-bold text-slate-900 dark:text-white' }, row.qualification),
                   React.createElement('td', { key: 'd', className: 'p-3.5 font-semibold' }, safeVal(row.degree)),
                   React.createElement('td', { key: 'm', className: 'p-3.5' }, safeVal(row.medium)),
                   React.createElement('td', { key: 'm1', className: 'p-3.5 font-medium' }, safeVal(row.method1)),
                   React.createElement('td', { key: 'm2', className: 'p-3.5 font-medium' }, safeVal(row.method2)),
-                  React.createElement('td', { key: 'u', className: 'p-3.5 font-semibold text-[#0c4a7e] dark:text-sky-300' }, safeVal(row.university)),
+                  React.createElement('td', { key: 'u', className: `p-3.5 font-semibold ${isDark ? 'text-teal-300' : 'text-teal-800'}` }, safeVal(row.university)),
                   React.createElement('td', { key: 'y', className: 'p-3.5 text-center font-bold' }, safeVal(row.yearPassed)),
                   React.createElement('td', { key: 'p', className: 'p-3.5 text-center font-extrabold' },
                     row.percentage && row.percentage !== '—' ? `${row.percentage}%` : '—'
@@ -620,13 +623,13 @@
             // GOT
             React.createElement('div', {
               key: 't-got',
-              className: `p-4 rounded-xl border flex flex-col justify-between ${
-                isDark ? 'bg-slate-800/60 border-slate-700' : 'bg-emerald-50/40 border-emerald-200'
+              className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
+                isDark ? 'bg-[#09222c] border-teal-500/30' : 'bg-teal-50/50 border-teal-200'
               }`
             }, [
-              React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-slate-500 dark:text-slate-400 mb-1' }, 'GOT (Gazetted Officers Test)'),
+              React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-teal-800 dark:text-teal-300 mb-1' }, 'GOT (Gazetted Officers Test)'),
               React.createElement('div', { key: 'st', className: 'my-1' }, [
-                React.createElement('span', { key: 'b', className: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200 border border-emerald-300 text-xs font-black px-2 py-0.5 rounded-full' }, '✓ PASSED')
+                React.createElement('span', { key: 'b', className: 'bg-teal-100 text-teal-900 dark:bg-teal-950 dark:text-teal-200 border border-teal-300 dark:border-teal-700 text-xs font-black px-2 py-0.5 rounded-full' }, '✓ PASSED')
               ]),
               React.createElement('div', { key: 'y', className: 'text-xs font-bold text-slate-700 dark:text-slate-300' }, 'Year: Dec-10')
             ]),
@@ -634,13 +637,13 @@
             // EOT
             React.createElement('div', {
               key: 't-eot',
-              className: `p-4 rounded-xl border flex flex-col justify-between ${
-                isDark ? 'bg-slate-800/60 border-slate-700' : 'bg-emerald-50/40 border-emerald-200'
+              className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
+                isDark ? 'bg-[#09222c] border-teal-500/30' : 'bg-teal-50/50 border-teal-200'
               }`
             }, [
-              React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-slate-500 dark:text-slate-400 mb-1' }, 'EOT (Executive Officers Test)'),
+              React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-teal-800 dark:text-teal-300 mb-1' }, 'EOT (Executive Officers Test)'),
               React.createElement('div', { key: 'st', className: 'my-1' }, [
-                React.createElement('span', { key: 'b', className: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200 border border-emerald-300 text-xs font-black px-2 py-0.5 rounded-full' }, '✓ PASSED')
+                React.createElement('span', { key: 'b', className: 'bg-teal-100 text-teal-900 dark:bg-teal-950 dark:text-teal-200 border border-teal-300 dark:border-teal-700 text-xs font-black px-2 py-0.5 rounded-full' }, '✓ PASSED')
               ]),
               React.createElement('div', { key: 'y', className: 'text-xs font-bold text-slate-700 dark:text-slate-300' }, 'Year: Dec-11')
             ]),
@@ -648,13 +651,13 @@
             // Lang Test Tel
             React.createElement('div', {
               key: 't-tel',
-              className: `p-4 rounded-xl border flex flex-col justify-between ${
-                isDark ? 'bg-slate-800/60 border-slate-700' : 'bg-slate-50 border-slate-200'
+              className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
+                isDark ? 'bg-[#09222c] border-teal-500/30' : 'bg-[#f0f8f7] border-teal-200/80'
               }`
             }, [
-              React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-slate-500 dark:text-slate-400 mb-1' }, 'Lang Test (Telugu)'),
+              React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-teal-800 dark:text-teal-300 mb-1' }, 'Lang Test (Telugu)'),
               React.createElement('div', { key: 'st', className: 'my-1' }, [
-                React.createElement('span', { key: 'b', className: 'bg-blue-100 text-[#0c4a7e] dark:bg-blue-900/60 dark:text-blue-200 border border-blue-200 text-xs font-bold px-2 py-0.5 rounded-full' }, 'Exemption / Passed')
+                React.createElement('span', { key: 'b', className: 'bg-cyan-100 text-cyan-900 dark:bg-cyan-950/70 dark:text-cyan-200 border border-cyan-200 dark:border-cyan-700 text-xs font-bold px-2 py-0.5 rounded-full' }, 'Exemption / Passed')
               ]),
               React.createElement('div', { key: 'y', className: 'text-xs font-bold text-slate-700 dark:text-slate-300' }, 'Year: Feb-14')
             ]),
@@ -662,11 +665,11 @@
             // Lang Test Hin
             React.createElement('div', {
               key: 't-hin',
-              className: `p-4 rounded-xl border flex flex-col justify-between ${
-                isDark ? 'bg-slate-800/60 border-slate-700' : 'bg-slate-50 border-slate-200'
+              className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
+                isDark ? 'bg-[#09222c] border-teal-500/30' : 'bg-[#f0f8f7] border-teal-200/80'
               }`
             }, [
-              React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-slate-500 dark:text-slate-400 mb-1' }, 'Lang Test (Hindi)'),
+              React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-teal-800 dark:text-teal-300 mb-1' }, 'Lang Test (Hindi)'),
               React.createElement('div', { key: 'st', className: 'my-1' }, [
                 React.createElement('span', { key: 'b', className: 'text-slate-500 text-xs font-semibold' }, '—')
               ]),
@@ -676,11 +679,11 @@
             // Other Tests
             React.createElement('div', {
               key: 't-oth',
-              className: `p-4 rounded-xl border flex flex-col justify-between ${
-                isDark ? 'bg-slate-800/60 border-slate-700' : 'bg-slate-50 border-slate-200'
+              className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
+                isDark ? 'bg-[#09222c] border-teal-500/30' : 'bg-[#f0f8f7] border-teal-200/80'
               }`
             }, [
-              React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-slate-500 dark:text-slate-400 mb-1' }, 'Other Tests'),
+              React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-teal-800 dark:text-teal-300 mb-1' }, 'Other Tests'),
               React.createElement('div', { key: 'st', className: 'my-1' }, [
                 React.createElement('span', { key: 'b', className: 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 text-xs font-bold px-2 py-0.5 rounded-full' }, 'NO')
               ]),
@@ -745,13 +748,13 @@
               promotions.map((p, idx) => (
                 React.createElement('div', {
                   key: `prom-${idx}`,
-                  className: `p-4 rounded-xl border flex flex-col justify-between ${
+                  className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
                     p.designation && p.designation !== '—'
-                      ? (isDark ? 'bg-amber-950/20 border-amber-600/40 text-amber-200' : 'bg-amber-50/70 border-amber-300 text-amber-900')
-                      : (isDark ? 'bg-slate-800/40 border-slate-700/60 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-400')
+                      ? (isDark ? 'bg-[#0c2f3d]/90 border-teal-400/60 text-teal-200 shadow-[0_0_12px_rgba(45,212,191,0.2)]' : 'bg-[#e6f7f5] border-teal-400/80 text-teal-950')
+                      : (isDark ? 'bg-[#081d26]/60 border-teal-900/40 text-teal-400/60' : 'bg-[#f0f8f7]/70 border-teal-200/70 text-slate-400')
                   }`
                 }, [
-                  React.createElement('div', { key: 'lbl', className: 'text-[11px] font-black uppercase tracking-wider mb-1.5' }, p.label || `Promotion-${idx + 1}`),
+                  React.createElement('div', { key: 'lbl', className: 'text-[11px] font-black uppercase tracking-wider mb-1.5 text-teal-800 dark:text-teal-300' }, p.label || `Promotion-${idx + 1}`),
                   React.createElement('div', { key: 'val', className: 'text-sm sm:text-base font-extrabold tracking-tight' }, safeVal(p.designation))
                 ])
               ))
@@ -775,19 +778,19 @@
               React.createElement('div', { key: 'j4-wrap', className: 'sm:col-span-2' }, [
                 React.createElement('div', {
                   key: 'j4',
-                  className: `p-3.5 rounded-xl border flex items-center justify-between ${
-                    isDark ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-200'
+                  className: `p-3.5 rounded-xl border flex items-center justify-between eerie-field-box ${
+                    isDark ? 'bg-[#091e28]/90 border-teal-500/30' : 'bg-[#f0f8f7] border-teal-200'
                   }`
                 }, [
                   React.createElement('div', { key: 'l-col' }, [
-                    React.createElement('div', { key: 'lbl', className: 'text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-0.5' }, 'Account Number'),
+                    React.createElement('div', { key: 'lbl', className: 'text-[11px] font-bold text-teal-800/80 dark:text-teal-300/80 uppercase tracking-wider mb-0.5' }, 'Account Number'),
                     React.createElement('div', { key: 'val', className: 'text-base font-mono font-bold tracking-wider text-slate-900 dark:text-white' },
                       bank.accountNumberMasked || bank.accountNumber || '—'
                     )
                   ]),
                   React.createElement('span', {
                     key: 'lock-bdg',
-                    className: 'px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center space-x-1'
+                    className: 'px-2.5 py-1 rounded-full text-[10px] font-bold bg-teal-100 text-teal-900 border border-teal-300 dark:bg-teal-950 dark:text-teal-200 dark:border-teal-700 flex items-center space-x-1'
                   }, [
                     React.createElement('span', { key: 'i' }, '🔒'),
                     React.createElement('span', { key: 't' }, 'Masked for Privacy')
@@ -815,25 +818,25 @@
             // Declaration 1: Teacher
             React.createElement('div', {
               key: 'd1-box',
-              className: `p-4 sm:p-5 rounded-xl border ${
-                isDark ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-200'
+              className: `p-4 sm:p-5 rounded-xl border eerie-field-box ${
+                isDark ? 'bg-[#091e28]/80 border-teal-500/25' : 'bg-[#f0f8f7] border-teal-200'
               }`
             }, [
-              React.createElement('div', { key: 'h', className: 'text-xs font-black uppercase text-[#0c4a7e] dark:text-sky-300 mb-1 flex items-center space-x-1.5' }, [
+              React.createElement('div', { key: 'h', className: 'text-xs font-black uppercase text-[#083344] dark:text-teal-300 mb-1 flex items-center space-x-1.5' }, [
                 React.createElement('span', { key: 'i' }, '📌'),
                 React.createElement('span', { key: 't' }, 'Declaration by Candidate')
               ]),
               React.createElement('p', { key: 'p', className: `text-xs leading-relaxed mb-4 ${isDark ? 'text-slate-300' : 'text-slate-700'}` },
                 decl.teacherDeclaration || "I hereby declare that the above information provided by me is true and correct to the best of my knowledge and belief and if any false information found, I will be personally held responsible as per CCA Rules."
               ),
-              React.createElement('div', { key: 'sig-row', className: 'flex justify-between items-center pt-2 border-t border-slate-200 dark:border-slate-700' }, [
-                React.createElement('span', { key: 'st', className: 'text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center space-x-1' }, [
+              React.createElement('div', { key: 'sig-row', className: 'flex justify-between items-center pt-2 border-t border-teal-500/20' }, [
+                React.createElement('span', { key: 'st', className: 'text-[11px] font-bold text-teal-700 dark:text-teal-300 flex items-center space-x-1' }, [
                   React.createElement('span', { key: 'i' }, '✓'),
                   React.createElement('span', { key: 't' }, 'Endorsed by Employee')
                 ]),
                 React.createElement('div', { key: 's', className: 'text-right' }, [
                   React.createElement('div', { key: 'sn', className: 'font-extrabold text-xs text-slate-900 dark:text-white' }, personal.teacherName || 'P. SURESH BABU'),
-                  React.createElement('div', { key: 'sl', className: 'text-[10px] text-slate-500' }, decl.teacherSignLabel || 'Signature of the Teacher')
+                  React.createElement('div', { key: 'sl', className: 'text-[10px] text-teal-700 dark:text-teal-400' }, decl.teacherSignLabel || 'Signature of the Teacher')
                 ])
               ])
             ]),
@@ -841,25 +844,25 @@
             // Declaration 2: DDO / Headmaster & MEO
             React.createElement('div', {
               key: 'd2-box',
-              className: `p-4 sm:p-5 rounded-xl border ${
-                isDark ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-200'
+              className: `p-4 sm:p-5 rounded-xl border eerie-field-box ${
+                isDark ? 'bg-[#091e28]/80 border-teal-500/25' : 'bg-[#f0f8f7] border-teal-200'
               }`
             }, [
-              React.createElement('div', { key: 'h', className: 'text-xs font-black uppercase text-[#0c4a7e] dark:text-sky-300 mb-1 flex items-center space-x-1.5' }, [
+              React.createElement('div', { key: 'h', className: 'text-xs font-black uppercase text-[#083344] dark:text-teal-300 mb-1 flex items-center space-x-1.5' }, [
                 React.createElement('span', { key: 'i' }, '🏛️'),
                 React.createElement('span', { key: 't' }, 'Certificate of DDO / Headmaster & Mandal Educational Officer')
               ]),
               React.createElement('p', { key: 'p', className: `text-xs leading-relaxed mb-4 ${isDark ? 'text-slate-300' : 'text-slate-700'}` },
                 decl.certDdoHmDeclaration || "I hereby declare that the above information provided by me is true and correct to the best of my knowledge and belief and if any false information found, I will be personally held responsible as per CCA Rules."
               ),
-              React.createElement('div', { key: 'sigs', className: 'grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-200 dark:border-slate-700' }, [
-                React.createElement('div', { key: 'sig-ddo', className: `p-3 rounded-lg border text-center ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}` }, [
+              React.createElement('div', { key: 'sigs', className: 'grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-teal-500/20' }, [
+                React.createElement('div', { key: 'sig-ddo', className: `p-3 rounded-lg border text-center ${isDark ? 'bg-[#081a24] border-teal-500/30' : 'bg-white border-teal-200/80'}` }, [
                   React.createElement('div', { key: 'sig-lbl', className: 'text-xs font-extrabold text-slate-900 dark:text-white' }, decl.ddoHmSignLabel || 'Signature of the DDO/HM'),
-                  React.createElement('div', { key: 'sig-inst', className: 'text-[10px] text-slate-500' }, working.schoolName || 'MPUPS ROLLIAKAI')
+                  React.createElement('div', { key: 'sig-inst', className: 'text-[10px] text-teal-700 dark:text-teal-400' }, working.schoolName || 'MPUPS ROLLIAKAI')
                 ]),
-                React.createElement('div', { key: 'sig-meo', className: `p-3 rounded-lg border text-center ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}` }, [
+                React.createElement('div', { key: 'sig-meo', className: `p-3 rounded-lg border text-center ${isDark ? 'bg-[#081a24] border-teal-500/30' : 'bg-white border-teal-200/80'}` }, [
                   React.createElement('div', { key: 'sig-lbl', className: 'text-xs font-extrabold text-slate-900 dark:text-white' }, decl.meoSignLabel || 'Signature of the MEO'),
-                  React.createElement('div', { key: 'sig-inst', className: 'text-[10px] text-slate-500' }, `MEO ${working.mandal || 'Parvathagiri'}`)
+                  React.createElement('div', { key: 'sig-inst', className: 'text-[10px] text-teal-700 dark:text-teal-400' }, `MEO ${working.mandal || 'Parvathagiri'}`)
                 ])
               ])
             ]),
@@ -867,29 +870,29 @@
             // Declaration 3: CRP / CO / MIS Coordinator
             React.createElement('div', {
               key: 'd3-box',
-              className: `p-4 sm:p-5 rounded-xl border ${
-                isDark ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-200'
+              className: `p-4 sm:p-5 rounded-xl border eerie-field-box ${
+                isDark ? 'bg-[#091e28]/80 border-teal-500/25' : 'bg-[#f0f8f7] border-teal-200'
               }`
             }, [
-              React.createElement('div', { key: 'h', className: 'text-xs font-black uppercase text-[#0c4a7e] dark:text-sky-300 mb-1 flex items-center space-x-1.5' }, [
+              React.createElement('div', { key: 'h', className: 'text-xs font-black uppercase text-[#083344] dark:text-teal-300 mb-1 flex items-center space-x-1.5' }, [
                 React.createElement('span', { key: 'i' }, '📑'),
                 React.createElement('span', { key: 't' }, 'Verification by Cluster Resource Person / Computer Operator / MIS Coordinator')
               ]),
               React.createElement('p', { key: 'p', className: `text-xs leading-relaxed mb-4 ${isDark ? 'text-slate-300' : 'text-slate-700'}` },
                 decl.crpCoMiscoDeclaration || "I certify that the above particulars submitted by the candidate are verified with the Original Certificates and the service register of the individual and found correct."
               ),
-              React.createElement('div', { key: 'sigs', className: 'grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-200 dark:border-slate-700' }, [
-                React.createElement('div', { key: 's-crp', className: `p-3 rounded-lg border text-center ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}` }, [
+              React.createElement('div', { key: 'sigs', className: 'grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-teal-500/20' }, [
+                React.createElement('div', { key: 's-crp', className: `p-3 rounded-lg border text-center ${isDark ? 'bg-[#081a24] border-teal-500/30' : 'bg-white border-teal-200/80'}` }, [
                   React.createElement('div', { key: 'lbl', className: 'text-xs font-extrabold text-slate-900 dark:text-white' }, decl.crpSignLabel || 'Signature of the CRP'),
-                  React.createElement('div', { key: 't', className: 'text-[10px] text-slate-500' }, 'Cluster Resource Person')
+                  React.createElement('div', { key: 't', className: 'text-[10px] text-teal-700 dark:text-teal-400' }, 'Cluster Resource Person')
                 ]),
-                React.createElement('div', { key: 's-co', className: `p-3 rounded-lg border text-center ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}` }, [
+                React.createElement('div', { key: 's-co', className: `p-3 rounded-lg border text-center ${isDark ? 'bg-[#081a24] border-teal-500/30' : 'bg-white border-teal-200/80'}` }, [
                   React.createElement('div', { key: 'lbl', className: 'text-xs font-extrabold text-slate-900 dark:text-white' }, decl.coSignLabel || 'Signature of the CO'),
-                  React.createElement('div', { key: 't', className: 'text-[10px] text-slate-500' }, 'Computer Operator')
+                  React.createElement('div', { key: 't', className: 'text-[10px] text-teal-700 dark:text-teal-400' }, 'Computer Operator')
                 ]),
-                React.createElement('div', { key: 's-misco', className: `p-3 rounded-lg border text-center ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}` }, [
+                React.createElement('div', { key: 's-misco', className: `p-3 rounded-lg border text-center ${isDark ? 'bg-[#081a24] border-teal-500/30' : 'bg-white border-teal-200/80'}` }, [
                   React.createElement('div', { key: 'lbl', className: 'text-xs font-extrabold text-slate-900 dark:text-white' }, decl.miscoSignLabel || 'Signature of the MISCO'),
-                  React.createElement('div', { key: 't', className: 'text-[10px] text-slate-500' }, 'MIS Coordinator')
+                  React.createElement('div', { key: 't', className: 'text-[10px] text-teal-700 dark:text-teal-400' }, 'MIS Coordinator')
                 ])
               ])
             ])
@@ -902,7 +905,9 @@
         React.createElement('div', {
           key: 'bottom-control-card',
           className: `p-5 rounded-2xl border transition-colors flex flex-col sm:flex-row items-center justify-between gap-4 ${
-            isDark ? 'bg-[#131f37] border-slate-700/80 text-slate-300' : 'bg-white border-slate-200 text-slate-700'
+            isDark
+              ? 'bg-gradient-to-r from-[#0a202b] to-[#06151d] border-teal-500/30 text-teal-200'
+              : 'bg-gradient-to-r from-white via-[#f0fbf9] to-[#ebf7f6] border-teal-500/25 text-slate-700'
           }`
         }, [
           React.createElement('button', {
@@ -910,20 +915,20 @@
             onClick: onBack,
             className: `px-4 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
               isDark
-                ? 'bg-slate-800 border-slate-600 text-slate-200 hover:bg-slate-700'
-                : 'bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200'
+                ? 'bg-[#0c2633] border-teal-600/40 text-teal-200 hover:bg-[#0f3244]'
+                : 'bg-teal-50 border-teal-200 text-teal-800 hover:bg-teal-100'
             }`
           }, '← Back to Dashboard Overview'),
 
           React.createElement('div', { key: 'copy-box', className: 'text-center text-xs space-y-0.5' }, [
             React.createElement('div', { key: 'c', className: 'font-semibold' }, '© 2026 Pragnya (IN). All Rights Reserved.'),
-            React.createElement('div', { key: 'd', className: 'text-[11px] text-slate-500' }, 'Design & Code by P V Rajeshwar • School Education Department')
+            React.createElement('div', { key: 'd', className: 'text-[11px] text-teal-700 dark:text-teal-400' }, 'Design & Code by P V Rajeshwar • School Education Department')
           ]),
 
           React.createElement('button', {
             key: 'btn-p2',
             onClick: handlePrint,
-            className: 'bg-[#0c4a7e] hover:bg-[#08355b] text-white font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-sm flex items-center space-x-2 cursor-pointer transition-all'
+            className: 'bg-gradient-to-r from-[#0d9488] via-[#0f766e] to-[#044e54] hover:from-[#14b8a6] hover:to-[#0f766e] text-white font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-sm flex items-center space-x-2 cursor-pointer transition-all'
           }, [
             React.createElement('span', { key: 'i' }, '🖨'),
             React.createElement('span', { key: 't' }, 'Print / Save as PDF')
@@ -943,25 +948,25 @@
         // ---------------- PAGE 1 ----------------
         React.createElement('div', {
           key: 'print-page-1',
-          className: 'service-record-page bg-white p-6 sm:p-8 border border-slate-700 mb-8'
+          className: 'service-record-page bg-white p-4 sm:p-6 border border-slate-700 mb-4'
         }, [
           // Page 1 Header
-          React.createElement('div', { key: 'p1-head', className: 'text-center border-b-2 border-slate-800 pb-3 mb-4' }, [
+          React.createElement('div', { key: 'p1-head', className: 'text-center border-b-2 border-slate-800 pb-2 mb-3' }, [
             React.createElement('div', { key: 'seal-box', className: 'flex justify-center mb-1' }, [
               TelanganaEmblem
-                ? React.createElement(TelanganaEmblem, { key: 'seal', className: 'w-12 h-12' })
-                : React.createElement('div', { key: 'fallback-seal', className: 'w-12 h-12 rounded-full border-2 border-[#007a33] flex items-center justify-center text-xs font-bold text-[#007a33]' }, 'TS')
+                ? React.createElement(TelanganaEmblem, { key: 'seal', className: 'w-10 h-10' })
+                : React.createElement('div', { key: 'fallback-seal', className: 'w-10 h-10 rounded-full border-2 border-[#007a33] flex items-center justify-center text-xs font-bold text-[#007a33]' }, 'TS')
             ]),
-            React.createElement('h1', { key: 'govt', className: 'text-sm sm:text-base font-black tracking-wider uppercase text-slate-900' },
+            React.createElement('h1', { key: 'govt', className: 'text-sm sm:text-base font-black tracking-wider uppercase text-slate-900 leading-tight' },
               'GOVERNMENT OF TELANGANA'
             ),
-            React.createElement('h2', { key: 'dept', className: 'text-xs sm:text-sm font-bold uppercase text-slate-800' },
+            React.createElement('h2', { key: 'dept', className: 'text-xs sm:text-sm font-bold uppercase text-slate-800 leading-tight' },
               record.department || 'SCHOOL EDUCATION DEPARTMENT'
             ),
-            React.createElement('h3', { key: 'dist', className: 'text-xs font-extrabold uppercase text-[#0c4a7e]' },
+            React.createElement('h3', { key: 'dist', className: 'text-xs font-extrabold uppercase text-[#0c4a7e] leading-tight' },
               record.district || 'WARANGAL DISTRICT'
             ),
-            React.createElement('div', { key: 'details-bar', className: 'mt-2 pt-1 border-t border-slate-300 flex justify-between items-center text-[11px]' }, [
+            React.createElement('div', { key: 'details-bar', className: 'mt-1.5 pt-1 border-t border-slate-300 flex justify-between items-center text-[10px]' }, [
               React.createElement('span', { key: 'info', className: 'font-bold text-slate-800' },
                 `Showing Details of: ${record.treasuryCode || '—'} - ${record.teacherName || personal.teacherName || '—'}`
               )
@@ -969,9 +974,16 @@
           ]),
 
           // SECTION A
-          React.createElement('div', { key: 'sec-a', className: 'mb-4' }, [
+          React.createElement('div', { key: 'sec-a', className: 'mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-a', title: 'A. PERSONAL DETAILS OF THE EMPLOYEE' }),
             React.createElement('table', { key: 'tbl-a', className: 'w-full text-xs border border-slate-700' }, [
+              React.createElement('colgroup', { key: 'cg-a' }, [
+                React.createElement('col', { key: 'col1', style: { width: '20%' } }),
+                React.createElement('col', { key: 'col2', style: { width: '20%' } }),
+                React.createElement('col', { key: 'col3', style: { width: '20%' } }),
+                React.createElement('col', { key: 'col4', style: { width: '20%' } }),
+                React.createElement('col', { key: 'col5', style: { width: '20%' } })
+              ]),
               React.createElement('tbody', { key: 'b' }, [
                 React.createElement('tr', { key: 'r1' }, [
                   React.createElement(PrintCell, { key: 'c1', label: 'TREASURY CODE', value: personal.treasuryCode }),
@@ -997,9 +1009,15 @@
           ]),
 
           // SECTION B
-          React.createElement('div', { key: 'sec-b', className: 'mb-4' }, [
+          React.createElement('div', { key: 'sec-b', className: 'mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-b', title: 'B. SPOUSE DETAILS (IF SPOUSE IS GOVT./MUNICIPAL/LOCAL BODY EMPLOYEE)' }),
             React.createElement('table', { key: 'tbl-b', className: 'w-full text-xs border border-slate-700' }, [
+              React.createElement('colgroup', { key: 'cg-b' }, [
+                React.createElement('col', { key: 'col1', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col2', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col3', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col4', style: { width: '25%' } })
+              ]),
               React.createElement('tbody', { key: 'b' }, [
                 React.createElement('tr', { key: 'r1' }, [
                   React.createElement(PrintCell, { key: 'c1', label: 'WHETHER SPOUSE IS GOVT. EMPLOYEE', value: spouse.isSpouseGovtEmployee }),
@@ -1015,9 +1033,14 @@
           ]),
 
           // SECTION C
-          React.createElement('div', { key: 'sec-c', className: 'mb-4' }, [
+          React.createElement('div', { key: 'sec-c', className: 'mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-c', title: 'C. RESIDENTIAL DETAILS' }),
             React.createElement('table', { key: 'tbl-c', className: 'w-full text-xs border border-slate-700' }, [
+              React.createElement('colgroup', { key: 'cg-c' }, [
+                React.createElement('col', { key: 'col1', style: { width: '33.333%' } }),
+                React.createElement('col', { key: 'col2', style: { width: '33.333%' } }),
+                React.createElement('col', { key: 'col3', style: { width: '33.334%' } })
+              ]),
               React.createElement('tbody', { key: 'b' }, [
                 React.createElement('tr', { key: 'r1' }, [
                   React.createElement(PrintCell, { key: 'c1', label: 'RESIDENTIAL ADDRESS', value: residential.residentialAddress }),
@@ -1033,9 +1056,15 @@
           ]),
 
           // SECTION D
-          React.createElement('div', { key: 'sec-d', className: 'mb-4' }, [
+          React.createElement('div', { key: 'sec-d', className: 'mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-d', title: 'D. WORKING PLACE DETAILS' }),
             React.createElement('table', { key: 'tbl-d', className: 'w-full text-xs border border-slate-700' }, [
+              React.createElement('colgroup', { key: 'cg-d' }, [
+                React.createElement('col', { key: 'col1', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col2', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col3', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col4', style: { width: '25%' } })
+              ]),
               React.createElement('tbody', { key: 'b' }, [
                 React.createElement('tr', { key: 'r1' }, [
                   React.createElement(PrintCell, { key: 'c1', label: 'NEW DISTRICT', value: working.newDistrict }),
@@ -1047,7 +1076,7 @@
                   React.createElement(PrintCell, { key: 'c5', label: 'CATEGORY OF THE SCHOOL', value: working.categoryOfSchool }),
                   React.createElement(PrintCell, { key: 'c6', label: 'MANAGEMENT', value: working.management }),
                   React.createElement(PrintCell, { key: 'c7', label: 'MEDIUM OF THE SCHOOL', value: working.mediumOfSchool }),
-                  React.createElement(PrintCell, { key: 'c8', label: 'HRA PERCENTAGE', value: working.hraPercentage })
+                  React.createElement(PrintCell, { key: 'c8', label: 'HRA PERCENTAGE', value: `${working.hraPercentage}%` })
                 ]),
                 React.createElement('tr', { key: 'r3' }, [
                   React.createElement(PrintCell, { key: 'c9', label: 'WORKING AREA', value: working.workingArea, colSpan: 4 })
@@ -1057,10 +1086,21 @@
           ]),
 
           // SECTION E
-          React.createElement('div', { key: 'sec-e', className: 'mb-4' }, [
+          React.createElement('div', { key: 'sec-e', className: 'mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-e', title: 'E. ACADEMIC QUALIFICATIONS' }),
             React.createElement('table', { key: 'tbl-e', className: 'w-full text-xs border border-slate-700 text-center' }, [
-              React.createElement('thead', { key: 'th', className: 'bg-slate-100 text-[10px] uppercase font-bold text-slate-800' }, [
+              React.createElement('colgroup', { key: 'cg-e' }, [
+                React.createElement('col', { key: 'col1', style: { width: '14%' } }),
+                React.createElement('col', { key: 'col2', style: { width: '10%' } }),
+                React.createElement('col', { key: 'col3', style: { width: '10%' } }),
+                React.createElement('col', { key: 'col4', style: { width: '10%' } }),
+                React.createElement('col', { key: 'col5', style: { width: '10%' } }),
+                React.createElement('col', { key: 'col6', style: { width: '10%' } }),
+                React.createElement('col', { key: 'col7', style: { width: '20%' } }),
+                React.createElement('col', { key: 'col8', style: { width: '8%' } }),
+                React.createElement('col', { key: 'col9', style: { width: '8%' } })
+              ]),
+              React.createElement('thead', { key: 'th', className: 'bg-slate-100 text-[8.5px] uppercase font-bold text-slate-800' }, [
                 React.createElement('tr', { key: 'hr' }, [
                   React.createElement('th', { key: 'q', className: 'border border-slate-700 p-1' }, 'Qualification'),
                   React.createElement('th', { key: 'b', className: 'border border-slate-700 p-1' }, 'Branch'),
@@ -1074,7 +1114,7 @@
                 ])
               ]),
               React.createElement('tbody', { key: 'tb' }, academic.map((row, idx) => (
-                React.createElement('tr', { key: `aq-${idx}`, className: 'text-[11px] bg-white' }, [
+                React.createElement('tr', { key: `aq-${idx}`, className: 'text-[9.5px] bg-white' }, [
                   React.createElement('td', { key: 'q', className: 'border border-slate-700 p-1 font-semibold text-left' }, row.qualification),
                   React.createElement('td', { key: 'b', className: 'border border-slate-700 p-1' }, safeVal(row.branch)),
                   React.createElement('td', { key: 'm', className: 'border border-slate-700 p-1' }, safeVal(row.degreeOrMedium)),
@@ -1090,10 +1130,20 @@
           ]),
 
           // SECTION F
-          React.createElement('div', { key: 'sec-f', className: 'mb-4' }, [
+          React.createElement('div', { key: 'sec-f', className: 'mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-f', title: 'F. PROFESSIONAL QUALIFICATIONS' }),
             React.createElement('table', { key: 'tbl-f', className: 'w-full text-xs border border-slate-700 text-center' }, [
-              React.createElement('thead', { key: 'th', className: 'bg-slate-100 text-[10px] uppercase font-bold text-slate-800' }, [
+              React.createElement('colgroup', { key: 'cg-f' }, [
+                React.createElement('col', { key: 'col1', style: { width: '14%' } }),
+                React.createElement('col', { key: 'col2', style: { width: '12%' } }),
+                React.createElement('col', { key: 'col3', style: { width: '10%' } }),
+                React.createElement('col', { key: 'col4', style: { width: '12%' } }),
+                React.createElement('col', { key: 'col5', style: { width: '12%' } }),
+                React.createElement('col', { key: 'col6', style: { width: '22%' } }),
+                React.createElement('col', { key: 'col7', style: { width: '9%' } }),
+                React.createElement('col', { key: 'col8', style: { width: '9%' } })
+              ]),
+              React.createElement('thead', { key: 'th', className: 'bg-slate-100 text-[8.5px] uppercase font-bold text-slate-800' }, [
                 React.createElement('tr', { key: 'hr' }, [
                   React.createElement('th', { key: 'q', className: 'border border-slate-700 p-1' }, 'Qualification'),
                   React.createElement('th', { key: 'd', className: 'border border-slate-700 p-1' }, 'Degree'),
@@ -1106,7 +1156,7 @@
                 ])
               ]),
               React.createElement('tbody', { key: 'tb' }, professional.map((row, idx) => (
-                React.createElement('tr', { key: `pq-${idx}`, className: 'text-[11px] bg-white' }, [
+                React.createElement('tr', { key: `pq-${idx}`, className: 'text-[9.5px] bg-white' }, [
                   React.createElement('td', { key: 'q', className: 'border border-slate-700 p-1 font-semibold text-left' }, row.qualification),
                   React.createElement('td', { key: 'd', className: 'border border-slate-700 p-1' }, safeVal(row.degree)),
                   React.createElement('td', { key: 'm', className: 'border border-slate-700 p-1' }, safeVal(row.medium)),
@@ -1121,11 +1171,19 @@
           ]),
 
           // SECTION G
-          React.createElement('div', { key: 'sec-g', className: 'mb-3' }, [
+          React.createElement('div', { key: 'sec-g', className: 'mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-g', title: 'G. DEPARTMENTAL TESTS' }),
             React.createElement('table', { key: 'tbl-g', className: 'w-full text-xs border border-slate-700 text-center' }, [
+              React.createElement('colgroup', { key: 'cg-g' }, [
+                React.createElement('col', { key: 'col1', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col2', style: { width: '15%' } }),
+                React.createElement('col', { key: 'col3', style: { width: '15%' } }),
+                React.createElement('col', { key: 'col4', style: { width: '15%' } }),
+                React.createElement('col', { key: 'col5', style: { width: '15%' } }),
+                React.createElement('col', { key: 'col6', style: { width: '15%' } })
+              ]),
               React.createElement('tbody', { key: 'tb' }, [
-                React.createElement('tr', { key: 'r1', className: 'bg-slate-100 text-[10px] uppercase font-bold text-slate-800' }, [
+                React.createElement('tr', { key: 'r1', className: 'bg-slate-100 text-[8.5px] uppercase font-bold text-slate-800' }, [
                   React.createElement('th', { key: 'th-lbl', className: 'border border-slate-700 p-1 text-left' }, 'Departmental Test'),
                   React.createElement('th', { key: 'th-got', className: 'border border-slate-700 p-1' }, 'GOT'),
                   React.createElement('th', { key: 'th-eot', className: 'border border-slate-700 p-1' }, 'EOT'),
@@ -1133,27 +1191,27 @@
                   React.createElement('th', { key: 'th-hin', className: 'border border-slate-700 p-1' }, 'Lang Test (Hin)'),
                   React.createElement('th', { key: 'th-oth', className: 'border border-slate-700 p-1' }, 'Other Tests')
                 ]),
-                React.createElement('tr', { key: 'r2', className: 'text-[11px] bg-white' }, [
+                React.createElement('tr', { key: 'r2', className: 'text-[9.5px] bg-white' }, [
                   React.createElement('td', { key: 'lbl', className: 'border border-slate-700 p-1 font-semibold text-left' }, 'Test passed (Yes / No)'),
-                  React.createElement('td', { key: 'got', className: 'border border-slate-700 p-1 font-bold' }, 'YES'),
-                  React.createElement('td', { key: 'eot', className: 'border border-slate-700 p-1 font-bold' }, 'YES'),
-                  React.createElement('td', { key: 'tel', className: 'border border-slate-700 p-1' }, '—'),
-                  React.createElement('td', { key: 'hin', className: 'border border-slate-700 p-1' }, '—'),
-                  React.createElement('td', { key: 'oth', className: 'border border-slate-700 p-1' }, 'NO')
+                  React.createElement('td', { key: 'got', className: 'border border-slate-700 p-1 font-bold' }, safeVal(deptTests.gotPassed || 'YES')),
+                  React.createElement('td', { key: 'eot', className: 'border border-slate-700 p-1 font-bold' }, safeVal(deptTests.eotPassed || 'YES')),
+                  React.createElement('td', { key: 'tel', className: 'border border-slate-700 p-1' }, safeVal(deptTests.langTestTeluguPassed || '—')),
+                  React.createElement('td', { key: 'hin', className: 'border border-slate-700 p-1' }, safeVal(deptTests.langTestHindiPassed || '—')),
+                  React.createElement('td', { key: 'oth', className: 'border border-slate-700 p-1' }, safeVal(deptTests.otherTestsPassed || 'NO'))
                 ]),
-                React.createElement('tr', { key: 'r3', className: 'text-[11px] bg-white' }, [
+                React.createElement('tr', { key: 'r3', className: 'text-[9.5px] bg-white' }, [
                   React.createElement('td', { key: 'lbl', className: 'border border-slate-700 p-1 font-semibold text-left' }, 'Year of Passing'),
-                  React.createElement('td', { key: 'got', className: 'border border-slate-700 p-1 font-bold' }, 'Dec-10'),
-                  React.createElement('td', { key: 'eot', className: 'border border-slate-700 p-1 font-bold' }, 'Dec-11'),
-                  React.createElement('td', { key: 'tel', className: 'border border-slate-700 p-1 font-bold' }, 'Feb-14'),
-                  React.createElement('td', { key: 'hin', className: 'border border-slate-700 p-1' }, '—'),
-                  React.createElement('td', { key: 'oth', className: 'border border-slate-700 p-1' }, '—')
+                  React.createElement('td', { key: 'got', className: 'border border-slate-700 p-1 font-bold' }, safeVal(deptTests.gotYear || 'Dec-10')),
+                  React.createElement('td', { key: 'eot', className: 'border border-slate-700 p-1 font-bold' }, safeVal(deptTests.eotYear || 'Dec-11')),
+                  React.createElement('td', { key: 'tel', className: 'border border-slate-700 p-1 font-bold' }, safeVal(deptTests.langTestTeluguYear || 'Feb-14')),
+                  React.createElement('td', { key: 'hin', className: 'border border-slate-700 p-1' }, safeVal(deptTests.langTestHindiYear || '—')),
+                  React.createElement('td', { key: 'oth', className: 'border border-slate-700 p-1' }, safeVal(deptTests.otherTestsYear || '—'))
                 ])
               ])
             ])
           ]),
 
-          React.createElement('div', { key: 'p1-foot', className: 'text-right text-[9px] text-slate-500 font-semibold' }, 'Page 1 of 2')
+          React.createElement('div', { key: 'p1-foot', className: 'text-right text-[8.5px] text-slate-500 font-semibold' }, 'Page 1 of 2')
         ]),
 
         // Force page break between Page 1 and Page 2 in A4 print
@@ -1162,12 +1220,18 @@
         // ---------------- PAGE 2 ----------------
         React.createElement('div', {
           key: 'print-page-2',
-          className: 'service-record-page bg-white p-6 sm:p-8 border border-slate-700 mb-8'
+          className: 'service-record-page bg-white p-4 sm:p-6 border border-slate-700 mb-4'
         }, [
           // SECTION H
-          React.createElement('div', { key: 'sec-h', className: 'mb-4' }, [
+          React.createElement('div', { key: 'sec-h', className: 'mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-h', title: 'H. SERVICE DETAILS' }),
             React.createElement('table', { key: 'tbl-h', className: 'w-full text-xs border border-slate-700' }, [
+              React.createElement('colgroup', { key: 'cg-h' }, [
+                React.createElement('col', { key: 'col1', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col2', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col3', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col4', style: { width: '25%' } })
+              ]),
               React.createElement('tbody', { key: 'b' }, [
                 React.createElement('tr', { key: 'r1' }, [
                   React.createElement(PrintCell, { key: 'c1', label: 'DATE OF APPOINTMENT AS SPECIAL TEACHER (398/UNTRAINED/SPL VV)', value: service.dateOfAppointmentSpecialTeacher }),
@@ -1200,20 +1264,26 @@
           ]),
 
           // SECTION I
-          React.createElement('div', { key: 'sec-i', className: 'mb-4' }, [
+          React.createElement('div', { key: 'sec-i', className: 'mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-i', title: 'I. ELIGIBLE PROMOTION' }),
             React.createElement('table', { key: 'tbl-i', className: 'w-full text-xs border border-slate-700 text-center' }, [
-              React.createElement('thead', { key: 'th', className: 'bg-slate-100 text-[10px] uppercase font-bold text-slate-800' }, [
+              React.createElement('colgroup', { key: 'cg-i' }, [
+                React.createElement('col', { key: 'col1', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col2', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col3', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col4', style: { width: '25%' } })
+              ]),
+              React.createElement('thead', { key: 'th', className: 'bg-slate-100 text-[8.5px] uppercase font-bold text-slate-800' }, [
                 React.createElement('tr', { key: 'hr' },
                   promotions.map((p, i) => (
-                    React.createElement('th', { key: `ph-${i}`, className: 'border border-slate-700 p-1.5' }, p.label || `Promotion-${i + 1}`)
+                    React.createElement('th', { key: `ph-${i}`, className: 'border border-slate-700 p-1' }, p.label || `Promotion-${i + 1}`)
                   ))
                 )
               ]),
               React.createElement('tbody', { key: 'tb' }, [
                 React.createElement('tr', { key: 'r1' },
                   promotions.map((p, i) => (
-                    React.createElement('td', { key: `pd-${i}`, className: 'border border-slate-700 p-2 font-bold text-xs text-slate-900 bg-white' }, safeVal(p.designation))
+                    React.createElement('td', { key: `pd-${i}`, className: 'border border-slate-700 p-1.5 font-bold text-[10px] text-slate-900 bg-white' }, safeVal(p.designation))
                   ))
                 )
               ])
@@ -1221,82 +1291,88 @@
           ]),
 
           // SECTION J
-          React.createElement('div', { key: 'sec-j', className: 'mb-5' }, [
+          React.createElement('div', { key: 'sec-j', className: 'mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-j', title: 'J. BANK ACCOUNT DETAILS (CONFIDENTIAL)' }),
             React.createElement('table', { key: 'tbl-j', className: 'w-full text-xs border border-slate-700 text-center' }, [
-              React.createElement('thead', { key: 'th', className: 'bg-slate-100 text-[10px] uppercase font-bold text-slate-800' }, [
+              React.createElement('colgroup', { key: 'cg-j' }, [
+                React.createElement('col', { key: 'col1', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col2', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col3', style: { width: '25%' } }),
+                React.createElement('col', { key: 'col4', style: { width: '25%' } })
+              ]),
+              React.createElement('thead', { key: 'th', className: 'bg-slate-100 text-[8.5px] uppercase font-bold text-slate-800' }, [
                 React.createElement('tr', { key: 'hr' }, [
-                  React.createElement('th', { key: 'acc', className: 'border border-slate-700 p-1.5' }, 'ACCOUNT No.'),
-                  React.createElement('th', { key: 'br', className: 'border border-slate-700 p-1.5' }, 'BRANCH'),
-                  React.createElement('th', { key: 'bn', className: 'border border-slate-700 p-1.5' }, 'BANK NAME'),
-                  React.createElement('th', { key: 'if', className: 'border border-slate-700 p-1.5' }, 'IFSC CODE')
+                  React.createElement('th', { key: 'acc', className: 'border border-slate-700 p-1' }, 'ACCOUNT No.'),
+                  React.createElement('th', { key: 'br', className: 'border border-slate-700 p-1' }, 'BRANCH'),
+                  React.createElement('th', { key: 'bn', className: 'border border-slate-700 p-1' }, 'BANK NAME'),
+                  React.createElement('th', { key: 'if', className: 'border border-slate-700 p-1' }, 'IFSC CODE')
                 ])
               ]),
               React.createElement('tbody', { key: 'tb' }, [
                 React.createElement('tr', { key: 'r1' }, [
-                  React.createElement('td', { key: 'acc-val', className: 'border border-slate-700 p-2 font-mono font-bold text-xs tracking-wider bg-white' },
+                  React.createElement('td', { key: 'acc-val', className: 'border border-slate-700 p-1.5 font-mono font-bold text-[10px] tracking-wider bg-white' },
                     bank.accountNumberMasked || bank.accountNumber || '—'
                   ),
-                  React.createElement('td', { key: 'br-val', className: 'border border-slate-700 p-2 font-bold text-xs bg-white' }, safeVal(bank.branch)),
-                  React.createElement('td', { key: 'bn-val', className: 'border border-slate-700 p-2 font-bold text-xs bg-white' }, safeVal(bank.bankName)),
-                  React.createElement('td', { key: 'if-val', className: 'border border-slate-700 p-2 font-mono font-bold text-xs bg-white' }, safeVal(bank.ifscCode))
+                  React.createElement('td', { key: 'br-val', className: 'border border-slate-700 p-1.5 font-bold text-[10px] bg-white' }, safeVal(bank.branch)),
+                  React.createElement('td', { key: 'bn-val', className: 'border border-slate-700 p-1.5 font-bold text-[10px] bg-white' }, safeVal(bank.bankName)),
+                  React.createElement('td', { key: 'if-val', className: 'border border-slate-700 p-1.5 font-mono font-bold text-[10px] bg-white' }, safeVal(bank.ifscCode))
                 ])
               ])
             ])
           ]),
 
           // DECLARATION
-          React.createElement('div', { key: 'box-decl', className: 'border border-slate-700 p-3 mb-3 bg-white' }, [
-            React.createElement('div', { key: 'dt', className: 'text-[10px] font-black uppercase text-slate-900 mb-1' }, 'DECLARATION'),
-            React.createElement('p', { key: 'dp', className: 'text-[10px] text-slate-700 leading-relaxed mb-8' },
+          React.createElement('div', { key: 'box-decl', className: 'border border-slate-700 p-2.5 mb-2 bg-white' }, [
+            React.createElement('div', { key: 'dt', className: 'text-[9px] font-black uppercase text-slate-900 mb-0.5' }, 'DECLARATION'),
+            React.createElement('p', { key: 'dp', className: 'text-[9.5px] text-slate-700 leading-tight mb-4' },
               decl.teacherDeclaration || "I hereby declare that the above information provided by me is true and correct to the best of my knowledge and belief and if any false information found, I will be personally held responsible as per CCA Rules."
             ),
             React.createElement('div', { key: 'ds', className: 'text-right' }, [
-              React.createElement('div', { key: 'line', className: 'inline-block border-t border-slate-800 pt-1 text-[11px] font-extrabold text-slate-900 px-6' },
+              React.createElement('div', { key: 'line', className: 'inline-block border-t border-slate-800 pt-0.5 text-[10px] font-extrabold text-slate-900 px-6' },
                 decl.teacherSignLabel || 'Signature of the Teacher'
               )
             ])
           ]),
 
           // CERTIFICATE
-          React.createElement('div', { key: 'box-cert', className: 'border border-slate-700 p-3 mb-3 bg-white' }, [
-            React.createElement('div', { key: 'ct', className: 'text-[10px] font-black uppercase text-slate-900 mb-1' }, 'CERTIFICATE'),
-            React.createElement('p', { key: 'cp', className: 'text-[10px] text-slate-700 leading-relaxed mb-8' },
+          React.createElement('div', { key: 'box-cert', className: 'border border-slate-700 p-2.5 mb-2 bg-white' }, [
+            React.createElement('div', { key: 'ct', className: 'text-[9px] font-black uppercase text-slate-900 mb-0.5' }, 'CERTIFICATE'),
+            React.createElement('p', { key: 'cp', className: 'text-[9.5px] text-slate-700 leading-tight mb-4' },
               decl.certDdoHmDeclaration || "I hereby declare that the above information provided by me is true and correct to the best of my knowledge and belief and if any false information found, I will be personally held responsible as per CCA Rules."
             ),
-            React.createElement('div', { key: 'cs', className: 'flex justify-between items-end text-[11px] font-extrabold text-slate-900' }, [
-              React.createElement('div', { key: 'ddo', className: 'border-t border-slate-800 pt-1 px-4 text-center' },
+            React.createElement('div', { key: 'cs', className: 'flex justify-between items-end text-[10px] font-extrabold text-slate-900' }, [
+              React.createElement('div', { key: 'ddo', className: 'border-t border-slate-800 pt-0.5 px-4 text-center' },
                 decl.ddoHmSignLabel || 'Signature of the DDO/HM'
               ),
-              React.createElement('div', { key: 'meo', className: 'border-t border-slate-800 pt-1 px-4 text-center' },
+              React.createElement('div', { key: 'meo', className: 'border-t border-slate-800 pt-0.5 px-4 text-center' },
                 decl.meoSignLabel || 'Signature of the MEO'
               )
             ])
           ]),
 
           // DECLARATION BY CLUSTER RESOURCE PERSON / COMPUTER OPERATOR / MIS COORDINATOR
-          React.createElement('div', { key: 'box-cluster', className: 'border border-slate-700 p-3 mb-4 bg-white' }, [
-            React.createElement('div', { key: 'clt', className: 'text-[10px] font-black uppercase text-slate-900 mb-1' },
+          React.createElement('div', { key: 'box-cluster', className: 'border border-slate-700 p-2.5 mb-2 bg-white' }, [
+            React.createElement('div', { key: 'clt', className: 'text-[9px] font-black uppercase text-slate-900 mb-0.5' },
               'DECLARATION BY CLUSTER RESOURCE PERSON / COMPUTER OPERATOR / MIS COORDINATOR'
             ),
-            React.createElement('p', { key: 'clp', className: 'text-[10px] text-slate-700 leading-relaxed mb-8' },
+            React.createElement('p', { key: 'clp', className: 'text-[9.5px] text-slate-700 leading-tight mb-4' },
               decl.crpCoMiscoDeclaration || "I certify that the above particulars submitted by the candidate are verified with the Original Certificates and the service register of the individual and found correct."
             ),
-            React.createElement('div', { key: 'cls', className: 'flex justify-between items-end text-[11px] font-extrabold text-slate-900 text-center' }, [
-              React.createElement('div', { key: 'crp', className: 'border-t border-slate-800 pt-1 px-3' },
+            React.createElement('div', { key: 'cls', className: 'flex justify-between items-end text-[10px] font-extrabold text-slate-900 text-center' }, [
+              React.createElement('div', { key: 'crp', className: 'border-t border-slate-800 pt-0.5 px-3' },
                 decl.crpSignLabel || 'Signature of the CRP'
               ),
-              React.createElement('div', { key: 'co', className: 'border-t border-slate-800 pt-1 px-3' },
+              React.createElement('div', { key: 'co', className: 'border-t border-slate-800 pt-0.5 px-3' },
                 decl.coSignLabel || 'Signature of the CO'
               ),
-              React.createElement('div', { key: 'misco', className: 'border-t border-slate-800 pt-1 px-3' },
+              React.createElement('div', { key: 'misco', className: 'border-t border-slate-800 pt-0.5 px-3' },
                 decl.miscoSignLabel || 'Signature of the MISCO'
               )
             ])
           ]),
 
           // Bottom Copyright & Attribution Footer
-          React.createElement('div', { key: 'p2-foot', className: 'text-center text-[9px] text-slate-600 border-t border-slate-300 pt-2 space-y-0.5' }, [
+          React.createElement('div', { key: 'p2-foot', className: 'text-center text-[8.5px] text-slate-600 border-t border-slate-300 pt-1.5 space-y-0.5' }, [
             React.createElement('div', { key: 'c' }, '© 2026 Pragnya (IN). All Rights Reserved.'),
             React.createElement('div', { key: 'd' }, 'Design & Code by P V Rajeshwar.'),
             React.createElement('div', { key: 'end', className: 'font-bold text-slate-700' }, 'Page 2 of 2 • End of Official Teacher Service Record')

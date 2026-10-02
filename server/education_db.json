@@ -448,269 +448,40 @@
       "designation": "SA PHY SCI",
       "schoolName": "MPUPS Rolliakal",
       "mandal": "Parvathagiri",
-      "passkeys": [],
+      "passkeys": [
+        {
+          "credentialId": "Afsm7Tar422ihQ3GeNKh1A",
+          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEB43GxOHLsoTsOyI_p7ngEi4MDZwbIynrz7r18GrT8Ph6dYvJjbpL0YeJ2wVpvTR4F6Bphb-F0cpKMe5Zo-zk2A",
+          "counter": 0,
+          "transports": [
+            "hybrid",
+            "internal"
+          ],
+          "createdAt": "2026-10-02T07:29:53.683Z"
+        }
+      ],
       "createdAt": "2026-09-25T07:01:39.098Z",
-      "lastLogin": "2026-09-25T07:01:39.098Z",
+      "lastLogin": "2026-10-02T07:29:36.933Z",
       "_id": "6ab626b3aea589eadac89f1c"
     }
   ],
   "sessions": [
     {
-      "sessionId": "ad27124b99f9dfbc504673ec2a05c25efd6f77e93384284c07b55ce5ea18ca7a",
-      "userId": "USER-1790274371103-3519",
-      "role": "APO",
-      "createdAt": "2026-09-24T18:26:11.137Z",
-      "expiresAt": 1790360771137,
-      "metadata": {
-        "authMethod": "passkey"
-      }
-    },
-    {
-      "sessionId": "a1ab579ecdae546dc4acad12979d79b090243266c9d66c1ae833539416045eeb",
-      "userId": "TCH-TS-TCH-100234",
-      "role": "Teacher",
-      "createdAt": "2026-09-24T18:26:11.187Z",
-      "expiresAt": 1790360771187,
-      "metadata": {
-        "authMethod": "teacher_credentials"
-      }
-    },
-    {
-      "sessionId": "7a1fd0b86a36ba836f10be34413c383ddd7678f216cc792ade92facd3f4453bf",
-      "userId": "USER-1790274371103-3519",
-      "role": "APO",
-      "createdAt": "2026-09-24T18:26:11.298Z",
-      "expiresAt": 1790360771298,
-      "metadata": {
-        "authMethod": "password"
-      }
-    },
-    {
-      "sessionId": "139354ebb298b40571e18a99c416a4e14df94d3c8f35e431e4a6abdf918bc965",
-      "userId": "USER-1790317400944-5418",
-      "role": "APO",
-      "createdAt": "2026-09-25T06:23:21.160Z",
-      "expiresAt": 1790403801160,
-      "metadata": {
-        "authMethod": "passkey"
-      }
-    },
-    {
-      "sessionId": "5619b440d2917e8028fe156ef3fc9cdcbfd5c2b01c11e78654373c426fbcca3a",
-      "userId": "USER-1790317401116-1106",
-      "role": "DEO",
-      "createdAt": "2026-09-25T06:23:21.210Z",
-      "expiresAt": 1790403801210,
-      "metadata": {
-        "authMethod": "passkey"
-      }
-    },
-    {
-      "sessionId": "08618d4f6fd93220825ea78ed249221622782c96dc2c857fbd9a8903eb83bf3a",
-      "userId": "USER-1790317401288-2217",
-      "role": "APO",
-      "createdAt": "2026-09-25T06:23:21.383Z",
-      "expiresAt": 1790403801383,
-      "metadata": {
-        "authMethod": "passkey"
-      }
-    },
-    {
-      "sessionId": "4d54795487be4ba749e2ad50448b895fa8adf0888901191b6a1272a0410615bd",
-      "userId": "USER-1790317401462-8518",
-      "role": "MEO",
-      "createdAt": "2026-09-25T06:23:21.498Z",
-      "expiresAt": 1790403801498,
-      "metadata": {
-        "authMethod": "passkey"
-      }
-    },
-    {
-      "sessionId": "58bb519bc01d442732eb8f28df2f092f7d24d6036661e2f5d3de688661a607fb",
-      "userId": "USER-1790317658438-7433",
-      "role": "APO",
-      "createdAt": "2026-09-25T06:27:38.624Z",
-      "expiresAt": 1790404058624,
-      "metadata": {
-        "authMethod": "passkey"
-      }
-    },
-    {
-      "sessionId": "5f91a73ce5556803b255f33121bcc05813e6abc97a43f58ba5d61cd985fad523",
-      "userId": "USER-1790317658582-8493",
-      "role": "DEO",
-      "createdAt": "2026-09-25T06:27:38.674Z",
-      "expiresAt": 1790404058674,
-      "metadata": {
-        "authMethod": "passkey"
-      }
-    },
-    {
-      "sessionId": "745a6b98b62dabe4a29a3ca8029cc201a5d431b3370cc7dca77345330dd54881",
-      "userId": "USER-1790317658770-6389",
-      "role": "APO",
-      "createdAt": "2026-09-25T06:27:38.836Z",
-      "expiresAt": 1790404058836,
-      "metadata": {
-        "authMethod": "passkey"
-      }
-    },
-    {
-      "sessionId": "c501e67d1381535b8b19b9c207a4890bacf64aa7769fa467f02ed714d626dc28",
-      "userId": "TCH-TS-TCH-100234",
-      "role": "Teacher",
-      "createdAt": "2026-09-25T06:27:39.043Z",
-      "expiresAt": 1790404059043,
-      "metadata": {
-        "authMethod": "teacher_credentials"
-      }
-    },
-    {
-      "sessionId": "c8b701779fb9b5126e711c815c28a83cae9e027943b6176e09cd16c12d0804ea",
-      "userId": "USER-1790317658438-7433",
-      "role": "APO",
-      "createdAt": "2026-09-25T06:27:39.133Z",
-      "expiresAt": 1790404059133,
-      "metadata": {
-        "authMethod": "password"
-      }
-    },
-    {
-      "sessionId": "ccad35f838f8c2179f78a9ff83f6493fba1094d585dcffce32c821e26b73fb52",
-      "userId": "USER-1790317738027-6343",
-      "role": "APO",
-      "createdAt": "2026-09-25T06:28:58.198Z",
-      "expiresAt": 1790404138198,
-      "metadata": {
-        "authMethod": "passkey"
-      }
-    },
-    {
-      "sessionId": "9666c75a3dee72e2b1e2a1bfe174bb3a90799ff8c896b206bd6f7c6d2ad06701",
-      "userId": "USER-1790317738166-9521",
-      "role": "DEO",
-      "createdAt": "2026-09-25T06:28:58.240Z",
-      "expiresAt": 1790404138240,
-      "metadata": {
-        "authMethod": "passkey"
-      }
-    },
-    {
-      "sessionId": "a18ee8d2952151bc8152feb0dace8ea9b2d4f45bf6f88917911bfd31c457ac39",
-      "userId": "USER-1790317738342-3287",
-      "role": "APO",
-      "createdAt": "2026-09-25T06:28:58.388Z",
-      "expiresAt": 1790404138388,
-      "metadata": {
-        "authMethod": "passkey"
-      }
-    },
-    {
-      "sessionId": "97ec191f443f3c0ccda8185126a71541afa5f772da90aa3fd3c6bf8afc2260a9",
-      "userId": "TCH-TS-TCH-100234",
-      "role": "Teacher",
-      "createdAt": "2026-09-25T06:28:58.575Z",
-      "expiresAt": 1790404138575,
-      "metadata": {
-        "authMethod": "teacher_credentials"
-      }
-    },
-    {
-      "sessionId": "21769b5f0556364042f7a665cad2e35cdf97fb5be7a77ff563123cd130f6de9e",
-      "userId": "USER-1790317738027-6343",
-      "role": "APO",
-      "createdAt": "2026-09-25T06:28:58.663Z",
-      "expiresAt": 1790404138663,
-      "metadata": {
-        "authMethod": "password"
-      }
-    },
-    {
-      "sessionId": "533b2f40eb00c92402732a843e5033833721bfce737c59259168b9645861b111",
-      "userId": "USER-1790318125797-5075",
-      "role": "APO",
-      "createdAt": "2026-09-25T06:35:25.959Z",
-      "expiresAt": 1790404525959,
-      "metadata": {
-        "authMethod": "passkey"
-      }
-    },
-    {
-      "sessionId": "8efd4ebb9bce7ba6c63304cc23de88fc2d584cf86f04f41a9ebd7a90a44c749e",
-      "userId": "USER-1790318125928-5624",
-      "role": "DEO",
-      "createdAt": "2026-09-25T06:35:26.008Z",
-      "expiresAt": 1790404526008,
-      "metadata": {
-        "authMethod": "passkey"
-      }
-    },
-    {
-      "sessionId": "ab607cb4198b459ab3078a6f69515768cdda507ccde3b963d0d76acaf3d14620",
-      "userId": "USER-1790318126088-6356",
-      "role": "APO",
-      "createdAt": "2026-09-25T06:35:26.138Z",
-      "expiresAt": 1790404526138,
-      "metadata": {
-        "authMethod": "passkey"
-      }
-    },
-    {
-      "sessionId": "4f3f0bf9761f75b929908646324fc61f0690544a7e70a62b649da2e9c3712780",
-      "userId": "TCH-TS-TCH-100234",
-      "role": "Teacher",
-      "createdAt": "2026-09-25T06:35:26.309Z",
-      "expiresAt": 1790404526309,
-      "metadata": {
-        "authMethod": "teacher_credentials"
-      }
-    },
-    {
-      "sessionId": "4ffeca874a76bb2262e8e0266af009161a6f7b2ccc2cff51ba7b97e127a13545",
-      "userId": "USER-1790318125797-5075",
-      "role": "APO",
-      "createdAt": "2026-09-25T06:35:26.420Z",
-      "expiresAt": 1790404526420,
-      "metadata": {
-        "authMethod": "password"
-      }
-    },
-    {
-      "sessionId": "2891683651cd15706327e7e8e013ac686fdf792ac9b3a5be20b69bb981cb5827",
+      "sessionId": "e25a21fa7eefbdb51724a3e7bbe3932beb3471607e8f99e8cef142c1e36b3698",
       "userId": "TCH-2126324",
       "role": "Teacher",
-      "createdAt": "2026-09-25T07:01:39.102Z",
-      "expiresAt": 1790406099102,
+      "createdAt": "2026-10-02T07:29:36.944Z",
+      "expiresAt": 1791012576944,
       "metadata": {
         "authMethod": "teacher_credentials"
       }
     },
     {
-      "sessionId": "5947ed770def6af314926511783b564a987fb75df70a9c26f46acaaab3c9976f",
-      "userId": "TCH-TS-TCH-100234",
+      "sessionId": "3c6161f6e34e5e5811a2c9dd24a20bf68f0db6c7360ec53a5ff0eab74c0c3d1d",
+      "userId": "TCH-2126324",
       "role": "Teacher",
-      "createdAt": "2026-09-25T07:01:39.135Z",
-      "expiresAt": 1790406099135,
-      "metadata": {
-        "authMethod": "teacher_credentials"
-      }
-    },
-    {
-      "sessionId": "e1777f2042d8af3de7355ddee6b138e0b21e268fdf6d3c9f93863d6884288273",
-      "userId": "TCH-TS-TCH-100234",
-      "role": "Teacher",
-      "createdAt": "2026-09-25T07:04:35.027Z",
-      "expiresAt": 1790406275027,
-      "metadata": {
-        "authMethod": "teacher_credentials"
-      }
-    },
-    {
-      "sessionId": "e2c314e5c5a3aa7259a1964740ffb47fd3fe92333c6392b8de25aea2743f5bbf",
-      "userId": "TCH-TS-TCH-100234",
-      "role": "Teacher",
-      "createdAt": "2026-09-25T07:04:49.408Z",
-      "expiresAt": 1790406289408,
+      "createdAt": "2026-10-02T07:29:53.717Z",
+      "expiresAt": 1791012593717,
       "metadata": {
         "authMethod": "passkey"
       }
