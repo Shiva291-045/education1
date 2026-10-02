@@ -255,7 +255,7 @@ body.font-scale-lg {
     width: 100% !important;
     border-collapse: collapse !important;
     table-layout: fixed !important;
-    margin: 0 0 6px 0 !important;
+    margin: 0 !important;
   }
 
   #teacher-service-record-document thead {
@@ -283,6 +283,7 @@ body.font-scale-lg {
     font-weight: 800 !important;
     text-align: center !important;
     box-sizing: border-box !important;
+    line-height: 1.2 !important;
   }
 
   #teacher-service-record-document td {
@@ -293,7 +294,41 @@ body.font-scale-lg {
     background-color: #ffffff !important;
     color: #000000 !important;
     font-size: 9.5px !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
     box-sizing: border-box !important;
+    line-height: 1.25 !important;
+  }
+
+  /* Section heading bars in print */
+  #teacher-service-record-document .print-sec-head {
+    padding: 2.5px 6px !important;
+    font-size: 9.5px !important;
+    margin-bottom: -1px !important;
+    background-color: #f1f5f9 !important;
+    border: 1px solid #1e293b !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  /* Compact section spacing so content uses A4 printable area efficiently */
+  #teacher-service-record-document .print-sec-wrap {
+    margin-bottom: 6px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Declaration boxes on Page 2 */
+  #teacher-service-record-document .print-decl-box {
+    padding: 6px 8px !important;
+    margin-bottom: 6px !important;
+    border: 1px solid #1e293b !important;
+    background-color: #ffffff !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   .no-print,
@@ -317,11 +352,11 @@ body.font-scale-lg {
   .service-record-page {
     box-shadow: none !important;
     margin: 0 auto !important;
-    padding: 4mm 6mm !important;
+    padding: 0 !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     box-sizing: border-box !important;
     width: 100% !important;
-    border: 1px solid #1e293b !important;
+    border: none !important;
   }
 }

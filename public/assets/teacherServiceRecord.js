@@ -141,7 +141,7 @@
 
   function PrintSectionHeading({ title }) {
     return React.createElement('div', {
-      className: 'bg-slate-100 border border-slate-700 px-2 py-1 text-[9.5px] font-black text-slate-900 uppercase tracking-wider mb-[-1px]'
+      className: 'bg-slate-100 border border-slate-700 px-2 py-1 text-[9.5px] font-black text-slate-900 uppercase tracking-wider mb-[-1px] print-sec-head'
     }, title);
   }
 
@@ -974,7 +974,7 @@
           ]),
 
           // SECTION A
-          React.createElement('div', { key: 'sec-a', className: 'mb-2.5' }, [
+          React.createElement('div', { key: 'sec-a', className: 'print-sec-wrap mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-a', title: 'A. PERSONAL DETAILS OF THE EMPLOYEE' }),
             React.createElement('table', { key: 'tbl-a', className: 'w-full text-xs border border-slate-700' }, [
               React.createElement('colgroup', { key: 'cg-a' }, [
@@ -1009,7 +1009,7 @@
           ]),
 
           // SECTION B
-          React.createElement('div', { key: 'sec-b', className: 'mb-2.5' }, [
+          React.createElement('div', { key: 'sec-b', className: 'print-sec-wrap mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-b', title: 'B. SPOUSE DETAILS (IF SPOUSE IS GOVT./MUNICIPAL/LOCAL BODY EMPLOYEE)' }),
             React.createElement('table', { key: 'tbl-b', className: 'w-full text-xs border border-slate-700' }, [
               React.createElement('colgroup', { key: 'cg-b' }, [
@@ -1033,7 +1033,7 @@
           ]),
 
           // SECTION C
-          React.createElement('div', { key: 'sec-c', className: 'mb-2.5' }, [
+          React.createElement('div', { key: 'sec-c', className: 'print-sec-wrap mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-c', title: 'C. RESIDENTIAL DETAILS' }),
             React.createElement('table', { key: 'tbl-c', className: 'w-full text-xs border border-slate-700' }, [
               React.createElement('colgroup', { key: 'cg-c' }, [
@@ -1056,7 +1056,7 @@
           ]),
 
           // SECTION D
-          React.createElement('div', { key: 'sec-d', className: 'mb-2.5' }, [
+          React.createElement('div', { key: 'sec-d', className: 'print-sec-wrap mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-d', title: 'D. WORKING PLACE DETAILS' }),
             React.createElement('table', { key: 'tbl-d', className: 'w-full text-xs border border-slate-700' }, [
               React.createElement('colgroup', { key: 'cg-d' }, [
@@ -1086,17 +1086,17 @@
           ]),
 
           // SECTION E
-          React.createElement('div', { key: 'sec-e', className: 'mb-2.5' }, [
+          React.createElement('div', { key: 'sec-e', className: 'print-sec-wrap mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-e', title: 'E. ACADEMIC QUALIFICATIONS' }),
             React.createElement('table', { key: 'tbl-e', className: 'w-full text-xs border border-slate-700 text-center' }, [
               React.createElement('colgroup', { key: 'cg-e' }, [
-                React.createElement('col', { key: 'col1', style: { width: '14%' } }),
-                React.createElement('col', { key: 'col2', style: { width: '10%' } }),
-                React.createElement('col', { key: 'col3', style: { width: '10%' } }),
-                React.createElement('col', { key: 'col4', style: { width: '10%' } }),
-                React.createElement('col', { key: 'col5', style: { width: '10%' } }),
+                React.createElement('col', { key: 'col1', style: { width: '16%' } }),
+                React.createElement('col', { key: 'col2', style: { width: '8%' } }),
+                React.createElement('col', { key: 'col3', style: { width: '9%' } }),
+                React.createElement('col', { key: 'col4', style: { width: '8%' } }),
+                React.createElement('col', { key: 'col5', style: { width: '16%' } }),
                 React.createElement('col', { key: 'col6', style: { width: '10%' } }),
-                React.createElement('col', { key: 'col7', style: { width: '20%' } }),
+                React.createElement('col', { key: 'col7', style: { width: '17%' } }),
                 React.createElement('col', { key: 'col8', style: { width: '8%' } }),
                 React.createElement('col', { key: 'col9', style: { width: '8%' } })
               ]),
@@ -1119,7 +1119,11 @@
                   React.createElement('td', { key: 'b', className: 'border border-slate-700 p-1' }, safeVal(row.branch)),
                   React.createElement('td', { key: 'm', className: 'border border-slate-700 p-1' }, safeVal(row.degreeOrMedium)),
                   React.createElement('td', { key: 'o1', className: 'border border-slate-700 p-1' }, safeVal(row.optional1)),
-                  React.createElement('td', { key: 'o2', className: 'border border-slate-700 p-1' }, safeVal(row.optional2)),
+                  React.createElement('td', {
+                    key: 'o2',
+                    className: 'border border-slate-700 p-1 font-medium',
+                    style: { wordBreak: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }
+                  }, safeVal(row.optional2)),
                   React.createElement('td', { key: 'o3', className: 'border border-slate-700 p-1' }, safeVal(row.optional3)),
                   React.createElement('td', { key: 'u', className: 'border border-slate-700 p-1' }, safeVal(row.universityOrBoard)),
                   React.createElement('td', { key: 'y', className: 'border border-slate-700 p-1 font-bold' }, safeVal(row.yearPassed)),
@@ -1130,7 +1134,7 @@
           ]),
 
           // SECTION F
-          React.createElement('div', { key: 'sec-f', className: 'mb-2.5' }, [
+          React.createElement('div', { key: 'sec-f', className: 'print-sec-wrap mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-f', title: 'F. PROFESSIONAL QUALIFICATIONS' }),
             React.createElement('table', { key: 'tbl-f', className: 'w-full text-xs border border-slate-700 text-center' }, [
               React.createElement('colgroup', { key: 'cg-f' }, [
@@ -1171,7 +1175,7 @@
           ]),
 
           // SECTION G
-          React.createElement('div', { key: 'sec-g', className: 'mb-2.5' }, [
+          React.createElement('div', { key: 'sec-g', className: 'print-sec-wrap mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-g', title: 'G. DEPARTMENTAL TESTS' }),
             React.createElement('table', { key: 'tbl-g', className: 'w-full text-xs border border-slate-700 text-center' }, [
               React.createElement('colgroup', { key: 'cg-g' }, [
@@ -1223,7 +1227,7 @@
           className: 'service-record-page bg-white p-4 sm:p-6 border border-slate-700 mb-4'
         }, [
           // SECTION H
-          React.createElement('div', { key: 'sec-h', className: 'mb-2.5' }, [
+          React.createElement('div', { key: 'sec-h', className: 'print-sec-wrap mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-h', title: 'H. SERVICE DETAILS' }),
             React.createElement('table', { key: 'tbl-h', className: 'w-full text-xs border border-slate-700' }, [
               React.createElement('colgroup', { key: 'cg-h' }, [
@@ -1264,7 +1268,7 @@
           ]),
 
           // SECTION I
-          React.createElement('div', { key: 'sec-i', className: 'mb-2.5' }, [
+          React.createElement('div', { key: 'sec-i', className: 'print-sec-wrap mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-i', title: 'I. ELIGIBLE PROMOTION' }),
             React.createElement('table', { key: 'tbl-i', className: 'w-full text-xs border border-slate-700 text-center' }, [
               React.createElement('colgroup', { key: 'cg-i' }, [
@@ -1291,7 +1295,7 @@
           ]),
 
           // SECTION J
-          React.createElement('div', { key: 'sec-j', className: 'mb-2.5' }, [
+          React.createElement('div', { key: 'sec-j', className: 'print-sec-wrap mb-2.5' }, [
             React.createElement(PrintSectionHeading, { key: 'h-j', title: 'J. BANK ACCOUNT DETAILS (CONFIDENTIAL)' }),
             React.createElement('table', { key: 'tbl-j', className: 'w-full text-xs border border-slate-700 text-center' }, [
               React.createElement('colgroup', { key: 'cg-j' }, [
@@ -1322,7 +1326,7 @@
           ]),
 
           // DECLARATION
-          React.createElement('div', { key: 'box-decl', className: 'border border-slate-700 p-2.5 mb-2 bg-white' }, [
+          React.createElement('div', { key: 'box-decl', className: 'border border-slate-700 p-2.5 mb-2 bg-white print-decl-box' }, [
             React.createElement('div', { key: 'dt', className: 'text-[9px] font-black uppercase text-slate-900 mb-0.5' }, 'DECLARATION'),
             React.createElement('p', { key: 'dp', className: 'text-[9.5px] text-slate-700 leading-tight mb-4' },
               decl.teacherDeclaration || "I hereby declare that the above information provided by me is true and correct to the best of my knowledge and belief and if any false information found, I will be personally held responsible as per CCA Rules."
@@ -1335,7 +1339,7 @@
           ]),
 
           // CERTIFICATE
-          React.createElement('div', { key: 'box-cert', className: 'border border-slate-700 p-2.5 mb-2 bg-white' }, [
+          React.createElement('div', { key: 'box-cert', className: 'border border-slate-700 p-2.5 mb-2 bg-white print-decl-box' }, [
             React.createElement('div', { key: 'ct', className: 'text-[9px] font-black uppercase text-slate-900 mb-0.5' }, 'CERTIFICATE'),
             React.createElement('p', { key: 'cp', className: 'text-[9.5px] text-slate-700 leading-tight mb-4' },
               decl.certDdoHmDeclaration || "I hereby declare that the above information provided by me is true and correct to the best of my knowledge and belief and if any false information found, I will be personally held responsible as per CCA Rules."
@@ -1351,7 +1355,7 @@
           ]),
 
           // DECLARATION BY CLUSTER RESOURCE PERSON / COMPUTER OPERATOR / MIS COORDINATOR
-          React.createElement('div', { key: 'box-cluster', className: 'border border-slate-700 p-2.5 mb-2 bg-white' }, [
+          React.createElement('div', { key: 'box-cluster', className: 'border border-slate-700 p-2.5 mb-2 bg-white print-decl-box' }, [
             React.createElement('div', { key: 'clt', className: 'text-[9px] font-black uppercase text-slate-900 mb-0.5' },
               'DECLARATION BY CLUSTER RESOURCE PERSON / COMPUTER OPERATOR / MIS COORDINATOR'
             ),
