@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const xlsx = require('xlsx');
+const mongo = require('../mongo');
 
 const OVERRIDES_FILE = path.join(__dirname, '..', 'data', 'teacher_profile_overrides.json');
 
@@ -63,13 +64,42 @@ class TeacherDirectoryService {
     this.teachers = [];
     this.teachersMap = new Map(); // treasuryCode -> teacher
     this.overrides = {};
+    this.fallbackMobileMap = new Map();
     this.isLoaded = false;
     this.init();
   }
 
   init() {
     this.loadOverrides();
+    this.loadFallbackMobileMap();
     this.loadExcelData();
+  }
+
+  loadFallbackMobileMap() {
+    this.fallbackMobileMap = new Map();
+    try {
+      const candidatePaths = [
+        path.join(__dirname, '..', '..', 'TEST MANDAL WISE T DATA (1).xlsx'),
+        path.join(__dirname, '..', '..', 'TEST MANDAL WISE T DATA.xlsx')
+      ];
+      const found = candidatePaths.find(p => fs.existsSync(p));
+      if (found) {
+        const wb = xlsx.readFile(found);
+        for (const name of wb.SheetNames) {
+          const rows = xlsx.utils.sheet_to_json(wb.Sheets[name]);
+          rows.forEach(r => {
+            const code = String(r[' TREASURY CODE'] || r.TREASURY_CODE || r.treasuryCode || '').trim();
+            const mobile = String(r[' MOBILE NO.'] || r.MOBILE_NO || r.mobileNumber || '').trim();
+            if (code && mobile && !mobile.includes('*') && !mobile.includes('X') && mobile !== '-') {
+              this.fallbackMobileMap.set(code, mobile);
+            }
+          });
+        }
+        console.log(`[TEACHER DIRECTORY] Indexed ${this.fallbackMobileMap.size} authentic fallback mobile numbers.`);
+      }
+    } catch (e) {
+      console.warn('[TEACHER DIRECTORY] Fallback mobile map note:', e.message);
+    }
   }
 
   loadOverrides() {
@@ -140,7 +170,7 @@ class TeacherDirectoryService {
         const remainingDaysToRetire = String(r['REMAINING DAYS TO RETIRE'] || r.REMAINING_DAYS_TO_RETIRE || '').trim() || '-';
         const caste = String(r[' CASTE'] || r.CASTE || r.caste || '').trim() || '-';
         const rawMobile = String(r[' MOBILE NO.'] || r.MOBILE_NO || r.mobileNumber || '').trim();
-        const mobileNumber = maskMobileNumber(rawMobile);
+        const mobileNumber = rawMobile || '-';
         const phc = String(r[' PHC'] || r.PHC || '').trim().toUpperCase() || 'NO';
         const phcPercentage = String(r[' PHC%'] || r.PHC_PERCENTAGE || '').trim() || '-';
         const categoryOfSchool = String(r[' CATEGEORY OF THE SCHOOL'] || r.CATEGORY_OF_SCHOOL || '').trim() || '-';
@@ -292,7 +322,7 @@ class TeacherDirectoryService {
       designation: teacher.designation || '-',
       caste: teacher.caste || '-',
       maritalStatus: ovPersonal.maritalStatus || ov.maritalStatus || (isReferenceSuresh ? 'Married' : '-'),
-      mobileNumber: maskMobileNumber(teacher.mobileNumber || ovPersonal.mobileNumber || ov.mobileNumber || '-'),
+      mobileNumber: teacher.rawMobileNumber || teacher.mobileNumber || ovPersonal.mobileNumber || ov.mobileNumber || '-',
       aadharNo: ovPersonal.aadharNo || ov.aadharNo || (isReferenceSuresh ? '635732401209' : '-'),
       medium: teacher.medium || '-',
       typeOfPhc: teacher.phc === 'YES' ? (ovPersonal.typeOfPhc || ov.typeOfPhc || 'OH') : 'NO PHC',
@@ -585,7 +615,7 @@ class TeacherDirectoryService {
   /**
    * Retrieves an Individual Teacher Profile with strict RBAC boundary checks.
    */
-  getTeacherProfile(treasuryCode, user, options = {}) {
+  async getTeacherProfile(treasuryCode, user, options = {}) {
     if (!user) {
       return { success: false, status: 401, message: "Authentication required to view Teacher Profile." };
     }
@@ -638,6 +668,31 @@ class TeacherDirectoryService {
     }
 
     const profile = this.buildCompleteProfile(teacher, options);
+
+    // Identify if the teacher's mobile number is currently masked
+    const currentMobile = profile.personalDetails.mobileNumber;
+    const isMasked = !currentMobile || currentMobile === '-' || currentMobile === '—' || currentMobile.includes('*') || currentMobile.includes('X') || currentMobile.includes('x');
+
+    if (isMasked) {
+      let importedMobile = null;
+      try {
+        // Query MongoDB education.mobile_import collection using existing Atlas backend connection
+        importedMobile = await mongo.getMobileFromImport(code);
+      } catch (err) {
+        console.warn(`[TEACHER DIRECTORY] Mongo mobile lookup note for ${code}:`, err.message);
+      }
+
+      // Resilient fallback if MongoDB Atlas is offline or collection is pending
+      if (!importedMobile && this.fallbackMobileMap && this.fallbackMobileMap.has(code)) {
+        importedMobile = this.fallbackMobileMap.get(code);
+      }
+
+      // Replace ONLY the currently masked mobile number in the Individual Teacher Profile
+      if (importedMobile) {
+        profile.personalDetails.mobileNumber = importedMobile;
+      }
+    }
+
     return {
       success: true,
       userRole: role,

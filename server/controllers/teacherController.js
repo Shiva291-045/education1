@@ -180,7 +180,7 @@ class TeacherController {
       const urlObj = new URL(req.url, 'http://localhost');
       const forPrint = urlObj.searchParams.get('print') === 'true' || urlObj.searchParams.get('print') === '1';
 
-      const result = teacherDirectoryService.getTeacherProfile(treasuryCode, user, { maskSensitive: !forPrint });
+      const result = await teacherDirectoryService.getTeacherProfile(treasuryCode, user, { maskSensitive: !forPrint });
       if (!result.success) {
         return res.status(result.status || 403).json(result);
       }
