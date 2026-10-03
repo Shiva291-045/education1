@@ -46,16 +46,17 @@ class SchoolStrengthController {
       if (!user) {
         return res.status(401).json({
           success: false,
-          message: "Authentication required. Schools Information is a protected dashboard feature strictly restricted to authenticated DEO and APO officers."
+          message: "Authentication required. Please log in as DEO, APO, or MEO to access school strength records."
         });
       }
 
       const role = (user.role || '').toUpperCase();
       const isDeoOrApo = (role === 'DEO' || role === 'APO' || role === 'OFFICER');
-      if (!isDeoOrApo) {
+      const isMeo = (role === 'MEO');
+      if (!isDeoOrApo && !isMeo) {
         return res.status(403).json({
           success: false,
-          message: "Access Denied: Schools Information is a protected dashboard feature strictly restricted to authenticated DEO and APO officers."
+          message: "Access Denied: School strength records are strictly restricted to authenticated DEO, APO, and authorized MEO officers."
         });
       }
 
@@ -87,20 +88,29 @@ class SchoolStrengthController {
       if (!user) {
         return res.status(401).json({
           success: false,
-          message: "Authentication required. Schools Information is a protected dashboard feature strictly restricted to authenticated DEO and APO officers."
+          message: "Authentication required."
         });
       }
 
       const role = (user.role || '').toUpperCase();
       const isDeoOrApo = (role === 'DEO' || role === 'APO' || role === 'OFFICER');
-      if (!isDeoOrApo) {
+      const isMeo = (role === 'MEO');
+      if (!isDeoOrApo && !isMeo) {
         return res.status(403).json({
           success: false,
-          message: "Access Denied: Schools Information is a protected dashboard feature strictly restricted to authenticated DEO and APO officers."
+          message: "Access Denied: School strength records are strictly restricted to authenticated DEO, APO, and authorized MEO officers."
         });
       }
 
       const decodedMandal = decodeURIComponent(mandalParam).trim();
+      const userMandal = (user.mandal || '').trim().toUpperCase();
+      if (isMeo && decodedMandal.toUpperCase() !== userMandal) {
+        return res.status(403).json({
+          success: false,
+          message: `Access Denied: As MEO of ${userMandal}, you are strictly prohibited from viewing or accessing records for ${decodedMandal}.`
+        });
+      }
+
       const result = schoolStrengthService.getDashboardData({ mandal: decodedMandal }, user);
       if (!result.success) {
         return res.status(result.status || 403).json(result);
@@ -123,16 +133,17 @@ class SchoolStrengthController {
       if (!user) {
         return res.status(401).json({
           success: false,
-          message: "Authentication required. Schools Information is a protected dashboard feature strictly restricted to authenticated DEO and APO officers."
+          message: "Authentication required. Please log in to edit mandal strength particulars."
         });
       }
 
       const role = (user.role || '').toUpperCase();
       const isDeoOrApo = (role === 'DEO' || role === 'APO' || role === 'OFFICER');
-      if (!isDeoOrApo) {
+      const isMeo = (role === 'MEO');
+      if (!isDeoOrApo && !isMeo) {
         return res.status(403).json({
           success: false,
-          message: "Access Denied: Schools Information is a protected dashboard feature strictly restricted to authenticated DEO and APO officers."
+          message: "Access Denied: You do not have permission to edit school strength data."
         });
       }
 

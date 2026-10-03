@@ -78,10 +78,11 @@
     const userRole = (user?.role || '').toUpperCase();
     const isDeoOrApo = (userRole === 'DEO' || userRole === 'APO' || userRole === 'OFFICER');
     const isMeo = (userRole === 'MEO');
-    const assignedMandal = user?.mandal ? user.mandal.toUpperCase() : (previewMandal ? previewMandal.toUpperCase() : null);
+    const isAuthorized = isDeoOrApo || isMeo;
+    const assignedMandal = user?.mandal ? user.mandal.toUpperCase() : (previewMandal ? previewMandal.toUpperCase() : (isMeo ? 'JANGAON' : null));
 
-    // Strict Frontend Access Control: Schools Information is strictly restricted to authenticated DEO and APO officers
-    if (!isDeoOrApo) {
+    // Strict Frontend Access Control: Only authenticated DEO, APO, and authorized MEO officers
+    if (!isAuthorized) {
       return h('div', {
         className: 'min-h-[450px] flex items-center justify-center p-6'
       }, [
@@ -92,9 +93,9 @@
         }, [
           h('div', { className: 'w-16 h-16 mx-auto rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center text-3xl font-bold' }, '🔒'),
           h('h2', { className: 'text-xl font-black text-red-600 dark:text-red-400' }, '403 — Access Denied'),
-          h('p', { className: 'text-sm font-bold text-slate-800 dark:text-slate-100' }, 'Schools Information: Protected Feature'),
+          h('p', { className: 'text-sm font-bold text-slate-800 dark:text-slate-100' }, 'Protected Officer Feature'),
           h('p', { className: 'text-xs text-slate-500 dark:text-slate-400 leading-relaxed' }, 
-            'Schools Information is a protected dashboard feature strictly restricted to authenticated DEO and APO officers. Unauthorized users and guests are not permitted to access this data.'
+            'School strength records are strictly restricted to authenticated DEO, APO, and authorized MEO officers through their official login.'
           ),
           onBack && h('button', {
             onClick: onBack,
@@ -144,6 +145,13 @@
         }
 
         setDashboardData(json);
+
+        // If MEO, lock selected mandal to assigned mandal
+        if (json.isRestrictedToMandal && json.userMandal) {
+          setSelectedMandal(json.userMandal);
+        } else if (isMeo && assignedMandal) {
+          setSelectedMandal(assignedMandal);
+        }
       } catch (err) {
         console.error('Error loading schools information data:', err);
         setApiError(err.message);
@@ -284,16 +292,16 @@
               h('span', {
                 key: 'tag',
                 className: 'px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
-              }, 'Official Government Statistics'),
+              }, isMeo ? 'Mandal Educational Office' : 'Official Government Statistics'),
               h('span', {
                 key: 'dist',
                 className: 'text-xs font-bold text-sky-600 dark:text-sky-400'
-              }, 'District : Jangaon • Protected Dashboard')
+              }, isMeo ? `Mandal : ${assignedMandal} • Assigned Login` : 'District : Jangaon • Protected Dashboard')
             ]),
             h('h1', {
               key: 'title',
               className: `text-lg sm:text-xl font-black mt-0.5 ${isDark ? 'text-white' : 'text-[#0c4a7e]'}`
-            }, 'Schools Information — Jangaon District')
+            }, isMeo ? `School Strength Particulars — ${assignedMandal} Mandal` : 'Schools Information — Jangaon District')
           ])
         ]),
 
@@ -325,17 +333,23 @@
       h('div', {
         key: 'rbac-banner',
         className: `p-3.5 sm:p-4 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs ${
-          isDark ? 'bg-blue-950/40 border-blue-800 text-blue-200' : 'bg-blue-50 border-blue-200 text-blue-900'
+          isMeo
+            ? (isDark ? 'bg-emerald-950/40 border-emerald-800 text-emerald-200' : 'bg-emerald-50 border-emerald-200 text-emerald-900')
+            : (isDark ? 'bg-blue-950/40 border-blue-800 text-blue-200' : 'bg-blue-50 border-blue-200 text-blue-900')
         }`
       }, [
         h('div', { key: 'b-left', className: 'flex items-center space-x-2.5' }, [
-          h('span', { key: 'icon', className: 'text-base sm:text-lg' }, '🏛️'),
+          h('span', { key: 'icon', className: 'text-base sm:text-lg' }, isMeo ? '🏫' : '🏛️'),
           h('div', { key: 'text' }, [
             h('div', { key: 't1', className: 'font-bold' },
-              `District Educational Office Administration: ${userRole || 'DEO / APO'}`
+              isMeo
+                ? `Mandal Educational Officer (${assignedMandal}): Authorized Login (${user?.name || user?.mobile || 'MEO'})`
+                : `District Educational Office Administration: ${userRole || 'DEO / APO'}`
             ),
             h('div', { key: 't2', className: 'opacity-90 mt-0.5' },
-              'Protected Dashboard Feature: Complete district authority to view, filter, and edit school particulars across all 12 mandals and 16 management categories.'
+              isMeo
+                ? `You are authorized to view and modify strength particulars exclusively for ${assignedMandal} Mandal through your official login. Access to other mandals is strictly prohibited.`
+                : 'Protected Dashboard Feature: Complete district authority to view, filter, and edit school particulars across all 12 mandals and 16 management categories.'
             )
           ])
         ]),
@@ -343,8 +357,12 @@
         h('div', { key: 'b-right', className: 'flex items-center space-x-2 self-end sm:self-center' }, [
           h('span', {
             key: 'tag',
-            className: 'px-2.5 py-1 rounded-full font-bold uppercase tracking-wide text-[10px] bg-blue-200 text-blue-900 dark:bg-blue-900 dark:text-blue-100'
-          }, 'DISTRICT ALL MANDALS • AUTHORIZED')
+            className: `px-2.5 py-1 rounded-full font-bold uppercase tracking-wide text-[10px] ${
+              isMeo
+                ? 'bg-emerald-200 text-emerald-900 dark:bg-emerald-900 dark:text-emerald-100'
+                : 'bg-blue-200 text-blue-900 dark:bg-blue-900 dark:text-blue-100'
+            }`
+          }, isMeo ? `${assignedMandal} MANDAL ONLY • 🔐 PROTECTED` : 'DISTRICT ALL MANDALS • AUTHORIZED')
         ])
       ]),
 
