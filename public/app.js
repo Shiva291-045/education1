@@ -3097,6 +3097,14 @@ function OfficerModules({ user, isDark, onOpenSchoolsInfo, onOpenTeachersInfo, o
         React.createElement('span', { key: 't' }, isMeo ? 'Open Mandal Retirements' : 'Open Retirement Schedule')
       ])
     ]),
+
+    // MODULE 4: Mandal Inspection Monitoring
+    React.createElement('div', {
+      key: 'o1',
+      className: `p-5 rounded-2xl border transition-all space-y-3 ${
+        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      }`
+    }, [
       React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '🏛️ Mandal Inspection Monitoring'),
       React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Oversee school inspections across the 12 mandals of Jangaon District.'),
       React.createElement('button', {
