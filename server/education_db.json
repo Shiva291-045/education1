@@ -450,7 +450,7 @@
       "mandal": "Parvathagiri",
       "passkeys": [],
       "createdAt": "2026-09-25T07:01:39.098Z",
-      "lastLogin": "2026-10-03T12:52:22.439Z",
+      "lastLogin": "2026-10-03T14:28:39.995Z",
       "_id": "6ab626b3aea589eadac89f1c"
     },
     {
@@ -462,11 +462,22 @@
       "mandal": null,
       "passwordHash": "scrypt$1936ddae4f69541d08f73a8a652fe91c$1a6c1b48cf3a1dce3885a4375ec849c0e07a2127fd6351c342b3ca12e23bb45a96670381a73b8cbc3abfbef04b3902f7b72934466b7aae715ce99e2583b93893",
       "accountStatus": "ACTIVE",
-      "passkeys": [],
+      "passkeys": [
+        {
+          "credentialId": "FDYNhmsPQJ5h-fI4IPcSVg",
+          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAENZcUNN4_IxMknG_ne3BvF-fhC3LVxmUywSI9XHF_xtmMQbruODbBvDx9CvdIcKZi60YOQQozmDq_V2eulKglYg",
+          "counter": 0,
+          "transports": [
+            "hybrid",
+            "internal"
+          ],
+          "createdAt": "2026-10-03T13:02:27.514Z"
+        }
+      ],
       "officialDataLinked": true,
       "officialProfileId": null,
       "createdAt": "2026-10-02T09:29:41.298Z",
-      "lastLogin": "2026-10-03T12:52:22.520Z",
+      "lastLogin": "2026-10-03T14:28:40.070Z",
       "_id": "6abf7bad04e9e63ade8f9e1f"
     },
     {
@@ -497,7 +508,7 @@
       "officialDataLinked": true,
       "officialProfileId": null,
       "createdAt": "2026-10-02T09:29:41.393Z",
-      "lastLogin": "2026-10-03T12:52:22.607Z",
+      "lastLogin": "2026-10-03T14:28:40.137Z",
       "_id": "6abf7bad04e9e63ade8f9e24"
     },
     {
@@ -513,7 +524,7 @@
       "officialDataLinked": true,
       "officialProfileId": null,
       "createdAt": "2026-10-02T09:29:41.442Z",
-      "lastLogin": "2026-10-03T12:52:22.743Z"
+      "lastLogin": "2026-10-03T14:28:40.215Z"
     }
   ],
   "sessions": [
@@ -593,6 +604,66 @@
       "role": "MEO",
       "createdAt": "2026-10-03T12:52:22.750Z",
       "expiresAt": 1791118342750,
+      "metadata": {
+        "authMethod": "password"
+      }
+    },
+    {
+      "sessionId": "582d47f7d7d3581f61b24a959d0dd9613105db30dfec9455b23fcef638954f53",
+      "userId": "OFFICIAL-DEO-9848011222",
+      "role": "DEO",
+      "createdAt": "2026-10-03T13:02:14.394Z",
+      "expiresAt": 1791118934394,
+      "metadata": {
+        "authMethod": "password"
+      }
+    },
+    {
+      "sessionId": "c48b242fe00b654c665c9554c80d86ef8aeaf9e95cf77fd4e5ff1f949f7b9f3e",
+      "userId": "OFFICIAL-DEO-9848011222",
+      "role": "DEO",
+      "createdAt": "2026-10-03T13:02:27.533Z",
+      "expiresAt": 1791118947533,
+      "metadata": {
+        "authMethod": "passkey"
+      }
+    },
+    {
+      "sessionId": "e40a559d2ba4eb7e00a3449a346c73aa88056f43fe52866080c11a8dee7760f3",
+      "userId": "TCH-2126324",
+      "role": "Teacher",
+      "createdAt": "2026-10-03T14:28:39.999Z",
+      "expiresAt": 1791124119999,
+      "metadata": {
+        "authMethod": "teacher_credentials"
+      }
+    },
+    {
+      "sessionId": "7d256f98ede4e8118b33bd2dff317eae65512fe6e1255a6c5046735a447fdac8",
+      "userId": "OFFICIAL-DEO-9848011222",
+      "role": "DEO",
+      "createdAt": "2026-10-03T14:28:40.076Z",
+      "expiresAt": 1791124120076,
+      "metadata": {
+        "authMethod": "password"
+      }
+    },
+    {
+      "sessionId": "544ba740b57ff3ee4b2c0251c9f5f6b6a5052cd8ecc8d49e27e2ead93d299bae",
+      "userId": "OFFICIAL-MEO-9848033444",
+      "role": "MEO",
+      "createdAt": "2026-10-03T14:28:40.142Z",
+      "expiresAt": 1791124120142,
+      "metadata": {
+        "authMethod": "password"
+      }
+    },
+    {
+      "sessionId": "1999f4c88587dbb44e884b43a133bbd9652ee7c7ef6ed5ac8a7f9a15d8f1826c",
+      "userId": "OFFICIAL-MEO-9848044555",
+      "role": "MEO",
+      "createdAt": "2026-10-03T14:28:40.220Z",
+      "expiresAt": 1791124120220,
       "metadata": {
         "authMethod": "password"
       }
@@ -1002,6 +1073,18 @@
       "consumed": true,
       "consumedAt": "2026-09-25T07:04:49.400Z",
       "enrollmentToken": "0175b58e3f424cca5c457f52c1b2a97a8859b140c8580c7434a376b1a9951285"
+    },
+    {
+      "userId": "OFFICIAL-DEO-9848011222",
+      "challenge": "MaRAQqm_XmIjUqRuci_2UflYlDtSJy71ppGjNuwtHA4",
+      "registrationType": "WEBAUTHN_REGISTRATION",
+      "createdAt": "2026-10-03T13:02:16.021Z",
+      "createdAtIso": "2026-10-03T13:02:16.021Z",
+      "expiresAt": 1791033136021,
+      "expiresAtMs": 1791033136021,
+      "consumed": true,
+      "consumedAt": "2026-10-03T13:02:27.525Z",
+      "enrollmentToken": "a64e72316114121c611227bd2bdabaecf8bd92c351a1aa63f3d9da441f6aa2ad"
     }
   ],
   "school_strength_district": [

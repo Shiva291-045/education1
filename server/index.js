@@ -267,6 +267,30 @@ try {
         return;
       }
 
+      // Teachers Information Directory & Individual Teacher Profiles (Protected DEO, APO, MEO)
+      if (pathname === '/api/teachers' && req.method === 'GET') {
+        await teacherController.getTeachersDirectory(req, mockRes);
+        return;
+      }
+      if ((pathname.startsWith('/api/teachers/profile/') || (pathname.startsWith('/api/teachers/') && pathname !== '/api/teachers')) && req.method === 'GET') {
+        const treasuryCode = pathname.startsWith('/api/teachers/profile/')
+          ? pathname.replace('/api/teachers/profile/', '')
+          : pathname.replace('/api/teachers/', '');
+        if (treasuryCode) {
+          await teacherController.getIndividualTeacherProfile(req, mockRes, treasuryCode);
+          return;
+        }
+      }
+      if ((pathname.startsWith('/api/teachers/profile/') || (pathname.startsWith('/api/teachers/') && pathname !== '/api/teachers')) && req.method === 'PUT') {
+        const treasuryCode = pathname.startsWith('/api/teachers/profile/')
+          ? pathname.replace('/api/teachers/profile/', '')
+          : pathname.replace('/api/teachers/', '');
+        if (treasuryCode) {
+          await teacherController.updateIndividualTeacherProfile(req, mockRes, treasuryCode);
+          return;
+        }
+      }
+
       if (pathname === '/api/portal-data' && req.method === 'GET') {
         await authController.portalData(req, mockRes);
         return;

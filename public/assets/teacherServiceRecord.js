@@ -6,8 +6,8 @@
   const { useState, useEffect } = React;
 
   function safeVal(val) {
-    if (val === undefined || val === null || String(val).trim() === '' || String(val).trim() === '-') {
-      return '—';
+    if (val === undefined || val === null || String(val).trim() === '' || String(val).trim() === '-' || String(val).trim() === '—') {
+      return '-';
     }
     return String(val).trim();
   }
@@ -20,6 +20,7 @@
   function DigitalField({ label, value, colSpan, highlight, badge, isDark }) {
     const isSpecialBadge = badge || (value === 'YES' || value === 'Married' || value === 'PLAIN');
     const isNegativeBadge = (value === 'NO');
+    const isUnavailable = (safeVal(value) === '-');
 
     return React.createElement('div', {
       className: `p-3.5 rounded-xl border transition-all flex flex-col justify-between eerie-field-box ${
@@ -38,7 +39,12 @@
         key: 'val',
         className: 'flex items-center space-x-2'
       }, [
-        isSpecialBadge
+        isUnavailable
+          ? React.createElement('span', {
+              key: 'unavail-val',
+              className: 'text-sm sm:text-base font-semibold text-slate-400 dark:text-slate-500 tracking-wider'
+            }, '-')
+          : isSpecialBadge
           ? React.createElement('span', {
               key: 'sp-badge',
               className: `px-2.5 py-0.5 rounded-full text-xs font-black inline-flex items-center gap-1 ${
@@ -148,12 +154,17 @@
   // ==========================================
   // MAIN VIEW COMPONENT
   // ==========================================
-  function TeacherServiceRecordView({ onBack, user, isDark }) {
-    const [record, setRecord] = useState(null);
-    const [loading, setLoading] = useState(true);
+  function TeacherServiceRecordView({ onBack, user, isDark, treasuryCode, initialProfile }) {
+    const [record, setRecord] = useState(initialProfile || null);
+    const [loading, setLoading] = useState(!initialProfile);
     const [errorMsg, setErrorMsg] = useState('');
 
     useEffect(() => {
+      if (initialProfile) {
+        setRecord(initialProfile);
+        setLoading(false);
+        return;
+      }
       let isMounted = true;
       async function fetchRecord() {
         setLoading(true);
@@ -164,23 +175,35 @@
             : '';
 
           const isGuestPreview = (!user || user.accountStatus === 'PREVIEW_MODE');
-          const endpoint = isGuestPreview
+          const endpoint = treasuryCode
+            ? `${apiBase}/api/teachers/profile/${encodeURIComponent(treasuryCode)}`
+            : isGuestPreview
             ? `${apiBase}/api/teacher/preview-record`
             : `${apiBase}/api/teacher/service-record`;
 
-          const res = await fetch(endpoint, { credentials: 'include' });
+          const res = await fetch(endpoint, {
+            credentials: 'include',
+            headers: {
+              ...(user?.accountStatus === 'PREVIEW_MODE' ? {
+                'x-preview-role': user.role,
+                'x-preview-mandal': user.mandal || ''
+              } : {})
+            }
+          });
           const data = await res.json();
 
           if (isMounted) {
-            if (data.success && data.serviceRecord) {
-              setRecord(data.serviceRecord);
+            if (data.success && (data.profile || data.serviceRecord)) {
+              setRecord(data.profile || data.serviceRecord);
+            } else if (treasuryCode) {
+              setErrorMsg(data.message || `Unable to load teacher profile (HTTP ${res.status}).`);
             } else {
               const fallback = await fetch(`${apiBase}/api/teacher/preview-record`);
               const fbData = await fallback.json();
-              if (fbData.success && fbData.serviceRecord) {
-                setRecord(fbData.serviceRecord);
+              if (fbData.success && (fbData.profile || fbData.serviceRecord)) {
+                setRecord(fbData.profile || fbData.serviceRecord);
               } else {
-                setErrorMsg(data.message || "Failed to load Teacher Service Record.");
+                setErrorMsg(data.message || "Failed to load Individual Teacher Profile.");
               }
             }
           }
@@ -195,7 +218,7 @@
 
       fetchRecord();
       return () => { isMounted = false; };
-    }, [user]);
+    }, [user, treasuryCode, initialProfile]);
 
     const handlePrint = () => {
       window.print();
@@ -376,7 +399,7 @@
           icon: '👤',
           title: 'A. PERSONAL DETAILS OF THE EMPLOYEE',
           subtitle: 'Official identity, demographic credentials and service category',
-          badge: '13 Verified Fields',
+          badge: '16 Verified Fields',
           isDark: isDark
         }, [
           React.createElement('div', {
@@ -391,11 +414,14 @@
             React.createElement(DigitalField, { key: 'f6', label: 'Medium', value: personal.medium, isDark }),
             React.createElement(DigitalField, { key: 'f7', label: 'Gender', value: personal.gender, isDark }),
             React.createElement(DigitalField, { key: 'f8', label: 'Date of Birth', value: personal.dateOfBirth, isDark }),
-            React.createElement(DigitalField, { key: 'f9', label: 'Caste Category', value: personal.caste, isDark }),
-            React.createElement(DigitalField, { key: 'f10', label: 'Registered Mobile No', value: personal.mobileNumber, isDark }),
-            React.createElement(DigitalField, { key: 'f11', label: 'Marital Status', value: personal.maritalStatus, isDark }),
-            React.createElement(DigitalField, { key: 'f12', label: 'Type of PHC (OH/HH/VH/NO)', value: personal.typeOfPhc, isDark }),
-            React.createElement(DigitalField, { key: 'f13', label: 'PHC Percentage', value: personal.phcPercentage, isDark })
+            React.createElement(DigitalField, { key: 'f9', label: 'Age', value: personal.age, isDark }),
+            React.createElement(DigitalField, { key: 'f10', label: 'Date of Retirement', value: personal.dateOfRetirement, isDark }),
+            React.createElement(DigitalField, { key: 'f11', label: 'Remaining Days to Retire', value: personal.remainingDaysToRetire, isDark }),
+            React.createElement(DigitalField, { key: 'f12', label: 'Caste Category', value: personal.caste, isDark }),
+            React.createElement(DigitalField, { key: 'f13', label: 'Registered Mobile No', value: personal.mobileNumber, isDark }),
+            React.createElement(DigitalField, { key: 'f14', label: 'Marital Status', value: personal.maritalStatus, isDark }),
+            React.createElement(DigitalField, { key: 'f15', label: 'Type of PHC (OH/HH/VH/NO)', value: personal.typeOfPhc, isDark }),
+            React.createElement(DigitalField, { key: 'f16', label: 'PHC Percentage', value: personal.phcPercentage, isDark })
           ])
         ]),
 
@@ -621,74 +647,102 @@
             className: 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4'
           }, [
             // GOT
-            React.createElement('div', {
-              key: 't-got',
-              className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
-                isDark ? 'bg-[#09222c] border-teal-500/30' : 'bg-teal-50/50 border-teal-200'
-              }`
-            }, [
-              React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-teal-800 dark:text-teal-300 mb-1' }, 'GOT (Gazetted Officers Test)'),
-              React.createElement('div', { key: 'st', className: 'my-1' }, [
-                React.createElement('span', { key: 'b', className: 'bg-teal-100 text-teal-900 dark:bg-teal-950 dark:text-teal-200 border border-teal-300 dark:border-teal-700 text-xs font-black px-2 py-0.5 rounded-full' }, '✓ PASSED')
-              ]),
-              React.createElement('div', { key: 'y', className: 'text-xs font-bold text-slate-700 dark:text-slate-300' }, 'Year: Dec-10')
-            ]),
+            (() => {
+              const gotPassed = (deptTests.testPassed && deptTests.testPassed[1]) || 'YES';
+              const gotYear = (deptTests.yearOfPassing && deptTests.yearOfPassing[1]) || '-';
+              return React.createElement('div', {
+                key: 't-got',
+                className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
+                  isDark ? 'bg-[#09222c] border-teal-500/30' : 'bg-teal-50/50 border-teal-200'
+                }`
+              }, [
+                React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-teal-800 dark:text-teal-300 mb-1' }, 'GOT (Gazetted Officers Test)'),
+                React.createElement('div', { key: 'st', className: 'my-1' }, [
+                  React.createElement('span', { key: 'b', className: 'bg-teal-100 text-teal-900 dark:bg-teal-950 dark:text-teal-200 border border-teal-300 dark:border-teal-700 text-xs font-black px-2 py-0.5 rounded-full' },
+                    gotPassed === 'YES' ? '✓ PASSED' : safeVal(gotPassed)
+                  )
+                ]),
+                React.createElement('div', { key: 'y', className: 'text-xs font-bold text-slate-700 dark:text-slate-300' }, `Year: ${safeVal(gotYear)}`)
+              ]);
+            })(),
 
             // EOT
-            React.createElement('div', {
-              key: 't-eot',
-              className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
-                isDark ? 'bg-[#09222c] border-teal-500/30' : 'bg-teal-50/50 border-teal-200'
-              }`
-            }, [
-              React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-teal-800 dark:text-teal-300 mb-1' }, 'EOT (Executive Officers Test)'),
-              React.createElement('div', { key: 'st', className: 'my-1' }, [
-                React.createElement('span', { key: 'b', className: 'bg-teal-100 text-teal-900 dark:bg-teal-950 dark:text-teal-200 border border-teal-300 dark:border-teal-700 text-xs font-black px-2 py-0.5 rounded-full' }, '✓ PASSED')
-              ]),
-              React.createElement('div', { key: 'y', className: 'text-xs font-bold text-slate-700 dark:text-slate-300' }, 'Year: Dec-11')
-            ]),
+            (() => {
+              const eotPassed = (deptTests.testPassed && deptTests.testPassed[2]) || 'YES';
+              const eotYear = (deptTests.yearOfPassing && deptTests.yearOfPassing[2]) || '-';
+              return React.createElement('div', {
+                key: 't-eot',
+                className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
+                  isDark ? 'bg-[#09222c] border-teal-500/30' : 'bg-teal-50/50 border-teal-200'
+                }`
+              }, [
+                React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-teal-800 dark:text-teal-300 mb-1' }, 'EOT (Executive Officers Test)'),
+                React.createElement('div', { key: 'st', className: 'my-1' }, [
+                  React.createElement('span', { key: 'b', className: 'bg-teal-100 text-teal-900 dark:bg-teal-950 dark:text-teal-200 border border-teal-300 dark:border-teal-700 text-xs font-black px-2 py-0.5 rounded-full' },
+                    eotPassed === 'YES' ? '✓ PASSED' : safeVal(eotPassed)
+                  )
+                ]),
+                React.createElement('div', { key: 'y', className: 'text-xs font-bold text-slate-700 dark:text-slate-300' }, `Year: ${safeVal(eotYear)}`)
+              ]);
+            })(),
 
             // Lang Test Tel
-            React.createElement('div', {
-              key: 't-tel',
-              className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
-                isDark ? 'bg-[#09222c] border-teal-500/30' : 'bg-[#f0f8f7] border-teal-200/80'
-              }`
-            }, [
-              React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-teal-800 dark:text-teal-300 mb-1' }, 'Lang Test (Telugu)'),
-              React.createElement('div', { key: 'st', className: 'my-1' }, [
-                React.createElement('span', { key: 'b', className: 'bg-cyan-100 text-cyan-900 dark:bg-cyan-950/70 dark:text-cyan-200 border border-cyan-200 dark:border-cyan-700 text-xs font-bold px-2 py-0.5 rounded-full' }, 'Exemption / Passed')
-              ]),
-              React.createElement('div', { key: 'y', className: 'text-xs font-bold text-slate-700 dark:text-slate-300' }, 'Year: Feb-14')
-            ]),
+            (() => {
+              const telPassed = (deptTests.testPassed && deptTests.testPassed[3]) || '-';
+              const telYear = (deptTests.yearOfPassing && deptTests.yearOfPassing[3]) || '-';
+              return React.createElement('div', {
+                key: 't-tel',
+                className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
+                  isDark ? 'bg-[#09222c] border-teal-500/30' : 'bg-[#f0f8f7] border-teal-200/80'
+                }`
+              }, [
+                React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-teal-800 dark:text-teal-300 mb-1' }, 'Lang Test (Telugu)'),
+                React.createElement('div', { key: 'st', className: 'my-1' }, [
+                  telPassed && telPassed !== '-' && telPassed !== '—'
+                    ? React.createElement('span', { key: 'b', className: 'bg-cyan-100 text-cyan-900 dark:bg-cyan-950/70 dark:text-cyan-200 border border-cyan-200 dark:border-cyan-700 text-xs font-bold px-2 py-0.5 rounded-full' }, telPassed === 'YES' ? 'Exemption / Passed' : telPassed)
+                    : React.createElement('span', { key: 'b', className: 'text-slate-400 dark:text-slate-500 text-xs font-semibold' }, '-')
+                ]),
+                React.createElement('div', { key: 'y', className: 'text-xs font-bold text-slate-700 dark:text-slate-300' }, `Year: ${safeVal(telYear)}`)
+              ]);
+            })(),
 
             // Lang Test Hin
-            React.createElement('div', {
-              key: 't-hin',
-              className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
-                isDark ? 'bg-[#09222c] border-teal-500/30' : 'bg-[#f0f8f7] border-teal-200/80'
-              }`
-            }, [
-              React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-teal-800 dark:text-teal-300 mb-1' }, 'Lang Test (Hindi)'),
-              React.createElement('div', { key: 'st', className: 'my-1' }, [
-                React.createElement('span', { key: 'b', className: 'text-slate-500 text-xs font-semibold' }, '—')
-              ]),
-              React.createElement('div', { key: 'y', className: 'text-xs text-slate-400' }, 'Year: —')
-            ]),
+            (() => {
+              const hinPassed = (deptTests.testPassed && deptTests.testPassed[4]) || '-';
+              const hinYear = (deptTests.yearOfPassing && deptTests.yearOfPassing[4]) || '-';
+              return React.createElement('div', {
+                key: 't-hin',
+                className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
+                  isDark ? 'bg-[#09222c] border-teal-500/30' : 'bg-[#f0f8f7] border-teal-200/80'
+                }`
+              }, [
+                React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-teal-800 dark:text-teal-300 mb-1' }, 'Lang Test (Hindi)'),
+                React.createElement('div', { key: 'st', className: 'my-1' }, [
+                  hinPassed && hinPassed !== '-' && hinPassed !== '—'
+                    ? React.createElement('span', { key: 'b', className: 'bg-cyan-100 text-cyan-900 dark:bg-cyan-950/70 dark:text-cyan-200 border border-cyan-200 dark:border-cyan-700 text-xs font-bold px-2 py-0.5 rounded-full' }, hinPassed)
+                    : React.createElement('span', { key: 'b', className: 'text-slate-400 dark:text-slate-500 text-xs font-semibold' }, '-')
+                ]),
+                React.createElement('div', { key: 'y', className: 'text-xs text-slate-400' }, `Year: ${safeVal(hinYear)}`)
+              ]);
+            })(),
 
             // Other Tests
-            React.createElement('div', {
-              key: 't-oth',
-              className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
-                isDark ? 'bg-[#09222c] border-teal-500/30' : 'bg-[#f0f8f7] border-teal-200/80'
-              }`
-            }, [
-              React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-teal-800 dark:text-teal-300 mb-1' }, 'Other Tests'),
-              React.createElement('div', { key: 'st', className: 'my-1' }, [
-                React.createElement('span', { key: 'b', className: 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 text-xs font-bold px-2 py-0.5 rounded-full' }, 'NO')
-              ]),
-              React.createElement('div', { key: 'y', className: 'text-xs text-slate-400' }, 'Year: —')
-            ])
+            (() => {
+              const othPassed = (deptTests.testPassed && deptTests.testPassed[5]) || 'NO';
+              const othYear = (deptTests.yearOfPassing && deptTests.yearOfPassing[5]) || '-';
+              return React.createElement('div', {
+                key: 't-oth',
+                className: `p-4 rounded-xl border flex flex-col justify-between eerie-field-box ${
+                  isDark ? 'bg-[#09222c] border-teal-500/30' : 'bg-[#f0f8f7] border-teal-200/80'
+                }`
+              }, [
+                React.createElement('div', { key: 'h', className: 'text-[11px] font-black uppercase text-teal-800 dark:text-teal-300 mb-1' }, 'Other Tests'),
+                React.createElement('div', { key: 'st', className: 'my-1' }, [
+                  React.createElement('span', { key: 'b', className: 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 text-xs font-bold px-2 py-0.5 rounded-full' }, safeVal(othPassed))
+                ]),
+                React.createElement('div', { key: 'y', className: 'text-xs text-slate-400' }, `Year: ${safeVal(othYear)}`)
+              ]);
+            })()
           ])
         ]),
 
@@ -701,7 +755,7 @@
           icon: '💼',
           title: 'H. SERVICE DETAILS',
           subtitle: 'First appointment, feeder cadre, present cadre, DSC merit and administrative history',
-          badge: `Rank #${service.rank || '887'}`,
+          badge: (service.rank && service.rank !== '-' && service.rank !== '—') ? `Rank #${service.rank}` : 'Rank: —',
           isDark: isDark
         }, [
           React.createElement('div', {
@@ -1197,19 +1251,19 @@
                 ]),
                 React.createElement('tr', { key: 'r2', className: 'text-[9.5px] bg-white' }, [
                   React.createElement('td', { key: 'lbl', className: 'border border-slate-700 p-1 font-semibold text-left' }, 'Test passed (Yes / No)'),
-                  React.createElement('td', { key: 'got', className: 'border border-slate-700 p-1 font-bold' }, safeVal(deptTests.gotPassed || 'YES')),
-                  React.createElement('td', { key: 'eot', className: 'border border-slate-700 p-1 font-bold' }, safeVal(deptTests.eotPassed || 'YES')),
-                  React.createElement('td', { key: 'tel', className: 'border border-slate-700 p-1' }, safeVal(deptTests.langTestTeluguPassed || '—')),
-                  React.createElement('td', { key: 'hin', className: 'border border-slate-700 p-1' }, safeVal(deptTests.langTestHindiPassed || '—')),
-                  React.createElement('td', { key: 'oth', className: 'border border-slate-700 p-1' }, safeVal(deptTests.otherTestsPassed || 'NO'))
+                  React.createElement('td', { key: 'got', className: 'border border-slate-700 p-1 font-bold' }, safeVal(deptTests.gotPassed)),
+                  React.createElement('td', { key: 'eot', className: 'border border-slate-700 p-1 font-bold' }, safeVal(deptTests.eotPassed)),
+                  React.createElement('td', { key: 'tel', className: 'border border-slate-700 p-1' }, safeVal(deptTests.langTestTeluguPassed)),
+                  React.createElement('td', { key: 'hin', className: 'border border-slate-700 p-1' }, safeVal(deptTests.langTestHindiPassed)),
+                  React.createElement('td', { key: 'oth', className: 'border border-slate-700 p-1' }, safeVal(deptTests.otherTestsPassed))
                 ]),
                 React.createElement('tr', { key: 'r3', className: 'text-[9.5px] bg-white' }, [
                   React.createElement('td', { key: 'lbl', className: 'border border-slate-700 p-1 font-semibold text-left' }, 'Year of Passing'),
-                  React.createElement('td', { key: 'got', className: 'border border-slate-700 p-1 font-bold' }, safeVal(deptTests.gotYear || 'Dec-10')),
-                  React.createElement('td', { key: 'eot', className: 'border border-slate-700 p-1 font-bold' }, safeVal(deptTests.eotYear || 'Dec-11')),
-                  React.createElement('td', { key: 'tel', className: 'border border-slate-700 p-1 font-bold' }, safeVal(deptTests.langTestTeluguYear || 'Feb-14')),
-                  React.createElement('td', { key: 'hin', className: 'border border-slate-700 p-1' }, safeVal(deptTests.langTestHindiYear || '—')),
-                  React.createElement('td', { key: 'oth', className: 'border border-slate-700 p-1' }, safeVal(deptTests.otherTestsYear || '—'))
+                  React.createElement('td', { key: 'got', className: 'border border-slate-700 p-1 font-bold' }, safeVal(deptTests.gotYear)),
+                  React.createElement('td', { key: 'eot', className: 'border border-slate-700 p-1 font-bold' }, safeVal(deptTests.eotYear)),
+                  React.createElement('td', { key: 'tel', className: 'border border-slate-700 p-1 font-bold' }, safeVal(deptTests.langTestTeluguYear)),
+                  React.createElement('td', { key: 'hin', className: 'border border-slate-700 p-1' }, safeVal(deptTests.langTestHindiYear)),
+                  React.createElement('td', { key: 'oth', className: 'border border-slate-700 p-1' }, safeVal(deptTests.otherTestsYear))
                 ])
               ])
             ])
@@ -1387,4 +1441,5 @@
   }
 
   window.TeacherServiceRecordView = TeacherServiceRecordView;
+  window.IndividualTeacherProfileView = TeacherServiceRecordView;
 })();
