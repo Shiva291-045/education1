@@ -39,6 +39,17 @@ function fmtDate(val) {
   return String(val).trim();
 }
 
+function parseRetirementDate(val) {
+  if (!val || val === '-' || val === '0000-00-00') return null;
+  const parts = String(val).trim().split('-');
+  if (parts.length !== 3) return null;
+  const day = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10);
+  const year = parseInt(parts[2], 10);
+  if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+  return new Date(year, month - 1, day, 23, 59, 59, 999);
+}
+
 function maskAccountNumber(acc) {
   if (!acc || acc === '-') return '-';
   const str = String(acc).replace(/\s+/g, '');
@@ -762,6 +773,253 @@ class TeacherDirectoryService {
       success: true,
       message: `✓ Teacher profile for ${code} successfully updated.`,
       profile: updatedProfile
+    };
+  }
+
+  /**
+   * Automatically calculates employee retirements dynamically based on stored retirement date.
+   * Does NOT store or manually update remaining days; calculated dynamically from current date.
+   *
+   * Supported views:
+   * - THIS_MONTH: retiring in the current calendar month
+   * - EVERY_MONTH: retiring in any selected month (1-12) & year
+   * - THIS_YEAR: all retirements in the current year, grouped month-wise
+   * - EVERY_YEAR: all retirements in any selected year, grouped month-wise
+   * - UPCOMING: all upcoming retirements sorted by closest remaining days
+   * - RETIRED: employees whose retirement date has passed
+   */
+  getRetirements(query = {}, user) {
+    if (!user) {
+      return { success: false, status: 401, message: "Authentication required to access Retirements." };
+    }
+
+    const role = (user.role || '').toUpperCase();
+    const isTeacher = (role === 'TEACHER');
+    const isDeo = (role === 'DEO' || role === 'OFFICER');
+    const isApo = (role === 'APO');
+    const isMeo = (role === 'MEO');
+
+    if (isTeacher) {
+      return {
+        success: false,
+        status: 403,
+        message: "Access Denied: Teacher accounts do not have permission to access the Retirements dashboard."
+      };
+    }
+
+    if (!isDeo && !isApo && !isMeo) {
+      return {
+        success: false,
+        status: 403,
+        message: "Access Denied: Retirements is strictly restricted to authenticated DEO, APO, and MEO officers."
+      };
+    }
+
+    const userMandal = user.mandal ? normalizeMandal(user.mandal) : null;
+    if (isMeo) {
+      if (!userMandal) {
+        return { success: false, status: 403, message: "Access Denied: No assigned mandal configured for this MEO account." };
+      }
+      if (query.mandal && query.mandal.trim().toUpperCase() !== 'ALL') {
+        const reqMandal = normalizeMandal(query.mandal);
+        if (reqMandal !== userMandal) {
+          return {
+            success: false,
+            status: 403,
+            message: `Access Denied: As MEO of ${userMandal}, you are strictly prohibited from viewing retirements for ${reqMandal}.`
+          };
+        }
+      }
+    }
+
+    // Dynamic current date (updates daily automatically)
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1; // 1-12
+
+    let records = this.teachers;
+
+    // Apply MEO boundary
+    if (isMeo) {
+      records = records.filter(t => normalizeMandal(t.mandal) === userMandal);
+    } else if (query.mandal && query.mandal.trim().toUpperCase() !== 'ALL') {
+      const targetMandal = normalizeMandal(query.mandal);
+      records = records.filter(t => normalizeMandal(t.mandal) === targetMandal);
+    }
+
+    // Filter by search query (treasuryCode, name, school, designation)
+    if (query.search && query.search.trim()) {
+      const term = query.search.trim().toLowerCase();
+      records = records.filter(t =>
+        (t.treasuryCode && t.treasuryCode.toLowerCase().includes(term)) ||
+        (t.teacherName && t.teacherName.toLowerCase().includes(term)) ||
+        (t.schoolName && t.schoolName.toLowerCase().includes(term)) ||
+        (t.designation && t.designation.toLowerCase().includes(term)) ||
+        (t.mobileNumber && t.mobileNumber.toLowerCase().includes(term))
+      );
+    }
+
+    const allYearsSet = new Set();
+    const monthCountsByYear = {};
+
+    let thisMonthCount = 0;
+    let thisYearCount = 0;
+    let upcomingCount = 0;
+    let retiredCount = 0;
+
+    const enriched = [];
+
+    for (const t of records) {
+      const dStr = t.dateOfRetirement;
+      const parsed = parseRetirementDate(dStr);
+      if (!parsed) continue;
+
+      const retStart = new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate(), 0, 0, 0, 0);
+      const diffMs = retStart.getTime() - todayStart.getTime();
+      const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+      const year = parsed.getFullYear();
+      const month = parsed.getMonth() + 1;
+      const isRetired = diffDays < 0;
+
+      allYearsSet.add(year);
+
+      if (!monthCountsByYear[year]) {
+        monthCountsByYear[year] = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, total: 0 };
+      }
+      monthCountsByYear[year][month] = (monthCountsByYear[year][month] || 0) + 1;
+      monthCountsByYear[year].total = (monthCountsByYear[year].total || 0) + 1;
+
+      if (isRetired) {
+        retiredCount++;
+      } else {
+        upcomingCount++;
+      }
+
+      if (year === currentYear) {
+        thisYearCount++;
+        if (month === currentMonth) {
+          thisMonthCount++;
+        }
+      }
+
+      // Dynamic remaining time calculation
+      let remainingHuman = '';
+      if (isRetired) {
+        const daysAgo = Math.abs(diffDays);
+        remainingHuman = `Retired ${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`;
+      } else if (diffDays === 0) {
+        remainingHuman = 'Retiring Today';
+      } else {
+        let ry = year - now.getFullYear();
+        let rm = month - (now.getMonth() + 1);
+        let rd = parsed.getDate() - now.getDate();
+        if (rd < 0) {
+          rm -= 1;
+          const prevMLast = new Date(year, month - 1, 0).getDate();
+          rd += prevMLast;
+        }
+        if (rm < 0) {
+          ry -= 1;
+          rm += 12;
+        }
+        const parts = [];
+        if (ry > 0) parts.push(`${ry}y`);
+        if (rm > 0 || ry > 0) parts.push(`${rm}m`);
+        parts.push(`${rd}d`);
+        remainingHuman = parts.join(' ');
+      }
+
+      enriched.push({
+        treasuryCode: t.treasuryCode,
+        employeeId: t.employeeId || t.treasuryCode,
+        teacherName: t.teacherName,
+        designation: t.designation,
+        mandal: t.mandal,
+        schoolName: t.schoolName,
+        schoolDiseCode: t.schoolDiseCode,
+        gender: t.gender,
+        caste: t.caste,
+        dateOfBirth: t.dateOfBirth,
+        dateOfRetirement: t.dateOfRetirement,
+        mobileNumber: t.mobileNumber,
+        status: isRetired ? 'RETIRED' : 'UPCOMING',
+        daysRemaining: isRetired ? 0 : diffDays,
+        daysAgo: isRetired ? Math.abs(diffDays) : 0,
+        detailedRemaining: remainingHuman,
+        formattedTimeRemaining: isRetired ? remainingHuman : `${diffDays} days (${remainingHuman})`,
+        year,
+        month,
+        retDateTimestamp: parsed.getTime()
+      });
+    }
+
+    const availableYears = [...allYearsSet].sort((a, b) => a - b);
+    const mode = (query.mode || 'THIS_MONTH').toUpperCase();
+    const selectedYear = parseInt(query.year, 10) || currentYear;
+    const selectedMonth = parseInt(query.month, 10) || currentMonth;
+
+    let filtered = enriched;
+
+    if (mode === 'THIS_MONTH') {
+      filtered = filtered.filter(item => item.year === currentYear && item.month === currentMonth);
+      filtered.sort((a, b) => a.retDateTimestamp - b.retDateTimestamp);
+    } else if (mode === 'EVERY_MONTH') {
+      filtered = filtered.filter(item => item.year === selectedYear && item.month === selectedMonth);
+      filtered.sort((a, b) => a.retDateTimestamp - b.retDateTimestamp);
+    } else if (mode === 'THIS_YEAR') {
+      filtered = filtered.filter(item => item.year === currentYear);
+      filtered.sort((a, b) => a.retDateTimestamp - b.retDateTimestamp);
+    } else if (mode === 'EVERY_YEAR') {
+      filtered = filtered.filter(item => item.year === selectedYear);
+      filtered.sort((a, b) => a.retDateTimestamp - b.retDateTimestamp);
+    } else if (mode === 'UPCOMING') {
+      filtered = filtered.filter(item => item.status === 'UPCOMING');
+      filtered.sort((a, b) => a.daysRemaining - b.daysRemaining);
+    } else if (mode === 'RETIRED') {
+      filtered = filtered.filter(item => item.status === 'RETIRED');
+      filtered.sort((a, b) => b.retDateTimestamp - a.retDateTimestamp);
+    } else {
+      // ALL
+      filtered.sort((a, b) => a.retDateTimestamp - b.retDateTimestamp);
+    }
+
+    const totalFiltered = filtered.length;
+    const page = Math.max(1, parseInt(query.page, 10) || 1);
+    const limit = Math.max(1, Math.min(200, parseInt(query.limit, 10) || 25));
+    const startIndex = (page - 1) * limit;
+    const paginated = filtered.slice(startIndex, startIndex + limit);
+
+    return {
+      success: true,
+      userRole: role,
+      userMandal,
+      isRestrictedToMandal: isMeo,
+      currentDate: todayStart.toISOString().split('T')[0],
+      currentYear,
+      currentMonth,
+      selectedYear,
+      selectedMonth,
+      mode,
+      summary: {
+        thisMonthCount,
+        thisYearCount,
+        upcomingCount,
+        retiredCount,
+        totalInJurisdiction: enriched.length,
+        availableYears,
+        monthCountsForSelectedYear: monthCountsByYear[selectedYear] || {},
+        allMonthCountsByYear: monthCountsByYear
+      },
+      total: totalFiltered,
+      page,
+      limit,
+      totalPages: Math.ceil(totalFiltered / limit),
+      teachers: paginated,
+      filterOptions: {
+        mandals: isMeo ? [userMandal] : OFFICIAL_12_MANDALS,
+        availableYears
+      }
     };
   }
 }

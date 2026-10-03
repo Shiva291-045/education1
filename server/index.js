@@ -267,6 +267,12 @@ try {
         return;
       }
 
+      // Employee Retirements & Schedules (Protected DEO, APO, MEO)
+      if (pathname === '/api/teachers/retirements' && req.method === 'GET') {
+        await teacherController.getRetirements(req, mockRes);
+        return;
+      }
+
       // Teachers Information Directory & Individual Teacher Profiles (Protected DEO, APO, MEO)
       if (pathname === '/api/teachers' && req.method === 'GET') {
         await teacherController.getTeachersDirectory(req, mockRes);

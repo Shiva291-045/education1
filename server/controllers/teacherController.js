@@ -220,6 +220,53 @@ class TeacherController {
       return res.status(500).json({ success: false, message: "Internal server error updating teacher profile." });
     }
   }
+
+  /**
+   * GET /api/teachers/retirements
+   * Automatically calculates employee retirements dynamically based on stored retirement date.
+   * Access: DEO (All District), APO (District/Jurisdiction), MEO (Assigned mandal only).
+   * Blocked: Public (401), Teacher role (403).
+   */
+  async getRetirements(req, res) {
+    try {
+      const user = getSessionUser(req);
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: "Authentication required to access Retirements."
+        });
+      }
+
+      const role = (user.role || '').toUpperCase();
+      if (role === 'TEACHER') {
+        return res.status(403).json({
+          success: false,
+          message: "Access Denied: Teacher accounts do not have permission to access the Retirements dashboard."
+        });
+      }
+
+      const urlObj = new URL(req.url, 'http://localhost');
+      const query = {
+        mode: urlObj.searchParams.get('mode'),
+        year: urlObj.searchParams.get('year'),
+        month: urlObj.searchParams.get('month'),
+        mandal: urlObj.searchParams.get('mandal'),
+        search: urlObj.searchParams.get('search'),
+        page: urlObj.searchParams.get('page'),
+        limit: urlObj.searchParams.get('limit')
+      };
+
+      const result = teacherDirectoryService.getRetirements(query, user);
+      if (!result.success) {
+        return res.status(result.status || 403).json(result);
+      }
+
+      return res.status(200).json(result);
+    } catch (err) {
+      console.error('[TEACHER CONTROLLER] Error in getRetirements:', err);
+      return res.status(500).json({ success: false, message: "Internal server error fetching retirements." });
+    }
+  }
 }
 
 module.exports = new TeacherController();

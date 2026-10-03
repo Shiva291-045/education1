@@ -2442,6 +2442,18 @@ function RoleDashboard() {
             }, [
               React.createElement('span', { key: 'i' }, '👨‍🏫'),
               React.createElement('span', { key: 't' }, isMeo ? `Teachers Info (${activeUser.mandal || 'Assigned Mandal'})` : 'Teachers Information')
+            ]),
+            React.createElement('button', {
+              key: 'btn-tab-off-ret',
+              onClick: () => setOfficerTab('RETIREMENT'),
+              className: `flex items-center space-x-1 px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                officerTab === 'RETIREMENT'
+                  ? 'bg-[#0c4a7e] text-white shadow-xs font-bold'
+                  : (isDark ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-900')
+              }`
+            }, [
+              React.createElement('span', { key: 'i' }, '⏳'),
+              React.createElement('span', { key: 't' }, 'Retirement')
             ])
           ])
         ]),
@@ -2647,6 +2659,37 @@ function RoleDashboard() {
                   }, '← Return to Dashboard Overview')
                 ])
           )
+        : (officerTab === 'RETIREMENT')
+        ? (
+            isAuthorizedOfficer
+              ? (typeof window !== 'undefined' && window.RetirementDashboardView
+                  ? React.createElement(window.RetirementDashboardView, {
+                      key: 'retirement-dash-view',
+                      onBack: () => setOfficerTab('OVERVIEW'),
+                      user: activeUser,
+                      isDark: isDark
+                    })
+                  : React.createElement('div', { key: 'ret-load-err', className: 'p-8 text-center text-sm font-semibold text-slate-600' }, 'Loading Retirement Dashboard...')
+                )
+              : React.createElement('div', {
+                  key: 'unauthorized-box-ret',
+                  className: `p-8 max-w-xl mx-auto my-8 rounded-2xl border text-center space-y-4 shadow-lg ${
+                    isDark ? 'bg-slate-900 border-red-900/60 text-slate-100' : 'bg-white border-red-200 text-slate-800'
+                  }`
+                }, [
+                  React.createElement('div', { key: 'icon', className: 'w-16 h-16 mx-auto rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center text-3xl font-bold' }, '🔒'),
+                  React.createElement('h2', { key: 't', className: 'text-xl font-bold text-red-600 dark:text-red-400' }, '403 — Access Denied'),
+                  React.createElement('p', { key: 'st', className: 'text-sm font-semibold' }, 'Protected Officer Feature'),
+                  React.createElement('p', { key: 'desc', className: 'text-xs text-slate-500 dark:text-slate-400 leading-relaxed' },
+                    'Employee retirement schedules and records are protected dashboard features strictly restricted to authenticated DEO, APO, and authorized MEO officers.'
+                  ),
+                  React.createElement('button', {
+                    key: 'btn-back',
+                    onClick: () => setOfficerTab('OVERVIEW'),
+                    className: 'px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0c4a7e] hover:bg-[#08355b] transition-all cursor-pointer shadow-md'
+                  }, '← Return to Dashboard Overview')
+                ])
+          )
         : React.createElement(React.Fragment, { key: 'dashboard-standard-modules' }, [
             // Notice Box (Light & Dark)
             React.createElement('div', {
@@ -2682,7 +2725,8 @@ function RoleDashboard() {
               user: activeUser,
               isDark,
               onOpenSchoolsInfo: () => setOfficerTab('SCHOOLS_INFO'),
-              onOpenTeachersInfo: () => setOfficerTab('TEACHERS_INFO')
+              onOpenTeachersInfo: () => setOfficerTab('TEACHERS_INFO'),
+              onOpenRetirement: () => setOfficerTab('RETIREMENT')
             }),
             activeUser.role === 'School Staff' && React.createElement(SchoolStaffModules, { key: 'staff-mod', user: activeUser, isDark }),
             activeUser.role === 'Student' && React.createElement(StudentModules, { key: 'student-mod', user: activeUser, isDark }),
@@ -2924,7 +2968,7 @@ function StudentModules({ user, isDark }) {
   ]);
 }
 
-function OfficerModules({ user, isDark, onOpenSchoolsInfo, onOpenTeachersInfo }) {
+function OfficerModules({ user, isDark, onOpenSchoolsInfo, onOpenTeachersInfo, onOpenRetirement }) {
   const isDeoOrApo = (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer');
   const isMeo = (user.role === 'MEO');
 
@@ -3027,13 +3071,32 @@ function OfficerModules({ user, isDark, onOpenSchoolsInfo, onOpenTeachersInfo })
       ])
     ]),
 
-    // MODULE 3: Mandal Inspection Monitoring
+    // MODULE 3: Employee Retirements & Schedules
     React.createElement('div', {
-      key: 'o1',
-      className: `p-5 rounded-2xl border transition-all space-y-3 ${
-        isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+      key: 'o-retirement',
+      className: `p-5 rounded-2xl border-2 transition-all space-y-3 relative overflow-hidden flex flex-col justify-between ${
+        isDark ? 'bg-[#131f37] border-amber-500/80 shadow-lg text-slate-100 ring-1 ring-amber-500/30' : 'bg-gradient-to-br from-white to-amber-50/70 border-amber-400 shadow-md text-slate-800 ring-1 ring-amber-300/40'
       }`
     }, [
+      React.createElement('div', { key: 'badge', className: 'flex items-center justify-between' }, [
+        React.createElement('span', { className: 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 uppercase tracking-wider' }, isMeo ? `Retirements: ${user.mandal || 'Assigned'}` : 'Dynamic Schedules & Countdown'),
+        React.createElement('span', { className: 'text-xl' }, '⏳')
+      ]),
+      React.createElement('div', { key: 'body' }, [
+        React.createElement('h3', { className: `font-bold text-sm ${isDark ? 'text-amber-300' : 'text-amber-900'}` }, '⏳ Employee Retirements'),
+        React.createElement('p', { className: `text-xs mt-1 leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}` },
+          'Track upcoming retirements, days remaining (updating daily), current month/year schedules, and archived retired personnel.'
+        )
+      ]),
+      React.createElement('button', {
+        key: 'btn',
+        onClick: onOpenRetirement,
+        className: 'w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer bg-amber-600 hover:bg-amber-700 text-white flex items-center justify-center space-x-1.5'
+      }, [
+        React.createElement('span', { key: 'i' }, '📅'),
+        React.createElement('span', { key: 't' }, isMeo ? 'Open Mandal Retirements' : 'Open Retirement Schedule')
+      ])
+    ]),
       React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '🏛️ Mandal Inspection Monitoring'),
       React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Oversee school inspections across the 12 mandals of Jangaon District.'),
       React.createElement('button', {
