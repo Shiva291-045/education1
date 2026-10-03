@@ -76,8 +76,33 @@
     const [saveAlert, setSaveAlert] = useState(null);
 
     const userRole = (user?.role || '').toUpperCase();
+    const isDeoOrApo = (userRole === 'DEO' || userRole === 'APO' || userRole === 'OFFICER');
     const isMeo = (userRole === 'MEO');
-    const assignedMandal = user?.mandal ? user.mandal.toUpperCase() : (previewMandal ? previewMandal.toUpperCase() : (isMeo ? 'JANGAON' : null));
+    const assignedMandal = user?.mandal ? user.mandal.toUpperCase() : (previewMandal ? previewMandal.toUpperCase() : null);
+
+    // Strict Frontend Access Control: Schools Information is strictly restricted to authenticated DEO and APO officers
+    if (!isDeoOrApo) {
+      return h('div', {
+        className: 'min-h-[450px] flex items-center justify-center p-6'
+      }, [
+        h('div', {
+          className: `max-w-md w-full p-8 rounded-2xl border text-center space-y-4 shadow-xl ${
+            isDark ? 'bg-slate-900 border-red-900/60 text-slate-100' : 'bg-white border-red-200 text-slate-800'
+          }`
+        }, [
+          h('div', { className: 'w-16 h-16 mx-auto rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center text-3xl font-bold' }, '🔒'),
+          h('h2', { className: 'text-xl font-black text-red-600 dark:text-red-400' }, '403 — Access Denied'),
+          h('p', { className: 'text-sm font-bold text-slate-800 dark:text-slate-100' }, 'Schools Information: Protected Feature'),
+          h('p', { className: 'text-xs text-slate-500 dark:text-slate-400 leading-relaxed' }, 
+            'Schools Information is a protected dashboard feature strictly restricted to authenticated DEO and APO officers. Unauthorized users and guests are not permitted to access this data.'
+          ),
+          onBack && h('button', {
+            onClick: onBack,
+            className: 'px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0c4a7e] hover:bg-[#08355b] transition-all cursor-pointer shadow-md'
+          }, '← Return to Dashboard Overview')
+        ])
+      ]);
+    }
 
     // Fetch dashboard data from backend API
     const fetchData = async () => {
@@ -108,7 +133,7 @@
           headers['x-preview-mandal'] = assignedMandal;
         }
 
-        const res = await fetch(`/api/schools/strength?${queryParams.toString()}`, {
+        const res = await fetch(`/api/schools/information?${queryParams.toString()}`, {
           method: 'GET',
           headers
         });
@@ -119,13 +144,8 @@
         }
 
         setDashboardData(json);
-
-        // If MEO, force filter to assigned mandal
-        if (json.isRestrictedToMandal && json.userMandal) {
-          setSelectedMandal(json.userMandal);
-        }
       } catch (err) {
-        console.error('Error loading school strength data:', err);
+        console.error('Error loading schools information data:', err);
         setApiError(err.message);
       } finally {
         setLoading(false);
@@ -148,7 +168,7 @@
         if (assignedMandal) headers['x-preview-mandal'] = assignedMandal;
 
         const mandalName = encodeURIComponent(editModal.record.mandal);
-        const res = await fetch(`/api/schools/strength/mandal/${mandalName}`, {
+        const res = await fetch(`/api/schools/information/mandal/${mandalName}`, {
           method: 'PUT',
           headers,
           body: JSON.stringify(editModal.values)
@@ -182,7 +202,7 @@
         if (user?.sessionId) headers['Authorization'] = `Bearer ${user.sessionId}`;
         if (userRole) headers['x-preview-role'] = userRole;
 
-        const res = await fetch(`/api/schools/strength/district/${editModal.record.code}`, {
+        const res = await fetch(`/api/schools/information/district/${editModal.record.code}`, {
           method: 'PUT',
           headers,
           body: JSON.stringify({
@@ -268,12 +288,12 @@
               h('span', {
                 key: 'dist',
                 className: 'text-xs font-bold text-sky-600 dark:text-sky-400'
-              }, 'District : Jangaon')
+              }, 'District : Jangaon • Protected Dashboard')
             ]),
             h('h1', {
               key: 'title',
               className: `text-lg sm:text-xl font-black mt-0.5 ${isDark ? 'text-white' : 'text-[#0c4a7e]'}`
-            }, 'Schools & Student Strength Analytics Dashboard')
+            }, 'Schools Information — Jangaon District')
           ])
         ]),
 
@@ -287,7 +307,7 @@
             }`
           }, [
             h('span', { key: 'icon' }, '🖨️'),
-            h('span', { key: 'text' }, 'Print Dashboard View')
+            h('span', { key: 'text' }, 'Print Information View')
           ]),
           // Refresh Button
           h('button', {
@@ -305,37 +325,26 @@
       h('div', {
         key: 'rbac-banner',
         className: `p-3.5 sm:p-4 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs ${
-          isMeo
-            ? (isDark ? 'bg-amber-950/40 border-amber-800 text-amber-200' : 'bg-amber-50 border-amber-200 text-amber-900')
-            : (isDark ? 'bg-blue-950/40 border-blue-800 text-blue-200' : 'bg-blue-50 border-blue-200 text-blue-900')
+          isDark ? 'bg-blue-950/40 border-blue-800 text-blue-200' : 'bg-blue-50 border-blue-200 text-blue-900'
         }`
       }, [
         h('div', { key: 'b-left', className: 'flex items-center space-x-2.5' }, [
-          h('span', { key: 'icon', className: 'text-base sm:text-lg' }, isMeo ? '🔒' : '🏛️'),
+          h('span', { key: 'icon', className: 'text-base sm:text-lg' }, '🏛️'),
           h('div', { key: 'text' }, [
             h('div', { key: 't1', className: 'font-bold' },
-              isMeo
-                ? `Role-Based Access Control: MEO Portal (${assignedMandal || 'Assigned Mandal'})`
-                : `District Educational Office Administration: ${userRole || 'DEO / APO'}`
+              `District Educational Office Administration: ${userRole || 'DEO / APO'}`
             ),
             h('div', { key: 't2', className: 'opacity-90 mt-0.5' },
-              isMeo
-                ? `You are authorized to view and modify strength particulars exclusively for ${assignedMandal || 'your assigned mandal'}. Backend access boundaries are actively enforced.`
-                : 'You have complete district authority to view, filter, and edit records across all 12 mandals and 16 management categories.'
+              'Protected Dashboard Feature: Complete district authority to view, filter, and edit school particulars across all 12 mandals and 16 management categories.'
             )
           ])
         ]),
 
-        // For MEO demo switching or indicator
         h('div', { key: 'b-right', className: 'flex items-center space-x-2 self-end sm:self-center' }, [
           h('span', {
             key: 'tag',
-            className: `px-2.5 py-1 rounded-full font-bold uppercase tracking-wide text-[10px] ${
-              isMeo
-                ? 'bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-100'
-                : 'bg-blue-200 text-blue-900 dark:bg-blue-900 dark:text-blue-100'
-            }`
-          }, isMeo ? `MANDAL: ${assignedMandal || 'LOCKED'}` : 'DISTRICT ALL MANDALS')
+            className: 'px-2.5 py-1 rounded-full font-bold uppercase tracking-wide text-[10px] bg-blue-200 text-blue-900 dark:bg-blue-900 dark:text-blue-100'
+          }, 'DISTRICT ALL MANDALS • AUTHORIZED')
         ])
       ]),
 
@@ -1095,6 +1104,7 @@
     ]);
   }
 
+  window.SchoolsInformationDashboardView = SchoolStrengthDashboardView;
   window.SchoolStrengthDashboardView = SchoolStrengthDashboardView;
 
 })(typeof window !== 'undefined' ? window : this);

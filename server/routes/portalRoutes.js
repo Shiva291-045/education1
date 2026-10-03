@@ -6,7 +6,13 @@ try {
   const teacherController = require('../controllers/teacherController');
   const schoolStrengthController = require('../controllers/schoolStrengthController');
 
-  // Schools Strength Analytics Routes
+  // Protected Schools Information Routes (DEO & APO Only)
+  router.get('/schools/information', (req, res) => schoolStrengthController.getStrengthDashboard(req, res));
+  router.get('/schools/information/mandal/:mandal', (req, res) => schoolStrengthController.getMandalStrength(req, res, req.params.mandal));
+  router.put('/schools/information/mandal/:mandal', (req, res) => schoolStrengthController.updateMandal(req, res, req.params.mandal));
+  router.put('/schools/information/district/:code', (req, res) => schoolStrengthController.updateDistrict(req, res, req.params.code));
+
+  // Legacy/Alias routes mapped to the same controller
   router.get('/schools/strength', (req, res) => schoolStrengthController.getStrengthDashboard(req, res));
   router.get('/schools/strength/mandal/:mandal', (req, res) => schoolStrengthController.getMandalStrength(req, res, req.params.mandal));
   router.put('/schools/strength/mandal/:mandal', (req, res) => schoolStrengthController.updateMandal(req, res, req.params.mandal));

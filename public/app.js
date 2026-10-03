@@ -122,6 +122,7 @@ function AuthProvider({ children }) {
   const [activeModal, setActiveModal] = useState(null); // 'LOGIN' | 'REGISTER' | 'FORGOT' | 'ENROLL_PASSKEY'
   const [loginInitialTab, setLoginInitialTab] = useState('ADMIN'); // 'ADMIN' | 'TEACHER'
   const [currentView, setCurrentView] = useState('PORTAL'); // 'PORTAL' | 'DASHBOARD'
+  const [officerTab, setOfficerTab] = useState('OVERVIEW'); // 'OVERVIEW' | 'SCHOOLS_INFO'
   const [theme, setTheme] = useState(() => localStorage.getItem('jangaon_portal_theme') || 'light');
   const [pendingPasskeyEnrollment, setPendingPasskeyEnrollment] = useState(null);
 
@@ -376,6 +377,8 @@ function AuthProvider({ children }) {
       logout,
       currentView,
       setCurrentView,
+      officerTab,
+      setOfficerTab,
       theme,
       changeTheme,
       toggleTheme
@@ -534,15 +537,7 @@ function MainHeader() {
         React.createElement('span', { key: 'stu', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Students ▾'),
         React.createElement('span', { key: 'exam', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Examinations ▾'),
         React.createElement('span', { key: 'notif', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Notifications'),
-        React.createElement('span', { key: 'contact', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Contact'),
-        React.createElement('button', {
-          key: 'nav-strength',
-          onClick: () => setCurrentView('STRENGTH_DASHBOARD'),
-          className: 'flex items-center space-x-1 text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-md border border-emerald-300 transition-colors cursor-pointer shadow-xs'
-        }, [
-          React.createElement('span', { key: 'i' }, '📊'),
-          React.createElement('span', { key: 't' }, 'Schools Strength')
-        ])
+        React.createElement('span', { key: 'contact', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Contact')
       ]),
 
       // Right Action Buttons (Matching Reference Image)
@@ -827,7 +822,7 @@ function StatsRibbon() {
 // 6. QUICK SERVICES (IMAGE 2: PURE WHITE SECTION WITH PASTEL CARDS)
 // ==========================================
 function QuickServices() {
-  const { openModal } = useContext(AuthContext);
+  const { user, setCurrentView, openModal, setOfficerTab } = useContext(AuthContext);
 
   return React.createElement('div', {
     className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5'
@@ -885,8 +880,15 @@ function QuickServices() {
       React.createElement('div', {
         key: 'c-sch',
         onClick: () => {
-          const el = document.getElementById('find-school-section');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
+          if (user && (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer')) {
+            setOfficerTab('SCHOOLS_INFO');
+            setCurrentView('DASHBOARD');
+          } else {
+            // Strictly NO standalone login or registration page for Schools Information
+            // Smoothly scroll down to public directory search section
+            const el = document.getElementById('find-school-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }
         },
         className: 'bg-[#e3f2fd] border border-[#bbdefb] hover:border-blue-400 rounded-xl p-3.5 sm:p-4 flex items-center justify-between cursor-pointer transition-all duration-200 hover:shadow-xs group'
       }, [
@@ -897,7 +899,11 @@ function QuickServices() {
           }, '🏛️'),
           React.createElement('div', { key: 'txt' }, [
             React.createElement('h3', { key: 'title', className: 'text-sm sm:text-base font-bold text-[#0c4a7e] group-hover:text-blue-900' }, 'Schools Information'),
-            React.createElement('p', { key: 'sub', className: 'text-xs text-slate-600' }, 'Find Schools in Jangaon District')
+            React.createElement('p', { key: 'sub', className: 'text-xs text-slate-600' }, 
+              (user && (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer'))
+                ? 'Official District & Mandal School Particulars (Protected Dashboard)'
+                : 'Find Schools in Jangaon District'
+            )
           ])
         ]),
         React.createElement('div', {
@@ -2304,11 +2310,10 @@ function ForgotPasswordModal() {
 // 13. ROLE-BASED DASHBOARDS (LIGHT & DARK THEMES FULLY SUPPORTED)
 // ==========================================
 function RoleDashboard() {
-  const { user, setCurrentView, theme, changeTheme, openModal } = useContext(AuthContext);
+  const { user, setCurrentView, theme, changeTheme, openModal, officerTab, setOfficerTab } = useContext(AuthContext);
   const [previewRole, setPreviewRole] = useState('APO');
   const [previewMandal, setPreviewMandal] = useState('JANGAON');
   const [teacherView, setTeacherView] = useState('OVERVIEW');
-  const [officerTab, setOfficerTab] = useState('OVERVIEW');
 
   const isDark = (theme === 'dark');
 
@@ -2322,6 +2327,8 @@ function RoleDashboard() {
     accountStatus: 'PREVIEW_MODE',
     lastLogin: new Date().toISOString()
   };
+
+  const isDeoOrApo = activeUser && (activeUser.role === 'DEO' || activeUser.role === 'APO' || activeUser.role === 'Officer');
 
   return React.createElement('div', {
     className: `min-h-screen py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-200 ${
@@ -2384,7 +2391,7 @@ function RoleDashboard() {
               React.createElement('span', { key: 't' }, 'My Service Record')
             ])
           ]),
-          (activeUser.role === 'APO' || activeUser.role === 'DEO' || activeUser.role === 'MEO' || activeUser.role === 'Officer') && React.createElement('div', {
+          isDeoOrApo && React.createElement('div', {
             key: 'officer-tabs',
             className: `ml-2 inline-flex items-center p-0.5 rounded-lg border text-xs font-semibold ${
               isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-100 border-slate-300'
@@ -2400,16 +2407,16 @@ function RoleDashboard() {
               }`
             }, 'Overview'),
             React.createElement('button', {
-              key: 'btn-tab-off-str',
-              onClick: () => setOfficerTab('STRENGTH_ANALYTICS'),
+              key: 'btn-tab-off-info',
+              onClick: () => setOfficerTab('SCHOOLS_INFO'),
               className: `flex items-center space-x-1 px-2.5 py-1 rounded-md transition-all cursor-pointer ${
-                officerTab === 'STRENGTH_ANALYTICS'
-                  ? 'bg-emerald-700 text-white shadow-xs font-bold'
+                officerTab === 'SCHOOLS_INFO' || officerTab === 'STRENGTH_ANALYTICS'
+                  ? 'bg-[#0c4a7e] text-white shadow-xs font-bold'
                   : (isDark ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-900')
               }`
             }, [
-              React.createElement('span', { key: 'i' }, '📊'),
-              React.createElement('span', { key: 't' }, 'Schools Strength Analytics')
+              React.createElement('span', { key: 'i' }, '🏫'),
+              React.createElement('span', { key: 't' }, 'Schools Information')
             ])
           ])
         ]),
@@ -2553,17 +2560,36 @@ function RoleDashboard() {
               })
             : React.createElement('div', { key: 'ts-load-err', className: 'p-8 text-center text-sm font-semibold text-slate-600' }, 'Loading Teacher Service Record...')
           )
-        : ((activeUser.role === 'APO' || activeUser.role === 'DEO' || activeUser.role === 'MEO' || activeUser.role === 'Officer') && officerTab === 'STRENGTH_ANALYTICS')
-        ? (typeof window !== 'undefined' && window.SchoolStrengthDashboardView
-            ? React.createElement(window.SchoolStrengthDashboardView, {
-                key: 'school-strength-dash',
-                onBack: () => setOfficerTab('OVERVIEW'),
-                user: activeUser,
-                isDark: isDark,
-                previewMandal: previewMandal,
-                onMandalChange: setPreviewMandal
-              })
-            : React.createElement('div', { key: 'str-load-err', className: 'p-8 text-center text-sm font-semibold text-slate-600' }, 'Loading Schools & Strength Analytics...')
+        : (officerTab === 'SCHOOLS_INFO' || officerTab === 'STRENGTH_ANALYTICS')
+        ? (
+            isDeoOrApo
+              ? (typeof window !== 'undefined' && (window.SchoolsInformationDashboardView || window.SchoolStrengthDashboardView)
+                  ? React.createElement(window.SchoolsInformationDashboardView || window.SchoolStrengthDashboardView, {
+                      key: 'schools-info-dash',
+                      onBack: () => setOfficerTab('OVERVIEW'),
+                      user: activeUser,
+                      isDark: isDark
+                    })
+                  : React.createElement('div', { key: 'str-load-err', className: 'p-8 text-center text-sm font-semibold text-slate-600' }, 'Loading Schools Information...')
+                )
+              : React.createElement('div', {
+                  key: 'unauthorized-box',
+                  className: `p-8 max-w-xl mx-auto my-8 rounded-2xl border text-center space-y-4 shadow-lg ${
+                    isDark ? 'bg-slate-900 border-red-900/60 text-slate-100' : 'bg-white border-red-200 text-slate-800'
+                  }`
+                }, [
+                  React.createElement('div', { key: 'icon', className: 'w-16 h-16 mx-auto rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center text-3xl font-bold' }, '🔒'),
+                  React.createElement('h2', { key: 't', className: 'text-xl font-bold text-red-600 dark:text-red-400' }, '403 — Access Denied'),
+                  React.createElement('p', { key: 'st', className: 'text-sm font-semibold' }, 'Protected Feature: Schools Information'),
+                  React.createElement('p', { key: 'desc', className: 'text-xs text-slate-500 dark:text-slate-400 leading-relaxed' },
+                    'Schools Information is a protected dashboard feature strictly restricted to authenticated DEO and APO officers. Unauthorized users cannot access this data.'
+                  ),
+                  React.createElement('button', {
+                    key: 'btn-back',
+                    onClick: () => setOfficerTab('OVERVIEW'),
+                    className: 'px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0c4a7e] hover:bg-[#08355b] transition-all cursor-pointer shadow-md'
+                  }, '← Return to Dashboard Overview')
+                ])
           )
         : React.createElement(React.Fragment, { key: 'dashboard-standard-modules' }, [
             // Notice Box (Light & Dark)
@@ -2599,7 +2625,7 @@ function RoleDashboard() {
               key: 'officer-mod',
               user: activeUser,
               isDark,
-              onOpenStrengthAnalytics: () => setOfficerTab('STRENGTH_ANALYTICS')
+              onOpenSchoolsInfo: () => setOfficerTab('SCHOOLS_INFO')
             }),
             activeUser.role === 'School Staff' && React.createElement(SchoolStaffModules, { key: 'staff-mod', user: activeUser, isDark }),
             activeUser.role === 'Student' && React.createElement(StudentModules, { key: 'student-mod', user: activeUser, isDark }),
@@ -2841,36 +2867,52 @@ function StudentModules({ user, isDark }) {
   ]);
 }
 
-function OfficerModules({ user, isDark, onOpenStrengthAnalytics }) {
+function OfficerModules({ user, isDark, onOpenSchoolsInfo }) {
+  const isDeoOrApo = (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer');
+
   return React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6' }, [
-    // PRIMARY MODULE: Schools & Student Strength Analytics
-    React.createElement('div', {
-      key: 'o-strength',
-      className: `p-5 rounded-2xl border-2 transition-all space-y-3 relative overflow-hidden flex flex-col justify-between ${
-        isDark ? 'bg-[#131f37] border-sky-500/80 shadow-lg text-slate-100 ring-1 ring-sky-500/30' : 'bg-gradient-to-br from-white to-sky-50/70 border-sky-400 shadow-md text-slate-800 ring-1 ring-sky-300/40'
-      }`
-    }, [
-      React.createElement('div', { key: 'badge', className: 'flex items-center justify-between' }, [
-        React.createElement('span', { className: 'px-2 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 uppercase tracking-wider' }, 'Official Data Integration'),
-        React.createElement('span', { className: 'text-xl' }, '📊')
-      ]),
-      React.createElement('div', { key: 'body' }, [
-        React.createElement('h3', { className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '📊 Schools & Strength Analytics'),
-        React.createElement('p', { className: `text-xs mt-1 leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}` },
-          user.role === 'MEO'
-            ? `Access and update official strength particulars for ${user.mandal || 'your assigned mandal'}.`
-            : 'Access district-wide school strength particulars, class/stage breakdowns (PS, UPS, HS, Inter), and mandal matrices.'
-        )
-      ]),
-      React.createElement('button', {
-        key: 'btn',
-        onClick: onOpenStrengthAnalytics,
-        className: 'w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer bg-[#0c4a7e] hover:bg-[#08355b] text-white flex items-center justify-center space-x-1.5'
+    // PRIMARY MODULE: Schools Information (DEO & APO ONLY)
+    isDeoOrApo ? (
+      React.createElement('div', {
+        key: 'o-schools-info',
+        className: `p-5 rounded-2xl border-2 transition-all space-y-3 relative overflow-hidden flex flex-col justify-between ${
+          isDark ? 'bg-[#131f37] border-sky-500/80 shadow-lg text-slate-100 ring-1 ring-sky-500/30' : 'bg-gradient-to-br from-white to-sky-50/70 border-sky-400 shadow-md text-slate-800 ring-1 ring-sky-300/40'
+        }`
       }, [
-        React.createElement('span', { key: 'i' }, '📈'),
-        React.createElement('span', { key: 't' }, 'Open Schools & Strength Analytics')
+        React.createElement('div', { key: 'badge', className: 'flex items-center justify-between' }, [
+          React.createElement('span', { className: 'px-2 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 uppercase tracking-wider' }, 'Protected DEO/APO Module'),
+          React.createElement('span', { className: 'text-xl' }, '🏫')
+        ]),
+        React.createElement('div', { key: 'body' }, [
+          React.createElement('h3', { className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '🏫 Schools Information'),
+          React.createElement('p', { className: `text-xs mt-1 leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}` },
+            'Access district-wide school particulars, 12 mandals matrix, 16 managements, class/stage breakdowns (PS, UPS, HS, Inter), and official strength statistics.'
+          )
+        ]),
+        React.createElement('button', {
+          key: 'btn',
+          onClick: onOpenSchoolsInfo,
+          className: 'w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer bg-[#0c4a7e] hover:bg-[#08355b] text-white flex items-center justify-center space-x-1.5'
+        }, [
+          React.createElement('span', { key: 'i' }, '📈'),
+          React.createElement('span', { key: 't' }, 'Open Schools Information')
+        ])
       ])
-    ]),
+    ) : (
+      React.createElement('div', {
+        key: 'o-meo-admin',
+        className: `p-5 rounded-2xl border transition-all space-y-3 ${
+          isDark ? 'bg-[#131f37] border-slate-700/80 shadow-md text-slate-100' : 'bg-white border-slate-200 shadow-xs text-slate-800'
+        }`
+      }, [
+        React.createElement('h3', { key: 't', className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '📋 Mandal Administration'),
+        React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, `Manage administrative monitoring for ${user.mandal || 'your assigned mandal'}.`),
+        React.createElement('div', {
+          key: 'tag',
+          className: 'text-[11px] font-semibold text-slate-500'
+        }, 'Official MEO Dashboard Module')
+      ])
+    ),
     React.createElement('div', {
       key: 'o1',
       className: `p-5 rounded-2xl border transition-all space-y-3 ${
@@ -2881,11 +2923,11 @@ function OfficerModules({ user, isDark, onOpenStrengthAnalytics }) {
       React.createElement('p', { key: 'p', className: `text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}` }, 'Oversee school inspections across the 12 mandals of Jangaon District.'),
       React.createElement('button', {
         key: 'btn',
-        onClick: onOpenStrengthAnalytics,
+        onClick: isDeoOrApo ? onOpenSchoolsInfo : undefined,
         className: `w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer ${
           isDark ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-[#0c4a7e] hover:bg-[#08355b] text-white'
         }`
-      }, 'Open Mandal Audit Matrix')
+      }, isDeoOrApo ? 'Open Mandal Audit Matrix' : 'Audit Assigned Mandal')
     ]),
     React.createElement('div', {
       key: 'o2',
@@ -2996,15 +3038,6 @@ function App() {
           React.createElement(QuickServices),
           React.createElement(PortalCardsGrid)
         ])
-      ) : currentView === 'STRENGTH_DASHBOARD' ? (
-        (typeof window !== 'undefined' && window.SchoolStrengthDashboardView)
-          ? React.createElement(window.SchoolStrengthDashboardView, {
-              key: 'strength-view-direct',
-              user: user || { role: 'DEO', fullName: 'District Educational Officer' },
-              isDark: (theme === 'dark'),
-              onBack: () => setCurrentView('PORTAL')
-            })
-          : React.createElement('div', { className: 'p-8 text-center text-sm font-semibold' }, 'Loading School Strength Dashboard...')
       ) : (
         React.createElement(RoleDashboard, { key: 'dash-view' })
       )

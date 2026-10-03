@@ -474,19 +474,18 @@ class SchoolStrengthService {
       return {
         success: false,
         status: 401,
-        message: "Unauthorized: Active login session required."
+        message: "Authentication required. Schools Information is a protected dashboard feature strictly restricted to authenticated DEO and APO officers."
       };
     }
 
     const role = (user.role || '').toUpperCase();
     const isDeoOrApo = (role === 'DEO' || role === 'APO' || role === 'OFFICER');
-    const isMeo = (role === 'MEO');
 
-    if (!isDeoOrApo && !isMeo) {
+    if (!isDeoOrApo) {
       return {
         success: false,
         status: 403,
-        message: "Access Denied: Only DEO, APO, and authorized MEO officers can access school strength records."
+        message: "Access Denied: Schools Information is a protected dashboard feature strictly restricted to authenticated DEO and APO officers."
       };
     }
 
@@ -494,30 +493,8 @@ class SchoolStrengthService {
     const districtRecords = rawData.school_strength_district || INITIAL_DISTRICT_STRENGTH;
     let mandalRecords = rawData.school_strength_mandal || INITIAL_MANDAL_STRENGTH;
 
-    // Strict Backend RBAC: MEO can ONLY view data belonging to their assigned mandal
-    const userMandal = (user.mandal || '').trim().toUpperCase();
-    if (isMeo) {
-      if (!userMandal) {
-        return {
-          success: false,
-          status: 403,
-          message: "Access Denied: MEO user has no assigned mandal. Please contact District Educational Officer."
-        };
-      }
-      // If MEO queries for a specific mandal that is NOT their own, reject at database/API level
-      if (query.mandal && query.mandal.trim().toUpperCase() !== 'ALL' && query.mandal.trim().toUpperCase() !== userMandal) {
-        return {
-          success: false,
-          status: 403,
-          message: `Access Denied: As MEO of ${userMandal}, you are strictly prohibited from viewing or accessing records for ${query.mandal}.`
-        };
-      }
-      // Strictly restrict mandalRecords to ONLY the MEO's assigned mandal
-      mandalRecords = mandalRecords.filter(m => m.mandal.trim().toUpperCase() === userMandal);
-    }
-
-    // Filter by requested mandal if provided and allowed
-    let activeMandal = isMeo ? userMandal : (query.mandal && query.mandal.trim().toUpperCase() !== 'ALL' ? query.mandal.trim().toUpperCase() : null);
+    // Filter by requested mandal if provided
+    let activeMandal = (query.mandal && query.mandal.trim().toUpperCase() !== 'ALL') ? query.mandal.trim().toUpperCase() : null;
     
     // Filter district records by management if requested
     let filteredDistrict = districtRecords;
@@ -608,7 +585,7 @@ class SchoolStrengthService {
 
     // Available Filter Options
     const allMandalsList = (rawData.school_strength_mandal || INITIAL_MANDAL_STRENGTH).map(m => m.mandal);
-    const availableMandals = isMeo ? [userMandal] : allMandalsList;
+    const availableMandals = allMandalsList;
     const availableManagements = districtRecords.map(d => ({
       code: d.code,
       name: d.managementName,
@@ -620,12 +597,12 @@ class SchoolStrengthService {
       success: true,
       userRole: role,
       userMandal: user.mandal || null,
-      isRestrictedToMandal: isMeo,
+      isRestrictedToMandal: false,
       permissions: {
-        canViewAllMandals: isDeoOrApo,
-        canEditAllMandals: isDeoOrApo,
-        canEditAssignedMandal: isDeoOrApo || isMeo,
-        canEditDistrictParticulars: isDeoOrApo
+        canViewAllMandals: true,
+        canEditAllMandals: true,
+        canEditAssignedMandal: true,
+        canEditDistrictParticulars: true
       },
       summary: {
         districtTotalSchools,
@@ -656,38 +633,21 @@ class SchoolStrengthService {
 
   /**
    * Update Mandal data with strict RBAC enforcement
-   * DEO & APO: Can update any mandal
-   * MEO: Can ONLY update their assigned mandal
+   * DEO & APO ONLY
    */
   updateMandalData(targetMandal, managementsUpdates, user) {
     if (!user) {
-      return { success: false, status: 401, message: "Unauthorized: Active login session required." };
+      return { success: false, status: 401, message: "Authentication required. Active login session required." };
     }
 
     const role = (user.role || '').toUpperCase();
     const isDeoOrApo = (role === 'DEO' || role === 'APO' || role === 'OFFICER');
-    const isMeo = (role === 'MEO');
 
-    if (!isDeoOrApo && !isMeo) {
-      return { success: false, status: 403, message: "Access Denied: You do not have permission to edit school strength data." };
+    if (!isDeoOrApo) {
+      return { success: false, status: 403, message: "Access Denied: Schools Information editing is strictly restricted to authenticated DEO and APO officers." };
     }
 
     const target = (targetMandal || '').trim().toUpperCase();
-    const userMandal = (user.mandal || '').trim().toUpperCase();
-
-    // Strict backend enforcement: MEO can NEVER edit another mandal
-    if (isMeo) {
-      if (!userMandal) {
-        return { success: false, status: 403, message: "Access Denied: MEO user has no assigned mandal." };
-      }
-      if (target !== userMandal) {
-        return {
-          success: false,
-          status: 403,
-          message: `Access Denied: As MEO of ${userMandal}, you are strictly prohibited from modifying records for ${target}.`
-        };
-      }
-    }
 
     const data = this.readData();
     const mandalList = data.school_strength_mandal || JSON.parse(JSON.stringify(INITIAL_MANDAL_STRENGTH));
@@ -739,7 +699,7 @@ class SchoolStrengthService {
    */
   updateDistrictData(managementCode, updates, user) {
     if (!user) {
-      return { success: false, status: 401, message: "Unauthorized: Active login session required." };
+      return { success: false, status: 401, message: "Authentication required. Active login session required." };
     }
 
     const role = (user.role || '').toUpperCase();
@@ -750,7 +710,7 @@ class SchoolStrengthService {
       return {
         success: false,
         status: 403,
-        message: "Access Denied: Only DEO and APO have permissions to edit district-level management particulars."
+        message: "Access Denied: Schools Information editing is strictly restricted to authenticated DEO and APO officers."
       };
     }
 

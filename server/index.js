@@ -282,23 +282,29 @@ try {
         return mockRes.json({ success: true, count: schools.length, schools });
       }
 
-      // Schools Strength Analytics Routes
-      if (pathname === '/api/schools/strength' && req.method === 'GET') {
+      // Schools Information & Strength Analytics Routes (Protected DEO & APO)
+      if ((pathname === '/api/schools/information' || pathname === '/api/schools/strength') && req.method === 'GET') {
         await schoolStrengthController.getStrengthDashboard(req, mockRes);
         return;
       }
-      if (pathname.startsWith('/api/schools/strength/mandal/') && req.method === 'GET') {
-        const mandalParam = pathname.replace('/api/schools/strength/mandal/', '');
+      if ((pathname.startsWith('/api/schools/information/mandal/') || pathname.startsWith('/api/schools/strength/mandal/')) && req.method === 'GET') {
+        const mandalParam = pathname.startsWith('/api/schools/information/mandal/')
+          ? pathname.replace('/api/schools/information/mandal/', '')
+          : pathname.replace('/api/schools/strength/mandal/', '');
         await schoolStrengthController.getMandalStrength(req, mockRes, mandalParam);
         return;
       }
-      if (pathname.startsWith('/api/schools/strength/mandal/') && req.method === 'PUT') {
-        const mandalParam = pathname.replace('/api/schools/strength/mandal/', '');
+      if ((pathname.startsWith('/api/schools/information/mandal/') || pathname.startsWith('/api/schools/strength/mandal/')) && req.method === 'PUT') {
+        const mandalParam = pathname.startsWith('/api/schools/information/mandal/')
+          ? pathname.replace('/api/schools/information/mandal/', '')
+          : pathname.replace('/api/schools/strength/mandal/', '');
         await schoolStrengthController.updateMandal(req, mockRes, mandalParam);
         return;
       }
-      if (pathname.startsWith('/api/schools/strength/district/') && req.method === 'PUT') {
-        const codeParam = pathname.replace('/api/schools/strength/district/', '');
+      if ((pathname.startsWith('/api/schools/information/district/') || pathname.startsWith('/api/schools/strength/district/')) && req.method === 'PUT') {
+        const codeParam = pathname.startsWith('/api/schools/information/district/')
+          ? pathname.replace('/api/schools/information/district/', '')
+          : pathname.replace('/api/schools/strength/district/', '');
         await schoolStrengthController.updateDistrict(req, mockRes, codeParam);
         return;
       }
