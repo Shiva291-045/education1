@@ -619,16 +619,6 @@
       }
     },
     {
-      "sessionId": "c48b242fe00b654c665c9554c80d86ef8aeaf9e95cf77fd4e5ff1f949f7b9f3e",
-      "userId": "OFFICIAL-DEO-9848011222",
-      "role": "DEO",
-      "createdAt": "2026-10-03T13:02:27.533Z",
-      "expiresAt": 1791118947533,
-      "metadata": {
-        "authMethod": "passkey"
-      }
-    },
-    {
       "sessionId": "e40a559d2ba4eb7e00a3449a346c73aa88056f43fe52866080c11a8dee7760f3",
       "userId": "TCH-2126324",
       "role": "Teacher",

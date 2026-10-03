@@ -8,6 +8,15 @@ const db = require('../db');
  * to their respective official data.
  */
 
+function maskMobile(phone) {
+  if (!phone || phone === '-' || phone === '—') return '-';
+  const str = String(phone).trim();
+  if (str.includes('*') || str.includes('X') || str.includes('x')) return str;
+  const digits = str.replace(/\D/g, '');
+  if (digits.length >= 4) return `******${digits.slice(-4)}`;
+  return str;
+}
+
 // Full official sample record for Treasury Code 2126324 (P. Suresh Babu) based directly on the reference images
 const SAMPLE_RECORD_2126324 = {
   treasuryCode: "2126324",
@@ -19,7 +28,7 @@ const SAMPLE_RECORD_2126324 = {
     treasuryCode: "2126324",
     fatherName: "SOMALAH",
     gender: "MALE",
-    mobileNumber: "9700391515",
+    mobileNumber: "******1515",
     phcPercentage: "—",
     aadharNo: "635732401209",
     designation: "SA PHY SCI",
@@ -237,7 +246,7 @@ const SAMPLE_RECORD_100234 = {
     treasuryCode: "100234",
     fatherName: "K. RAMACHANDRAM",
     gender: "FEMALE",
-    mobileNumber: "9876543210",
+    mobileNumber: "******3210",
     phcPercentage: "—",
     aadharNo: "748291038472",
     designation: "School Assistant (Mathematics)",
@@ -617,6 +626,11 @@ class TeacherService {
       if (options.maskSensitive !== false) {
         baseRecord.bankDetails.accountNumber = baseRecord.bankDetails.accountNumberMasked;
       }
+    }
+
+    // Mask mobile number for all viewing
+    if (baseRecord.personalDetails && baseRecord.personalDetails.mobileNumber) {
+      baseRecord.personalDetails.mobileNumber = maskMobile(baseRecord.personalDetails.mobileNumber);
     }
 
     return baseRecord;

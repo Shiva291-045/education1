@@ -11,6 +11,15 @@
     return Number(n).toLocaleString('en-IN');
   }
 
+  function maskMobile(phone) {
+    if (!phone || phone === '-' || phone === '—') return '-';
+    const str = String(phone).trim();
+    if (str.includes('*') || str.includes('X') || str.includes('x')) return str;
+    const digits = str.replace(/\D/g, '');
+    if (digits.length >= 4) return `******${digits.slice(-4)}`;
+    return str;
+  }
+
   function TeachersInformationDashboardView({ user, isDark, onBack }) {
     const [loading, setLoading] = useState(true);
     const [teachersData, setTeachersData] = useState({ teachers: [], total: 0, filterOptions: {} });
@@ -556,7 +565,7 @@
                       }, t.gender || '-')
                     ]),
                     h('td', { className: 'p-3 text-center font-medium text-slate-600 dark:text-slate-400 border-r dark:border-slate-700' }, t.caste || '-'),
-                    h('td', { className: 'p-3 font-mono text-slate-600 dark:text-slate-400 border-r dark:border-slate-700' }, t.mobileNumber || '-'),
+                    h('td', { className: 'p-3 font-mono text-slate-600 dark:text-slate-400 border-r dark:border-slate-700' }, maskMobile(t.mobileNumber)),
                     h('td', { className: 'p-3 text-center' }, [
                       h('button', {
                         onClick: () => setSelectedTeacherCode(t.treasuryCode),

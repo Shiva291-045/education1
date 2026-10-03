@@ -12,6 +12,15 @@
     return String(val).trim();
   }
 
+  function maskMobile(phone) {
+    if (!phone || phone === '-' || phone === '—') return '-';
+    const str = String(phone).trim();
+    if (str.includes('*') || str.includes('X') || str.includes('x')) return str;
+    const digits = str.replace(/\D/g, '');
+    if (digits.length >= 4) return `******${digits.slice(-4)}`;
+    return str;
+  }
+
   // ==========================================
   // DIGITAL SCREEN LAYOUT COMPONENTS
   // ==========================================
@@ -418,7 +427,7 @@
             React.createElement(DigitalField, { key: 'f10', label: 'Date of Retirement', value: personal.dateOfRetirement, isDark }),
             React.createElement(DigitalField, { key: 'f11', label: 'Remaining Days to Retire', value: personal.remainingDaysToRetire, isDark }),
             React.createElement(DigitalField, { key: 'f12', label: 'Caste Category', value: personal.caste, isDark }),
-            React.createElement(DigitalField, { key: 'f13', label: 'Registered Mobile No', value: personal.mobileNumber, isDark }),
+            React.createElement(DigitalField, { key: 'f13', label: 'Registered Mobile No', value: maskMobile(personal.mobileNumber), isDark }),
             React.createElement(DigitalField, { key: 'f14', label: 'Marital Status', value: personal.maritalStatus, isDark }),
             React.createElement(DigitalField, { key: 'f15', label: 'Type of PHC (OH/HH/VH/NO)', value: personal.typeOfPhc, isDark }),
             React.createElement(DigitalField, { key: 'f16', label: 'PHC Percentage', value: personal.phcPercentage, isDark })
@@ -1043,7 +1052,7 @@
                   React.createElement(PrintCell, { key: 'c1', label: 'TREASURY CODE', value: personal.treasuryCode }),
                   React.createElement(PrintCell, { key: 'c2', label: 'FATHER NAME', value: personal.fatherName }),
                   React.createElement(PrintCell, { key: 'c3', label: 'GENDER', value: personal.gender }),
-                  React.createElement(PrintCell, { key: 'c4', label: 'MOBILE NO', value: personal.mobileNumber }),
+                  React.createElement(PrintCell, { key: 'c4', label: 'MOBILE NO', value: maskMobile(personal.mobileNumber) }),
                   React.createElement(PrintCell, { key: 'c5', label: 'PHC PERCENTAGE', value: personal.phcPercentage })
                 ]),
                 React.createElement('tr', { key: 'r2' }, [

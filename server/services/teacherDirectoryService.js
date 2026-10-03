@@ -45,6 +45,19 @@ function maskAccountNumber(acc) {
   return `XXXX XXXX ${str.slice(-4)}`;
 }
 
+function maskMobileNumber(phone) {
+  if (!phone || phone === '-' || phone === '—') return '-';
+  const str = String(phone).trim();
+  if (str.includes('*') || str.includes('X') || str.includes('x')) {
+    return str;
+  }
+  const digits = str.replace(/\D/g, '');
+  if (digits.length >= 4) {
+    return `******${digits.slice(-4)}`;
+  }
+  return str;
+}
+
 class TeacherDirectoryService {
   constructor() {
     this.teachers = [];
@@ -126,7 +139,8 @@ class TeacherDirectoryService {
         const dateOfRetirement = fmtDate(r['DATE OF RETIREMENT'] || r.DATE_OF_RETIREMENT);
         const remainingDaysToRetire = String(r['REMAINING DAYS TO RETIRE'] || r.REMAINING_DAYS_TO_RETIRE || '').trim() || '-';
         const caste = String(r[' CASTE'] || r.CASTE || r.caste || '').trim() || '-';
-        const mobileNumber = String(r[' MOBILE NO.'] || r.MOBILE_NO || r.mobileNumber || '').trim();
+        const rawMobile = String(r[' MOBILE NO.'] || r.MOBILE_NO || r.mobileNumber || '').trim();
+        const mobileNumber = maskMobileNumber(rawMobile);
         const phc = String(r[' PHC'] || r.PHC || '').trim().toUpperCase() || 'NO';
         const phcPercentage = String(r[' PHC%'] || r.PHC_PERCENTAGE || '').trim() || '-';
         const categoryOfSchool = String(r[' CATEGEORY OF THE SCHOOL'] || r.CATEGORY_OF_SCHOOL || '').trim() || '-';
@@ -161,6 +175,7 @@ class TeacherDirectoryService {
           remainingDaysToRetire,
           caste,
           mobileNumber,
+          rawMobileNumber: rawMobile,
           phc,
           phcPercentage,
           categoryOfSchool,
@@ -203,7 +218,8 @@ class TeacherDirectoryService {
           dateOfRetirement: '31-12-2038',
           remainingDaysToRetire: '12 Y 2 M',
           caste: 'BC B',
-          mobileNumber: '9700391515',
+          mobileNumber: maskMobileNumber('9700391515'),
+          rawMobileNumber: '9700391515',
           phc: 'NO',
           phcPercentage: '-',
           categoryOfSchool: 'UPS',
@@ -276,7 +292,7 @@ class TeacherDirectoryService {
       designation: teacher.designation || '-',
       caste: teacher.caste || '-',
       maritalStatus: ovPersonal.maritalStatus || ov.maritalStatus || (isReferenceSuresh ? 'Married' : '-'),
-      mobileNumber: teacher.mobileNumber || '-',
+      mobileNumber: maskMobileNumber(teacher.mobileNumber || ovPersonal.mobileNumber || ov.mobileNumber || '-'),
       aadharNo: ovPersonal.aadharNo || ov.aadharNo || (isReferenceSuresh ? '635732401209' : '-'),
       medium: teacher.medium || '-',
       typeOfPhc: teacher.phc === 'YES' ? (ovPersonal.typeOfPhc || ov.typeOfPhc || 'OH') : 'NO PHC',
@@ -532,7 +548,8 @@ class TeacherDirectoryService {
         t.teacherName.toLowerCase().includes(term) ||
         t.schoolName.toLowerCase().includes(term) ||
         t.designation.toLowerCase().includes(term) ||
-        t.mobileNumber.toLowerCase().includes(term)
+        t.mobileNumber.toLowerCase().includes(term) ||
+        (t.rawMobileNumber && t.rawMobileNumber.toLowerCase().includes(term))
       );
     }
 
