@@ -565,7 +565,7 @@
                       }, t.gender || '-')
                     ]),
                     h('td', { className: 'p-3 text-center font-medium text-slate-600 dark:text-slate-400 border-r dark:border-slate-700' }, t.caste || '-'),
-                    h('td', { className: 'p-3 font-mono text-slate-600 dark:text-slate-400 border-r dark:border-slate-700' }, maskMobile(t.mobileNumber)),
+                    h('td', { className: 'p-3 font-mono text-slate-600 dark:text-slate-400 border-r dark:border-slate-700' }, t.mobileNumber || '-'),
                     h('td', { className: 'p-3 text-center' }, [
                       h('button', {
                         onClick: () => setSelectedTeacherCode(t.treasuryCode),

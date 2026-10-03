@@ -170,7 +170,12 @@ class TeacherDirectoryService {
         const remainingDaysToRetire = String(r['REMAINING DAYS TO RETIRE'] || r.REMAINING_DAYS_TO_RETIRE || '').trim() || '-';
         const caste = String(r[' CASTE'] || r.CASTE || r.caste || '').trim() || '-';
         const rawMobile = String(r[' MOBILE NO.'] || r.MOBILE_NO || r.mobileNumber || '').trim();
-        const mobileNumber = rawMobile || '-';
+        let mobileNumber = rawMobile || '-';
+        if (!mobileNumber || mobileNumber === '-' || mobileNumber.includes('*') || mobileNumber.includes('X') || mobileNumber.includes('x')) {
+          if (this.fallbackMobileMap && this.fallbackMobileMap.has(treasuryCode)) {
+            mobileNumber = this.fallbackMobileMap.get(treasuryCode);
+          }
+        }
         const phc = String(r[' PHC'] || r.PHC || '').trim().toUpperCase() || 'NO';
         const phcPercentage = String(r[' PHC%'] || r.PHC_PERCENTAGE || '').trim() || '-';
         const categoryOfSchool = String(r[' CATEGEORY OF THE SCHOOL'] || r.CATEGORY_OF_SCHOOL || '').trim() || '-';
