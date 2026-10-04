@@ -477,7 +477,7 @@
       "officialDataLinked": true,
       "officialProfileId": null,
       "createdAt": "2026-10-02T09:29:41.298Z",
-      "lastLogin": "2026-10-03T14:28:40.070Z",
+      "lastLogin": "2026-10-04T08:11:47.532Z",
       "_id": "6abf7bad04e9e63ade8f9e1f"
     },
     {
@@ -654,6 +654,16 @@
       "role": "MEO",
       "createdAt": "2026-10-03T14:28:40.220Z",
       "expiresAt": 1791124120220,
+      "metadata": {
+        "authMethod": "password"
+      }
+    },
+    {
+      "sessionId": "18d832739238096b5dafbf1994e0bb9f2e56d1a57a809eb9a38eaea06a478583",
+      "userId": "OFFICIAL-DEO-9848011222",
+      "role": "DEO",
+      "createdAt": "2026-10-04T08:11:47.547Z",
+      "expiresAt": 1791187907547,
       "metadata": {
         "authMethod": "password"
       }

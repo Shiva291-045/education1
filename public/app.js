@@ -125,6 +125,27 @@ function AuthProvider({ children }) {
   const [officerTab, setOfficerTab] = useState('OVERVIEW'); // 'OVERVIEW' | 'SCHOOLS_INFO'
   const [theme, setTheme] = useState(() => localStorage.getItem('jangaon_portal_theme') || 'light');
   const [pendingPasskeyEnrollment, setPendingPasskeyEnrollment] = useState(null);
+  const [currentLang, setCurrentLang] = useState(() => (window.i18n ? window.i18n.getLanguage() : (localStorage.getItem('portal_language') || 'en')));
+
+  const changeLanguage = (newLang) => {
+    const l = (newLang === 'te' || newLang === 'తెలుగు') ? 'te' : 'en';
+    setCurrentLang(l);
+    if (window.i18n) {
+      window.i18n.setLanguage(l);
+    } else {
+      try { localStorage.setItem('portal_language', l); } catch (e) {}
+    }
+  };
+
+  useEffect(() => {
+    const handleLangChange = (e) => {
+      if (e && e.detail && e.detail.lang) {
+        setCurrentLang(e.detail.lang);
+      }
+    };
+    window.addEventListener('portal-language-change', handleLangChange);
+    return () => window.removeEventListener('portal-language-change', handleLangChange);
+  }, []);
 
   const changeTheme = (newTheme) => {
     setTheme(newTheme);
@@ -381,7 +402,9 @@ function AuthProvider({ children }) {
       setOfficerTab,
       theme,
       changeTheme,
-      toggleTheme
+      toggleTheme,
+      currentLang,
+      changeLanguage
     }
   }, children);
 }
@@ -390,8 +413,7 @@ function AuthProvider({ children }) {
 // 2. TOP GOVERNMENT ACCESSIBILITY BAR (IMAGE 2: DEEP BLUE #0c4a7e)
 // ==========================================
 function TopGovtBar({ fontScale, setFontScale }) {
-  const { theme, changeTheme } = useContext(AuthContext);
-  const [lang, setLang] = useState('English');
+  const { theme, changeTheme, currentLang, changeLanguage } = useContext(AuthContext);
 
   const handleFontChange = (scale) => {
     setFontScale(scale);
@@ -432,15 +454,16 @@ function TopGovtBar({ fontScale, setFontScale }) {
 
       React.createElement('span', { key: 'sep2', className: 'text-blue-300' }, '|'),
 
-      // Language Select
+      // Language Select (English ↔ Telugu switch)
       React.createElement('div', { key: 'lang', className: 'relative' }, [
         React.createElement('select', {
-          value: lang,
-          onChange: (e) => setLang(e.target.value),
-          className: 'bg-transparent text-white rounded text-xs focus:outline-none cursor-pointer'
+          id: 'portal-lang-select',
+          value: currentLang || 'en',
+          onChange: (e) => changeLanguage(e.target.value),
+          className: 'bg-transparent text-white rounded text-xs focus:outline-none cursor-pointer font-bold py-0.5 pr-1 hover:text-amber-300'
         }, [
-          React.createElement('option', { key: 'en', value: 'English', className: 'text-slate-800' }, 'English ▾'),
-          React.createElement('option', { key: 'te', value: 'తెలుగు', className: 'text-slate-800' }, 'తెలుగు')
+          React.createElement('option', { key: 'en', value: 'en', className: 'text-slate-800' }, 'English ▾'),
+          React.createElement('option', { key: 'te', value: 'te', className: 'text-slate-800' }, 'తెలుగు ▾')
         ])
       ]),
 
