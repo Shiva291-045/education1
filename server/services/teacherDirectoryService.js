@@ -36,7 +36,15 @@ function fmtDate(val) {
     const m = String(d.getUTCMonth() + 1).padStart(2, '0');
     return `${day}-${m}-${d.getUTCFullYear()}`;
   }
-  return String(val).trim();
+  const str = String(val).trim();
+  if (/^\d{5}$/.test(str)) {
+    const n = parseInt(str, 10);
+    const d = new Date((n - 25569) * 86400000);
+    const day = String(d.getUTCDate()).padStart(2, '0');
+    const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+    return `${day}-${m}-${d.getUTCFullYear()}`;
+  }
+  return str;
 }
 
 function parseRetirementDate(val) {
@@ -143,9 +151,9 @@ class TeacherDirectoryService {
   loadExcelData() {
     try {
       const candidatePaths = [
-        path.join(__dirname, '..', '..', 'Teacher_Data_Masked.xlsx'),
         path.join(__dirname, '..', '..', 'TEST MANDAL WISE T DATA (1).xlsx'),
-        path.join(__dirname, '..', '..', 'TEST MANDAL WISE T DATA.xlsx')
+        path.join(__dirname, '..', '..', 'TEST MANDAL WISE T DATA.xlsx'),
+        path.join(__dirname, '..', '..', 'Teacher_Data_Masked.xlsx')
       ];
 
       let filePath = candidatePaths.find(p => fs.existsSync(p));
@@ -194,11 +202,11 @@ class TeacherDirectoryService {
         const mediumOfSchool = String(r[' Medium of the School'] || r.MEDIUM_OF_SCHOOL || '').trim() || '-';
         const hraPercentage = String(r[' HRA Categeory'] || r.HRA_CATEGORY || '').trim() || '-';
 
-        const dateOfAppointmentSpecialTeacher = fmtDate(r[' DATE OF JOINING IN 398/-'] || r.DOJ_398);
-        const dateOfFirstAppointment = fmtDate(r[' DATE OF FIRST APPOINTMENT'] || r.DOA);
-        const dateOfJoiningFeederCadre = fmtDate(r[' DATE OF JOINING IN THE FEEDER CADRE'] || r.DOJ_FEEDER);
-        const dateOfJoiningPresentCadre = fmtDate(r[' DATE OF JOINING IN THE PRESENT CADRE'] || r.DOJ_PRESENT_CADRE);
-        const dateOfJoiningPresentSchool = fmtDate(r[' DATE OF JOINING IN THE PRESENT SCHOOL'] || r.DOJ_PRESENT_SCHOOL);
+        const dateOfAppointmentSpecialTeacher = fmtDate(r[' DATE OF JOINING IN 398/-'] || r['DATE OF JOINING IN 398/-'] || r.DOJ_398);
+        const dateOfFirstAppointment = fmtDate(r[' DATE OF FIRST APPOINTMENT'] || r['DATE OF FIRST APPOINTMENT'] || r.DOA || r.dateOfFirstAppointment);
+        const dateOfJoiningFeederCadre = fmtDate(r[' DATE OF JOINING IN THE FEEDER CADRE'] || r['DATE OF JOINING IN THE FEEDER CADRE'] || r.DOJ_FEEDER || r.dateOfJoiningFeederCadre);
+        const dateOfJoiningPresentCadre = fmtDate(r[' DATE OF JOINING IN THE PRESENT CADRE'] || r['DATE OF JOINING IN THE PRESENT CADRE'] || r.DOJ_PRESENT_CADRE || r.dateOfJoiningPresentCadre);
+        const dateOfJoiningPresentSchool = fmtDate(r[' DATE OF JOINING IN THE PRESENT SCHOOL'] || r['DATE OF JOINING IN THE PRESENT SCHOOL'] || r.DOJ_PRESENT_SCHOOL || r.dateOfJoiningPresentSchool);
         const appointmentManagement = String(r[' APPOINTMENT MANAGEMENT'] || r.APPOINTMENT_MANAGEMENT || '').trim() || management;
         const appointedArea = String(r[' APPOINTED AREA'] || r.APPOINTED_AREA || '').trim() || 'PLAIN';
         const yearOfDsc = String(r[' YEAR OF DSC'] || r.YEAR_OF_DSC || '').trim() || '-';
@@ -601,6 +609,22 @@ class TeacherDirectoryService {
 
     const totalCount = records.length;
 
+    // Dynamic Cadre Breakdown across all matching records
+    let saCount = 0;
+    let sgtCount = 0;
+    let othersCount = 0;
+
+    records.forEach(t => {
+      const d = (t.designation || '').toUpperCase();
+      if (d.startsWith('SA ') || d === 'SA' || d.includes('SCHOOL ASSISTANT')) {
+        saCount++;
+      } else if (d.startsWith('SGT') || d === 'SGT' || d.includes('SECONDARY GRADE TEACHER')) {
+        sgtCount++;
+      } else {
+        othersCount++;
+      }
+    });
+
     // Pagination
     const page = Math.max(1, parseInt(query.page, 10) || 1);
     const limit = Math.max(1, Math.min(100, parseInt(query.limit, 10) || 25));
@@ -621,6 +645,12 @@ class TeacherDirectoryService {
       limit,
       totalPages: Math.ceil(totalCount / limit),
       teachers: paginatedTeachers,
+      stats: {
+        totalTeachers: totalCount,
+        saCount,
+        sgtCount,
+        othersCount
+      },
       filterOptions: {
         mandals: availableMandals,
         designations: availableDesignations

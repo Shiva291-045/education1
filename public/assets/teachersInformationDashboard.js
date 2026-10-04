@@ -151,19 +151,22 @@
     const availableMandals = filterOptions.mandals || [];
     const availableDesignations = filterOptions.designations || [];
 
-    // Calculate Cadre Breakdown for Stat Cards
+    // Calculate Cadre Breakdown for Stat Cards (uses dynamic dataset stats from backend)
     const stats = useMemo(() => {
+      if (teachersData.stats) {
+        return teachersData.stats;
+      }
       let saCount = 0;
       let sgtCount = 0;
       let othersCount = 0;
       teachersList.forEach(t => {
         const d = (t.designation || '').toUpperCase();
-        if (d.includes('SA ') || d.includes('SCHOOL ASSISTANT')) saCount++;
-        else if (d.includes('SGT')) sgtCount++;
+        if (d.startsWith('SA ') || d === 'SA' || d.includes('SCHOOL ASSISTANT')) saCount++;
+        else if (d.startsWith('SGT') || d === 'SGT' || d.includes('SECONDARY GRADE TEACHER')) sgtCount++;
         else othersCount++;
       });
-      return { saCount, sgtCount, othersCount };
-    }, [teachersList]);
+      return { totalTeachers, saCount, sgtCount, othersCount };
+    }, [teachersData, teachersList, totalTeachers]);
 
     return h('div', {
       className: `min-h-screen p-4 sm:p-6 lg:p-8 space-y-6 transition-colors ${
@@ -517,9 +520,11 @@
                 h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[140px]' }, 'Designation'),
                 h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[130px]' }, 'Mandal'),
                 h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[200px]' }, 'School Name'),
-                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 text-center min-w-[80px]' }, 'Gender'),
-                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 text-center min-w-[80px]' }, 'Caste'),
-                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[110px]' }, 'Mobile No.'),
+                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 text-center min-w-[150px]' }, 'Date of First Appointment'),
+                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 text-center min-w-[160px]' }, 'Date of Joining the Feeder Cadre'),
+                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 text-center min-w-[160px]' }, 'Date of Joining the Present Cadre'),
+                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 text-center min-w-[160px]' }, 'Date of Joining in Present School'),
+                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 text-center min-w-[120px]' }, 'Mobile No.'),
                 h('th', { className: 'p-3 font-bold border-b dark:border-slate-700 text-center min-w-[150px]' }, 'Actions')
               ])
             ]),
@@ -527,14 +532,14 @@
             h('tbody', { className: 'divide-y divide-slate-200 dark:divide-slate-800' }, [
               loading ? (
                 h('tr', {}, [
-                  h('td', { colSpan: 10, className: 'p-8 text-center text-slate-500 font-semibold' }, [
+                  h('td', { colSpan: 12, className: 'p-8 text-center text-slate-500 font-semibold' }, [
                     h('div', { className: 'w-8 h-8 border-3 border-[#0c4a7e] border-t-transparent rounded-full animate-spin mx-auto mb-2' }),
                     'Loading official teacher records...'
                   ])
                 ])
               ) : teachersList.length === 0 ? (
                 h('tr', {}, [
-                  h('td', { colSpan: 10, className: 'p-8 text-center text-slate-500 font-semibold' },
+                  h('td', { colSpan: 12, className: 'p-8 text-center text-slate-500 font-semibold' },
                     'No teacher records found matching the selected criteria.'
                   )
                 ])
@@ -557,15 +562,11 @@
                       h('span', { className: 'px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 dark:bg-slate-800' }, t.mandal)
                     ]),
                     h('td', { className: 'p-3 text-slate-700 dark:text-slate-300 border-r dark:border-slate-700' }, t.schoolName),
-                    h('td', { className: 'p-3 text-center border-r dark:border-slate-700' }, [
-                      h('span', {
-                        className: `px-2 py-0.5 rounded text-[10px] font-bold ${
-                          t.gender === 'FEMALE' ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
-                        }`
-                      }, t.gender || '-')
-                    ]),
-                    h('td', { className: 'p-3 text-center font-medium text-slate-600 dark:text-slate-400 border-r dark:border-slate-700' }, t.caste || '-'),
-                    h('td', { className: 'p-3 font-mono text-slate-600 dark:text-slate-400 border-r dark:border-slate-700' }, t.mobileNumber || '-'),
+                    h('td', { className: 'p-3 text-center font-medium text-slate-700 dark:text-slate-300 border-r dark:border-slate-700 whitespace-nowrap' }, t.dateOfFirstAppointment || '-'),
+                    h('td', { className: 'p-3 text-center font-medium text-slate-700 dark:text-slate-300 border-r dark:border-slate-700 whitespace-nowrap' }, t.dateOfJoiningFeederCadre || '-'),
+                    h('td', { className: 'p-3 text-center font-medium text-slate-700 dark:text-slate-300 border-r dark:border-slate-700 whitespace-nowrap' }, t.dateOfJoiningPresentCadre || '-'),
+                    h('td', { className: 'p-3 text-center font-medium text-slate-700 dark:text-slate-300 border-r dark:border-slate-700 whitespace-nowrap' }, t.dateOfJoiningPresentSchool || '-'),
+                    h('td', { className: 'p-3 text-center font-mono text-slate-700 dark:text-slate-300 border-r dark:border-slate-700 whitespace-nowrap' }, t.mobileNumber || '-'),
                     h('td', { className: 'p-3 text-center' }, [
                       h('button', {
                         onClick: () => setSelectedTeacherCode(t.treasuryCode),
