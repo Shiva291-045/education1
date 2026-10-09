@@ -477,7 +477,7 @@
       "officialDataLinked": true,
       "officialProfileId": null,
       "createdAt": "2026-10-02T09:29:41.298Z",
-      "lastLogin": "2026-10-04T08:11:47.532Z",
+      "lastLogin": "2026-10-09T19:45:41.159Z",
       "_id": "6abf7bad04e9e63ade8f9e1f"
     },
     {
@@ -529,141 +529,11 @@
   ],
   "sessions": [
     {
-      "sessionId": "5df7a17fd9e6b4cacd49f11c117af860c06147cba20ca7b61111884ec4d2c1a5",
+      "sessionId": "40ed2a26565048a6b0f26723de8f4453ba312f6997a9f96303fd3cc67302d466",
       "userId": "OFFICIAL-DEO-9848011222",
       "role": "DEO",
-      "createdAt": "2026-10-03T09:47:56.545Z",
-      "expiresAt": 1791107276545,
-      "metadata": {
-        "authMethod": "password"
-      }
-    },
-    {
-      "sessionId": "d40b672e3ca84482206de07b05d1299df69963bcf0df69022ec1e40ce1cc2fa0",
-      "userId": "OFFICIAL-APO-9848022333",
-      "role": "APO",
-      "createdAt": "2026-10-03T09:48:12.360Z",
-      "expiresAt": 1791107292360,
-      "metadata": {
-        "authMethod": "password"
-      }
-    },
-    {
-      "sessionId": "7ff1031ce7c66d78fe599c2aabe3142ad01854d63a0e9609a7a05e9f47164f24",
-      "userId": "TCH-2126324",
-      "role": "Teacher",
-      "createdAt": "2026-10-03T12:51:28.554Z",
-      "expiresAt": 1791118288554,
-      "metadata": {
-        "authMethod": "teacher_credentials"
-      }
-    },
-    {
-      "sessionId": "699ba18b1657c721ccdcd3ce7e420f9264cd578278682447768eb2a6d32188b9",
-      "userId": "OFFICIAL-DEO-9848011222",
-      "role": "DEO",
-      "createdAt": "2026-10-03T12:51:28.657Z",
-      "expiresAt": 1791118288657,
-      "metadata": {
-        "authMethod": "password"
-      }
-    },
-    {
-      "sessionId": "fdff2f15560e979200eddedb714e5abd4567fbf45c4acf5f020706d66a8fa1ce",
-      "userId": "TCH-2126324",
-      "role": "Teacher",
-      "createdAt": "2026-10-03T12:52:22.443Z",
-      "expiresAt": 1791118342443,
-      "metadata": {
-        "authMethod": "teacher_credentials"
-      }
-    },
-    {
-      "sessionId": "65b7548f130d39e3cd32e608e6e29abd5438cd0854501b94bc30ab68b887be0a",
-      "userId": "OFFICIAL-DEO-9848011222",
-      "role": "DEO",
-      "createdAt": "2026-10-03T12:52:22.525Z",
-      "expiresAt": 1791118342525,
-      "metadata": {
-        "authMethod": "password"
-      }
-    },
-    {
-      "sessionId": "242042c04051bddd29a21a7bc1fcb7dc0b7a21e8f9c030aa7c1e22de3f1fb360",
-      "userId": "OFFICIAL-MEO-9848033444",
-      "role": "MEO",
-      "createdAt": "2026-10-03T12:52:22.618Z",
-      "expiresAt": 1791118342618,
-      "metadata": {
-        "authMethod": "password"
-      }
-    },
-    {
-      "sessionId": "f8e50febf4af318010c51cf7d3906aaf5f8fd1c50e35214c32d29d8be57dc740",
-      "userId": "OFFICIAL-MEO-9848044555",
-      "role": "MEO",
-      "createdAt": "2026-10-03T12:52:22.750Z",
-      "expiresAt": 1791118342750,
-      "metadata": {
-        "authMethod": "password"
-      }
-    },
-    {
-      "sessionId": "582d47f7d7d3581f61b24a959d0dd9613105db30dfec9455b23fcef638954f53",
-      "userId": "OFFICIAL-DEO-9848011222",
-      "role": "DEO",
-      "createdAt": "2026-10-03T13:02:14.394Z",
-      "expiresAt": 1791118934394,
-      "metadata": {
-        "authMethod": "password"
-      }
-    },
-    {
-      "sessionId": "e40a559d2ba4eb7e00a3449a346c73aa88056f43fe52866080c11a8dee7760f3",
-      "userId": "TCH-2126324",
-      "role": "Teacher",
-      "createdAt": "2026-10-03T14:28:39.999Z",
-      "expiresAt": 1791124119999,
-      "metadata": {
-        "authMethod": "teacher_credentials"
-      }
-    },
-    {
-      "sessionId": "7d256f98ede4e8118b33bd2dff317eae65512fe6e1255a6c5046735a447fdac8",
-      "userId": "OFFICIAL-DEO-9848011222",
-      "role": "DEO",
-      "createdAt": "2026-10-03T14:28:40.076Z",
-      "expiresAt": 1791124120076,
-      "metadata": {
-        "authMethod": "password"
-      }
-    },
-    {
-      "sessionId": "544ba740b57ff3ee4b2c0251c9f5f6b6a5052cd8ecc8d49e27e2ead93d299bae",
-      "userId": "OFFICIAL-MEO-9848033444",
-      "role": "MEO",
-      "createdAt": "2026-10-03T14:28:40.142Z",
-      "expiresAt": 1791124120142,
-      "metadata": {
-        "authMethod": "password"
-      }
-    },
-    {
-      "sessionId": "1999f4c88587dbb44e884b43a133bbd9652ee7c7ef6ed5ac8a7f9a15d8f1826c",
-      "userId": "OFFICIAL-MEO-9848044555",
-      "role": "MEO",
-      "createdAt": "2026-10-03T14:28:40.220Z",
-      "expiresAt": 1791124120220,
-      "metadata": {
-        "authMethod": "password"
-      }
-    },
-    {
-      "sessionId": "18d832739238096b5dafbf1994e0bb9f2e56d1a57a809eb9a38eaea06a478583",
-      "userId": "OFFICIAL-DEO-9848011222",
-      "role": "DEO",
-      "createdAt": "2026-10-04T08:11:47.547Z",
-      "expiresAt": 1791187907547,
+      "createdAt": "2026-10-09T19:45:41.169Z",
+      "expiresAt": 1791661541169,
       "metadata": {
         "authMethod": "password"
       }

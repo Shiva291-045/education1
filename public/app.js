@@ -1051,14 +1051,20 @@ function PortalCardsGrid() {
     { title: 'National Education Day Celebrations', date: '01 Sep 2025', type: 'celebration' }
   ];
 
-  const handleSearchSchool = async () => {
+  const fetchSchools = async (mVal, tVal) => {
     try {
-      const res = await fetch(`/api/schools/search?mandal=${mandal}&type=${schoolType}`);
+      const qMandal = mVal !== undefined ? mVal : mandal;
+      const qType = tVal !== undefined ? tVal : schoolType;
+      const res = await fetch(`/api/schools/search?mandal=${encodeURIComponent(qMandal)}&type=${encodeURIComponent(qType)}`);
       const data = await res.json();
       setSearchResults(data.schools || []);
     } catch (e) {
       setSearchResults([]);
     }
+  };
+
+  const handleSearchSchool = () => {
+    fetchSchools(mandal, schoolType);
   };
 
   return React.createElement('div', {
@@ -1199,30 +1205,49 @@ function PortalCardsGrid() {
                 React.createElement('select', {
                   key: 'sel-mandal',
                   value: mandal,
-                  onChange: (e) => setMandal(e.target.value),
+                  onChange: (e) => {
+                    const val = e.target.value;
+                    setMandal(val);
+                    fetchSchools(val, schoolType);
+                  },
                   className: 'w-full text-[11px] border border-slate-300 rounded-lg p-1.5 bg-white text-slate-700 focus:outline-none focus:border-[#0c4a7e]'
                 }, [
                   React.createElement('option', { key: 'all', value: 'all' }, 'Select Mandal ▾'),
-                  React.createElement('option', { key: 'm1', value: 'Jangaon' }, 'Jangaon'),
-                  React.createElement('option', { key: 'm2', value: 'Bachannapet' }, 'Bachannapet'),
-                  React.createElement('option', { key: 'm3', value: 'Devaruppula' }, 'Devaruppula'),
-                  React.createElement('option', { key: 'm4', value: 'Lingalaghanpur' }, 'Lingalaghanpur'),
-                  React.createElement('option', { key: 'm5', value: 'Narmetta' }, 'Narmetta'),
-                  React.createElement('option', { key: 'm6', value: 'Station Ghanpur' }, 'Station Ghanpur'),
-                  React.createElement('option', { key: 'm7', value: 'Palakurthi' }, 'Palakurthi')
+                  React.createElement('option', { key: 'm1', value: 'Bachannapeta' }, 'Bachannapeta'),
+                  React.createElement('option', { key: 'm2', value: 'Chilpur' }, 'Chilpur'),
+                  React.createElement('option', { key: 'm3', value: 'Devaruppala' }, 'Devaruppala'),
+                  React.createElement('option', { key: 'm4', value: 'Ghanpur Stn' }, 'Ghanpur Stn'),
+                  React.createElement('option', { key: 'm5', value: 'Jangaon' }, 'Jangaon'),
+                  React.createElement('option', { key: 'm6', value: 'Kodakandla' }, 'Kodakandla'),
+                  React.createElement('option', { key: 'm7', value: 'Lingalaghanpur' }, 'Lingalaghanpur'),
+                  React.createElement('option', { key: 'm8', value: 'Narmetta' }, 'Narmetta'),
+                  React.createElement('option', { key: 'm9', value: 'Palakurthi' }, 'Palakurthi'),
+                  React.createElement('option', { key: 'm10', value: 'Raghunathpalle' }, 'Raghunathpalle'),
+                  React.createElement('option', { key: 'm11', value: 'Tharigoppula' }, 'Tharigoppula'),
+                  React.createElement('option', { key: 'm12', value: 'Zaffergadh' }, 'Zaffergadh')
                 ]),
 
                 React.createElement('select', {
                   key: 'sel-type',
                   value: schoolType,
-                  onChange: (e) => setSchoolType(e.target.value),
+                  onChange: (e) => {
+                    const val = e.target.value;
+                    setSchoolType(val);
+                    fetchSchools(mandal, val);
+                  },
                   className: 'w-full text-[11px] border border-slate-300 rounded-lg p-1.5 bg-white text-slate-700 focus:outline-none focus:border-[#0c4a7e]'
                 }, [
                   React.createElement('option', { key: 'all', value: 'all' }, 'Select School Type ▾'),
-                  React.createElement('option', { key: 't1', value: 'Government' }, 'Government High School'),
-                  React.createElement('option', { key: 't2', value: 'ZPHS' }, 'Zilla Parishad (ZPHS)'),
+                  React.createElement('option', { key: 't1', value: 'MPP/ZPP' }, 'MPP / ZPP (Local Body)'),
+                  React.createElement('option', { key: 't2', value: 'Government' }, 'Government High School'),
                   React.createElement('option', { key: 't3', value: 'KGBV' }, 'KGBV Residential'),
-                  React.createElement('option', { key: 't4', value: 'Model School' }, 'TS Model School')
+                  React.createElement('option', { key: 't4', value: 'Model School' }, 'TS Model School (TGMS)'),
+                  React.createElement('option', { key: 't5', value: 'TGWREIS' }, 'Social Welfare Residential'),
+                  React.createElement('option', { key: 't6', value: 'Tribal Welfare' }, 'Tribal Welfare Ashram'),
+                  React.createElement('option', { key: 't7', value: 'MJPTBC' }, 'BC Welfare Residential'),
+                  React.createElement('option', { key: 't8', value: 'Minority' }, 'Minority Residential (TGMRS)'),
+                  React.createElement('option', { key: 't9', value: 'Aided' }, 'Aided School'),
+                  React.createElement('option', { key: 't10', value: 'Private' }, 'Private School')
                 ]),
 
                 React.createElement('button', {
@@ -1245,17 +1270,17 @@ function PortalCardsGrid() {
 
             searchResults && React.createElement('div', {
               key: 'search-results-box',
-              className: 'mt-2 max-h-28 overflow-y-auto space-y-1 p-1 bg-white rounded border border-slate-200'
+              className: 'mt-2 max-h-36 overflow-y-auto space-y-1 p-1 bg-white rounded border border-slate-200'
             }, searchResults.length > 0 ? (
               searchResults.map((s, idx) => React.createElement('div', {
                 key: `res-${idx}`,
                 className: 'text-[10px] p-1 bg-slate-50 rounded border border-slate-100 flex items-center justify-between'
               }, [
-                React.createElement('div', { key: 't', className: 'truncate' }, [
-                  React.createElement('div', { key: 'n', className: 'font-bold text-slate-800 truncate' }, s.name),
-                  React.createElement('div', { key: 'd', className: 'text-[9px] text-slate-500' }, `${s.mandal} • ${s.medium}`)
+                React.createElement('div', { key: 't', className: 'truncate flex-1 pr-1' }, [
+                  React.createElement('div', { key: 'n', className: 'font-bold text-slate-800 truncate', title: s.name }, s.name),
+                  React.createElement('div', { key: 'd', className: 'text-[9px] text-slate-500' }, `${s.location || s.mandal} • ${s.medium}`)
                 ]),
-                React.createElement('span', { key: 'tag', className: 'text-[8px] font-semibold bg-[#e3f2fd] text-[#0c4a7e] px-1 py-0.2 rounded flex-shrink-0 ml-1' }, s.type)
+                React.createElement('span', { key: 'tag', className: 'text-[8px] font-semibold bg-[#e3f2fd] text-[#0c4a7e] px-1 py-0.2 rounded flex-shrink-0 ml-1' }, s.category || s.type)
               ]))
             ) : (
               React.createElement('div', { className: 'text-[11px] text-slate-500 text-center py-1.5' }, 'No schools found for selection.')

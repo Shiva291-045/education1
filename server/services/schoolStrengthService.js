@@ -24,6 +24,24 @@ const OFFICIAL_12_MANDALS = [
   "PALAKURTHI", "RAGHUNATHPALLE", "THARIGOPPULA", "ZAFFERGADH"
 ];
 
+const MANDAL_DISPLAY_NAMES = {
+  "BACHANNAPETA": "Bachannapeta",
+  "BACHANNAPET": "Bachannapeta",
+  "CHILPUR": "Chilpur",
+  "DEVARUPPALA": "Devaruppala",
+  "DEVARUPPULA": "Devaruppala",
+  "GANPUR (STN)": "Station Ghanpur",
+  "GHANPUR STN": "Station Ghanpur",
+  "JANGAON": "Jangaon",
+  "KODAKANDLA": "Kodakandla",
+  "LINGALAGHANPUR": "Lingalaghanpur",
+  "NARMETTA": "Narmetta",
+  "PALAKURTHI": "Palakurthi",
+  "RAGHUNATHPALLE": "Raghunathpalle",
+  "THARIGOPPULA": "Tharigoppula",
+  "ZAFFERGADH": "Zaffergadh"
+};
+
 const DB_FILE = path.join(__dirname, '..', 'education_db.json');
 
 // Exact District Schools Strength from Sheet 1: "Schools Strength Particulars- Dist : Jangaon"
@@ -469,6 +487,29 @@ class SchoolStrengthService {
           const mgmt = (r[' MANAGEMENT'] || '').trim();
 
           if (sName) {
+            const rawMed = (r[' Medium of the School'] || r[' MEDIUM'] || '').trim().toUpperCase();
+            let med = 'Telugu Medium';
+            if (rawMed === 'UM' || rawMed.includes('URDU')) {
+              med = 'Urdu Medium';
+            } else if (rawMed === 'EM' || rawMed.includes('ENGLISH')) {
+              med = 'English Medium';
+            } else if (cat === 'HS' || sName.startsWith('ZPHS') || sName.startsWith('GHS')) {
+              med = 'Telugu & English';
+            } else {
+              med = 'Telugu Medium';
+            }
+
+            let displayType = 'MPP/ZPP';
+            if (mgmt === 'GOVT' || sName.startsWith('GOVT') || sName.startsWith('GHS')) {
+              displayType = cat === 'PS' ? 'Government Primary' : 'Government High School';
+            } else if (sName.startsWith('ZPHS')) {
+              displayType = 'ZPHS (High School)';
+            } else if (sName.startsWith('MPPS')) {
+              displayType = 'MPPS (Primary)';
+            } else if (sName.startsWith('MPUPS')) {
+              displayType = 'MPUPS (Upper Primary)';
+            }
+
             const key = mandal + '___' + sName;
             if (!schoolMap.has(key)) {
               schoolMap.set(key, {
@@ -479,6 +520,8 @@ class SchoolStrengthService {
                 management: mgmt === 'LB' ? 'MPP/ZPP' : (mgmt === 'GOVT' ? 'GOVT HS & JR' : mgmt),
                 managementCode: mgmt === 'LB' ? 33 : (mgmt === 'GOVT' ? 10 : 33),
                 stage: cat === 'PS' ? '1-PS (1st-5th)' : (cat === 'UPS' ? '2-UPS (6th-8th)' : '7- HS (8th-10th)'),
+                medium: med,
+                displayType: displayType,
                 teachersCount: 0,
                 studentsCount: 0
               });
@@ -492,18 +535,18 @@ class SchoolStrengthService {
       INITIAL_MANDAL_STRENGTH.forEach(m => {
         const mName = m.mandal;
         const specials = [
-          { key: 'KGBV', name: `KGBV ${mName}`, code: 14, stage: '5- 6th to Inter' },
-          { key: 'TGMS', name: `TS MODEL SCHOOL (TGMS) ${mName}`, code: 62, stage: '5- 6th to Inter' },
-          { key: 'TGREIE', name: `TGREIE ${mName}`, code: 12, stage: '3- 5th to Inter' },
-          { key: 'TGWREIS', name: `TGWREIS ${mName}`, code: 24, stage: '3- 5th to Inter' },
-          { key: 'TGREIS (G)', name: `TGREIS (G) ${mName}`, code: 27, stage: '3- 5th to Inter' },
-          { key: 'TW ASHRAM HS', name: `TW ASHRAM HS ${mName}`, code: 29, stage: '6- PP3 to 10th' },
-          { key: 'TWPS', name: `TWPS ${mName}`, code: 31, stage: '1-PS (1st-5th)' },
-          { key: 'AIDED', name: `AIDED HIGH SCHOOL ${mName}`, code: 35, stage: '7- HS (8th-10th)' },
-          { key: 'PVT CBSE', name: `PVT CBSE SCHOOL ${mName}`, code: 39, stage: '6- PP3 to 10th' },
-          { key: 'URS JN', name: `URS JN SCHOOL ${mName}`, code: 63, stage: '6- PP3 to 10th' },
-          { key: 'MJPTBC WREIS', name: `MJPTBC WREIS ${mName}`, code: 64, stage: '3- 5th to Inter' },
-          { key: 'TGMRS', name: `TGMRS (MINORITY RESIDENTIAL) ${mName}`, code: 65, stage: '3- 5th to Inter' }
+          { key: 'KGBV', name: `KGBV ${mName}`, code: 14, stage: '5- 6th to Inter', medium: 'English Medium', displayType: 'KGBV Residential' },
+          { key: 'TGMS', name: `TS MODEL SCHOOL (TGMS) ${mName}`, code: 62, stage: '5- 6th to Inter', medium: 'English Medium', displayType: 'TS Model School' },
+          { key: 'TGREIE', name: `TGREIE ${mName}`, code: 12, stage: '3- 5th to Inter', medium: 'English Medium', displayType: 'Residential Welfare' },
+          { key: 'TGWREIS', name: `TGWREIS ${mName}`, code: 24, stage: '3- 5th to Inter', medium: 'English Medium', displayType: 'Social Welfare Residential' },
+          { key: 'TGREIS (G)', name: `TGREIS (G) ${mName}`, code: 27, stage: '3- 5th to Inter', medium: 'English Medium', displayType: 'Residential Welfare' },
+          { key: 'TW ASHRAM HS', name: `TW ASHRAM HS ${mName}`, code: 29, stage: '6- PP3 to 10th', medium: 'Telugu Medium', displayType: 'Tribal Welfare Ashram' },
+          { key: 'TWPS', name: `TWPS ${mName}`, code: 31, stage: '1-PS (1st-5th)', medium: 'Telugu Medium', displayType: 'Tribal Welfare Primary' },
+          { key: 'AIDED', name: `AIDED HIGH SCHOOL ${mName}`, code: 35, stage: '7- HS (8th-10th)', medium: 'Telugu & English', displayType: 'Aided High School' },
+          { key: 'PVT CBSE', name: `PVT CBSE SCHOOL ${mName}`, code: 39, stage: '6- PP3 to 10th', medium: 'English Medium', displayType: 'Private CBSE' },
+          { key: 'URS JN', name: `URS JN SCHOOL ${mName}`, code: 63, stage: '6- PP3 to 10th', medium: 'English Medium', displayType: 'Residential' },
+          { key: 'MJPTBC WREIS', name: `MJPTBC WREIS ${mName}`, code: 64, stage: '3- 5th to Inter', medium: 'English Medium', displayType: 'BC Welfare Residential' },
+          { key: 'TGMRS', name: `TGMRS (MINORITY RESIDENTIAL) ${mName}`, code: 65, stage: '3- 5th to Inter', medium: 'English Medium', displayType: 'Minority Residential' }
         ];
 
         specials.forEach(sp => {
@@ -518,6 +561,8 @@ class SchoolStrengthService {
                 management: sp.key,
                 managementCode: sp.code,
                 stage: sp.stage,
+                medium: sp.medium,
+                displayType: sp.displayType,
                 teachersCount: 10,
                 studentsCount: m.managements[sp.key]
               });
@@ -1094,13 +1139,134 @@ class SchoolStrengthService {
       }
     } catch (e) {}
 
-    return {
-      success: true,
-      status: 200,
-      message: `✓ Successfully updated district particulars for Management Code ${managementCode} (${currentItem.managementName}).`,
-      updatedItem: currentItem
-    };
-  }
+      return {
+        success: true,
+        status: 200,
+        message: `✓ Successfully updated district particulars for Management Code ${managementCode} (${currentItem.managementName}).`,
+        updatedItem: currentItem
+      };
+    }
+
+    /**
+     * Search schools for "Find a School" public portal feature
+     * Dynamically filters by mandal and school type
+     * Returns only: name, location, mandal, medium, category/type (never student count or totals)
+     */
+    searchSchools(mandalQuery, typeQuery) {
+      this.ensureInitialized();
+      const schools = this.schoolsList || [];
+      let filtered = schools;
+
+      const normMandal = (m) => {
+        if (!m) return '';
+        const str = m.toUpperCase().replace(/[^A-Z]/g, '');
+        if (str.includes('DEVARUPP')) return 'DEVARUPPALA';
+        if (str.includes('LINGALA')) return 'LINGALAGHANPUR';
+        if (str.includes('GANPUR') || str.includes('GHANPUR')) return 'GHANPUR';
+        if (str.includes('BACHANNAPET')) return 'BACHANNAPETA';
+        if (str.includes('RAGHUNATHPALL')) return 'RAGHUNATHPALLE';
+        if (str.includes('THARIGOPP') || str.includes('TARIGOPP')) return 'THARIGOPPULA';
+        if (str.includes('ZAFFER') || str.includes('ZAFFAR')) return 'ZAFFERGADH';
+        if (str.includes('PALAKURTH')) return 'PALAKURTHI';
+        if (str.includes('KODAKANDL')) return 'KODAKANDLA';
+        if (str.includes('NARMET')) return 'NARMETTA';
+        if (str.includes('CHILPUR')) return 'CHILPUR';
+        if (str.includes('JANGAON')) return 'JANGAON';
+        return str;
+      };
+
+      // Filter by mandal if specified and not 'all'
+      if (mandalQuery && mandalQuery.toLowerCase() !== 'all' && mandalQuery.trim() !== '') {
+        const qNorm = normMandal(mandalQuery);
+        filtered = filtered.filter(s => {
+          const sNorm = normMandal(s.mandal);
+          return sNorm === qNorm;
+        });
+      }
+
+      // Filter by type if specified and not 'all'
+      if (typeQuery && typeQuery.toLowerCase() !== 'all' && typeQuery.trim() !== '') {
+        const q = typeQuery.trim().toLowerCase();
+        filtered = filtered.filter(s => {
+          const cat = (s.category || '').toLowerCase();
+          const mgmt = (s.management || '').toLowerCase();
+          const name = (s.name || '').toLowerCase();
+          const code = String(s.managementCode || '');
+          const dispType = (s.displayType || '').toLowerCase();
+
+          // MPP / ZPP / Local Body / ZPHS / MPPS / MPUPS
+          if (q.includes('mpp') || q.includes('zpp') || q === 'zphs' || q === 'lb' || q.includes('local body') || q === 'mpps' || q === 'mpups') {
+            return code === '33' || mgmt.includes('mpp') || mgmt.includes('zpp') || name.startsWith('zphs') || name.startsWith('mpps') || name.startsWith('mpups') || dispType.includes('mpp') || dispType.includes('zpp') || dispType.includes('zphs');
+          }
+
+          // Government / Govt High School / Govt PS
+          if (q === 'government' || q === 'govt' || q.includes('government') || q === 'govt hs & jr' || q === 'govt ps' || q === '10' || q === '11') {
+            return code === '10' || code === '11' || mgmt.includes('govt') || name.startsWith('govt') || name.startsWith('ghs') || dispType.includes('govt');
+          }
+
+          // KGBV Residential
+          if (q.includes('kgbv') || q === '14') {
+            return code === '14' || name.includes('kgbv') || cat.includes('kgbv') || mgmt.includes('kgbv') || dispType.includes('kgbv');
+          }
+
+          // TS Model School / TGMS
+          if (q.includes('model') || q === 'tgms' || q === '62') {
+            return code === '62' || name.includes('model school') || name.includes('tgms') || dispType.includes('model');
+          }
+
+          // Social Welfare / TGWREIS
+          if (q.includes('social welfare') || q.includes('tgwreis')) {
+            return ['24'].includes(code) || name.includes('tgwreis') || dispType.includes('social welfare');
+          }
+
+          // Residential (General / All Residential)
+          if (q === 'residential' || q.includes('residential welfare') || q.includes('tgreis')) {
+            return ['24', '27', '12', '14', '63', '64', '65'].includes(code) || name.includes('residential') || name.includes('tgwreis') || name.includes('tgreis') || name.includes('tgreie');
+          }
+
+          // Tribal Welfare / Ashram / TW
+          if (q.includes('tribal') || q.includes('ashram') || q === 'tw' || q.includes('twps') || q === '29' || q === '31') {
+            return ['29', '31'].includes(code) || name.includes('ashram') || name.includes('twps') || dispType.includes('tribal');
+          }
+
+          // BC Welfare / MJPTBC
+          if (q.includes('bc welfare') || q.includes('mjptbc') || q === '64') {
+            return code === '64' || name.includes('mjptbc') || dispType.includes('bc welfare');
+          }
+
+          // Minority Residential / TGMRS
+          if (q.includes('minority') || q.includes('tgmrs') || q === '65') {
+            return code === '65' || name.includes('tgmrs') || name.includes('minority') || dispType.includes('minority');
+          }
+
+          // Aided
+          if (q.includes('aided') || q === '35') {
+            return code === '35' || name.includes('aided') || mgmt.includes('aided') || dispType.includes('aided');
+          }
+
+          // Private / CBSE
+          if (q.includes('private') || q.includes('pvt') || q.includes('cbse') || q === '38' || q === '39') {
+            return code === '38' || code === '39' || name.includes('pvt') || name.includes('cbse') || dispType.includes('private');
+          }
+
+          // Generic fallback
+          return cat.includes(q) || mgmt.includes(q) || name.includes(q) || dispType.includes(q);
+        });
+      }
+
+      // Map to clean format: name, location, medium, category/type (NO student counts or totals)
+      return filtered.map(s => {
+        const loc = MANDAL_DISPLAY_NAMES[s.mandal] || MANDAL_DISPLAY_NAMES[normMandal(s.mandal)] || s.mandal;
+        return {
+          name: s.name,
+          location: loc,
+          mandal: loc,
+          medium: s.medium || 'Telugu & English',
+          category: s.displayType || (s.managementCode === 33 ? 'MPP/ZPP' : (s.managementCode === 10 ? 'Government' : s.management)),
+          type: s.displayType || (s.managementCode === 33 ? 'MPP/ZPP' : (s.managementCode === 10 ? 'Government' : s.management))
+        };
+      });
+    }
 }
 
 module.exports = new SchoolStrengthService();

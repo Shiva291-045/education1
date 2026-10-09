@@ -302,14 +302,8 @@ try {
         return;
       }
       if (pathname === '/api/schools/search' && req.method === 'GET') {
-        const schools = [
-          { name: "Zilla Parishad High School, Jangaon", type: "Government", mandal: "Jangaon", medium: "Telugu & English" },
-          { name: "Govt High School, Bachannapet", type: "Government", mandal: "Bachannapet", medium: "Telugu & English" },
-          { name: "Kasturba Gandhi Balika Vidyalaya (KGBV)", type: "Residential", mandal: "Jangaon", medium: "English" },
-          { name: "Telangana State Model School, Narmetta", type: "Model School", mandal: "Narmetta", medium: "English" },
-          { name: "MPPS Primary School, Station Ghanpur", type: "Primary", mandal: "Station Ghanpur", medium: "Telugu" }
-        ];
-        return mockRes.json({ success: true, count: schools.length, schools });
+        await schoolStrengthController.searchSchools(req, mockRes);
+        return;
       }
 
       // Schools Information & Strength Analytics Routes (Protected DEO & APO)

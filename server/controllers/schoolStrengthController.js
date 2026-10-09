@@ -190,6 +190,41 @@ class SchoolStrengthController {
       return res.status(500).json({ success: false, message: "Internal server error updating district particulars." });
     }
   }
+
+  /**
+   * GET /api/schools/search
+   * Public endpoint for "Find a School" search widget.
+   * Query params: ?mandal=...&type=...
+   */
+  async searchSchools(req, res) {
+    try {
+      let mandal = '';
+      let type = '';
+
+      if (req.query) {
+        mandal = req.query.mandal || '';
+        type = req.query.type || '';
+      } else if (req.url) {
+        const urlObj = new URL(req.url, 'http://localhost');
+        mandal = urlObj.searchParams.get('mandal') || '';
+        type = urlObj.searchParams.get('type') || '';
+      }
+
+      const schools = schoolStrengthService.searchSchools(mandal, type);
+      return res.status(200).json({
+        success: true,
+        count: schools.length,
+        schools
+      });
+    } catch (err) {
+      console.error('[SchoolStrengthController] Error in searchSchools:', err);
+      return res.status(500).json({
+        success: false,
+        message: "Error searching schools",
+        schools: []
+      });
+    }
+  }
 }
 
 module.exports = new SchoolStrengthController();
