@@ -51,6 +51,47 @@
     return Number(n).toLocaleString('en-IN');
   }
 
+  const t = (k) => (window.i18n ? window.i18n.t(k) : k);
+
+  function getManagementBadgeStyle(code) {
+    switch (Number(code)) {
+      case 10: // GOVT HS & JR
+        return { circleBg: 'bg-blue-100 dark:bg-blue-950', textColor: 'text-blue-600 dark:text-blue-300', icon: '🏫' };
+      case 11: // GOVT PS DNTPS
+        return { circleBg: 'bg-rose-100 dark:bg-rose-950', textColor: 'text-rose-600 dark:text-rose-300', icon: '🏫' };
+      case 12: // TGREIE
+        return { circleBg: 'bg-emerald-100 dark:bg-emerald-950', textColor: 'text-emerald-600 dark:text-emerald-300', icon: '🏢' };
+      case 14: // KGBV
+        return { circleBg: 'bg-purple-100 dark:bg-purple-950', textColor: 'text-purple-600 dark:text-purple-300', icon: '👥' };
+      case 24: // TGWREIS
+        return { circleBg: 'bg-amber-100 dark:bg-amber-950', textColor: 'text-amber-600 dark:text-amber-300', icon: '🏢' };
+      case 27: // TGREIS (G)
+        return { circleBg: 'bg-teal-100 dark:bg-teal-950', textColor: 'text-teal-600 dark:text-teal-300', icon: '🎓' };
+      case 29: // TW ASHRAM HS
+        return { circleBg: 'bg-yellow-100 dark:bg-yellow-950', textColor: 'text-yellow-700 dark:text-yellow-300', icon: '🏠' };
+      case 31: // TWPS
+        return { circleBg: 'bg-pink-100 dark:bg-pink-950', textColor: 'text-pink-600 dark:text-pink-300', icon: '🏢' };
+      case 33: // MPP/ZPP
+        return { circleBg: 'bg-sky-100 dark:bg-sky-950', textColor: 'text-sky-600 dark:text-sky-300', icon: '🏫' };
+      case 35: // AIDED
+        return { circleBg: 'bg-emerald-100 dark:bg-emerald-950', textColor: 'text-emerald-600 dark:text-emerald-300', icon: '🤝' };
+      case 38: // PVT
+        return { circleBg: 'bg-rose-100 dark:bg-rose-950', textColor: 'text-rose-600 dark:text-rose-300', icon: '🎓' };
+      case 39: // PVT CBSE
+        return { circleBg: 'bg-purple-100 dark:bg-purple-950', textColor: 'text-purple-600 dark:text-purple-300', icon: '📖' };
+      case 62: // TGMS
+        return { circleBg: 'bg-indigo-100 dark:bg-indigo-950', textColor: 'text-indigo-600 dark:text-indigo-300', icon: '🏫' };
+      case 63: // URS JN
+        return { circleBg: 'bg-amber-100 dark:bg-amber-950', textColor: 'text-amber-600 dark:text-amber-300', icon: '🏢' };
+      case 64: // MJPTBC WREIS
+        return { circleBg: 'bg-violet-100 dark:bg-violet-950', textColor: 'text-violet-600 dark:text-violet-300', icon: '👥' };
+      case 65: // TGMRS
+        return { circleBg: 'bg-teal-100 dark:bg-teal-950', textColor: 'text-teal-600 dark:text-teal-300', icon: '🎓' };
+      default:
+        return { circleBg: 'bg-slate-100 dark:bg-slate-800', textColor: 'text-slate-600 dark:text-slate-300', icon: '🏫' };
+    }
+  }
+
   function SchoolStrengthDashboardView({ user, isDark, onBack, previewMandal, onMandalChange }) {
     const [loading, setLoading] = useState(true);
     const [dashboardData, setDashboardData] = useState(null);
@@ -58,6 +99,7 @@
 
     // Filters
     const [selectedMandal, setSelectedMandal] = useState('ALL');
+    const [selectedSchool, setSelectedSchool] = useState('ALL');
     const [selectedManagement, setSelectedManagement] = useState('ALL');
     const [selectedStage, setSelectedStage] = useState('ALL');
     const [searchTerm, setSearchTerm] = useState('');
@@ -114,6 +156,9 @@
         if (selectedMandal && selectedMandal !== 'ALL') {
           queryParams.append('mandal', selectedMandal);
         }
+        if (selectedSchool && selectedSchool !== 'ALL') {
+          queryParams.append('school', selectedSchool);
+        }
         if (selectedManagement && selectedManagement !== 'ALL') {
           queryParams.append('management', selectedManagement);
         }
@@ -162,7 +207,36 @@
 
     useEffect(() => {
       fetchData();
-    }, [selectedMandal, selectedManagement, selectedStage, assignedMandal, userRole]);
+    }, [selectedMandal, selectedSchool, selectedManagement, selectedStage, assignedMandal, userRole]);
+
+    // Handle mandal change with automatic reset of incompatible school selection
+    const handleMandalChange = (newMandal) => {
+      setSelectedMandal(newMandal);
+      if (selectedSchool !== 'ALL') {
+        setSelectedSchool('ALL');
+      }
+      if (onMandalChange && typeof onMandalChange === 'function') {
+        onMandalChange(newMandal);
+      }
+    };
+
+    // Reset all interactive filters to district-wide
+    const handleResetFilters = () => {
+      setSelectedMandal(isMeo ? assignedMandal : 'ALL');
+      setSelectedSchool('ALL');
+      setSelectedManagement('ALL');
+      setSelectedStage('ALL');
+      setSearchTerm('');
+    };
+
+    // Schools list filtered by selected mandal
+    const availableSchoolsForSelect = useMemo(() => {
+      const list = dashboardData?.filterOptions?.schools || [];
+      if (!selectedMandal || selectedMandal === 'ALL') {
+        return list;
+      }
+      return list.filter(s => s.mandal && s.mandal.toUpperCase() === selectedMandal.toUpperCase());
+    }, [dashboardData, selectedMandal]);
 
     // Handle Mandal edit save
     const handleSaveMandal = async () => {
@@ -384,12 +458,10 @@
           ]),
           h('div', { key: 'mid', className: 'my-2' }, [
             h('div', { className: `text-2xl sm:text-3xl font-black ${isDark ? 'text-white' : 'text-[#0c4a7e]'}` },
-              formatNum(summary.filteredSchools !== undefined ? summary.filteredSchools : summary.districtTotalSchools || 593)
+              formatNum(summary.districtTotalSchools || 593)
             ),
             h('p', { className: 'text-xs text-slate-500 dark:text-slate-400 mt-0.5' },
-              selectedManagement !== 'ALL' || selectedStage !== 'ALL'
-                ? `Filtered schools (${selectedManagement})`
-                : 'Across 16 Management Codes'
+              'Across 16 Management Codes'
             )
           ]),
           h('div', { key: 'btm', className: 'pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] flex justify-between' }, [
@@ -412,16 +484,10 @@
           ]),
           h('div', { key: 'mid', className: 'my-2' }, [
             h('div', { className: 'text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400' },
-              formatNum(
-                selectedMandal !== 'ALL'
-                  ? summary.mandalTotalStudents
-                  : (summary.filteredStudents !== undefined ? summary.filteredStudents : summary.districtTotalStudents || 74657)
-              )
+              formatNum(summary.districtTotalStudents || 74657)
             ),
             h('p', { className: 'text-xs text-slate-500 dark:text-slate-400 mt-0.5' },
-              selectedMandal !== 'ALL'
-                ? `Students in Mandal ${selectedMandal}`
-                : 'Total District Enrollment'
+              'Total District Enrollment'
             )
           ]),
           h('div', { key: 'btm', className: 'pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] flex justify-between' }, [
@@ -481,163 +547,219 @@
         ])
       ]),
 
-      // 4. INTERACTIVE DYNAMIC FILTERS & SEARCH BAR
+      // 4. STUDENT ENROLLMENT SECTION (IMAGE 2)
       h('div', {
-        key: 'filters-bar',
-        className: `p-4 sm:p-5 rounded-2xl border shadow-sm space-y-4 ${
-          isDark ? 'bg-[#131f37] border-slate-700' : 'bg-white border-slate-200'
-        }`
-      }, [
-        h('div', { className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800' }, [
-          h('div', { className: 'flex items-center space-x-2' }, [
-            h('span', { className: 'text-base' }, '🔍'),
-            h('h2', { className: `text-sm font-bold uppercase tracking-wider ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` },
-              'Interactive Filters & Data Queries'
-            )
-          ]),
-          h('div', { className: 'text-[11px] text-slate-500 dark:text-slate-400 italic' },
-            'Cards, matrices and stage distributions update dynamically based on selections.'
-          )
-        ]),
-
-        h('div', { className: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3' }, [
-          // Filter 1: Mandal
-          h('div', { key: 'f-mandal' }, [
-            h('label', { className: 'block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1' }, [
-              'Mandal ',
-              isMeo && h('span', { className: 'text-amber-500 text-[10px] font-normal' }, '(Locked to Assigned)')
-            ]),
-            h('select', {
-              value: selectedMandal,
-              disabled: isMeo,
-              onChange: (e) => setSelectedMandal(e.target.value),
-              className: `w-full px-3 py-2 border rounded-xl text-xs font-semibold focus:outline-none focus:border-[#0c4a7e] ${
-                isMeo
-                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-300 dark:border-slate-700 cursor-not-allowed'
-                  : (isDark ? 'bg-slate-800 text-white border-slate-600' : 'bg-white text-slate-800 border-slate-300')
-              }`
-            }, [
-              !isMeo && h('option', { key: 'all', value: 'ALL' }, '— All 12 Mandals (District View) —'),
-              (dashboardData?.filterOptions?.mandals || [
-                "BACHANNAPETA", "CHILPUR", "DEVARUPPALA", "GANPUR (STN)",
-                "JANGAON", "KODAKANDLA", "LINGALAGHANPUR", "NARMETTA",
-                "PALAKURTHI", "RAGHUNATHPALLE", "THARIGOPPULA", "ZAFFERGADH"
-              ]).map(m => h('option', { key: m, value: m }, m))
-            ])
-          ]),
-
-          // Filter 2: Management / School Type
-          h('div', { key: 'f-mgmt' }, [
-            h('label', { className: 'block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1' }, 'School Type / Management'),
-            h('select', {
-              value: selectedManagement,
-              onChange: (e) => setSelectedManagement(e.target.value),
-              className: `w-full px-3 py-2 border rounded-xl text-xs font-semibold focus:outline-none focus:border-[#0c4a7e] ${
-                isDark ? 'bg-slate-800 text-white border-slate-600' : 'bg-white text-slate-800 border-slate-300'
-              }`
-            }, [
-              h('option', { key: 'all', value: 'ALL' }, '— All 16 Managements —'),
-              MGMT_COLUMNS.map(m => h('option', { key: m.key, value: m.key }, `${m.code} - ${m.label}`))
-            ])
-          ]),
-
-          // Filter 3: Class / Stage
-          h('div', { key: 'f-stage' }, [
-            h('label', { className: 'block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1' }, 'Class / Stage Breakdown'),
-            h('select', {
-              value: selectedStage,
-              onChange: (e) => setSelectedStage(e.target.value),
-              className: `w-full px-3 py-2 border rounded-xl text-xs font-semibold focus:outline-none focus:border-[#0c4a7e] ${
-                isDark ? 'bg-slate-800 text-white border-slate-600' : 'bg-white text-slate-800 border-slate-300'
-              }`
-            }, [
-              h('option', { key: 'all', value: 'ALL' }, '— All Classes & Stages —'),
-              STAGE_KEYS.map(s => h('option', { key: s.key, value: s.key }, `${s.label} (${s.desc})`))
-            ])
-          ]),
-
-          // Filter 4: Search keyword
-          h('div', { key: 'f-search' }, [
-            h('label', { className: 'block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1' }, 'Search Particulars'),
-            h('div', { className: 'flex rounded-xl border border-slate-300 dark:border-slate-600 overflow-hidden' }, [
-              h('input', {
-                type: 'text',
-                placeholder: 'Filter by keyword...',
-                value: searchTerm,
-                onChange: (e) => setSearchTerm(e.target.value),
-                className: `flex-1 px-3 py-2 text-xs focus:outline-none ${
-                  isDark ? 'bg-slate-800 text-white' : 'bg-white text-slate-800'
-                }`
-              }),
-              searchTerm && h('button', {
-                onClick: () => setSearchTerm(''),
-                className: 'px-2 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
-              }, '✕')
-            ])
-          ])
-        ]),
-
-        // Active filter pills and reset
-        h('div', { className: 'flex flex-wrap items-center justify-between gap-2 pt-2 text-xs' }, [
-          h('div', { className: 'flex flex-wrap items-center gap-1.5' }, [
-            h('span', { className: 'text-slate-500 font-semibold' }, 'Active Criteria:'),
-            h('span', {
-              className: 'px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium'
-            }, `Mandal: ${selectedMandal}`),
-            h('span', {
-              className: 'px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium'
-            }, `Management: ${selectedManagement}`),
-            h('span', {
-              className: 'px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium'
-            }, `Stage: ${selectedStage}`)
-          ]),
-
-          (!isMeo && (selectedMandal !== 'ALL' || selectedManagement !== 'ALL' || selectedStage !== 'ALL' || searchTerm)) && h('button', {
-            onClick: () => {
-              setSelectedMandal('ALL');
-              setSelectedManagement('ALL');
-              setSelectedStage('ALL');
-              setSearchTerm('');
-            },
-            className: 'text-xs text-rose-600 dark:text-rose-400 hover:underline font-bold cursor-pointer'
-          }, '↺ Reset All Filters')
-        ])
-      ]),
-
-      // 5. CLASS / STAGE-WISE BENCHMARK SUMMARY (FROM SHEET 1)
-      h('div', {
-        key: 'stage-benchmarks',
+        key: 'student-enrollment-section',
         className: `p-4 sm:p-5 rounded-2xl border shadow-sm space-y-3 ${
           isDark ? 'bg-[#131f37] border-slate-700' : 'bg-white border-slate-200'
         }`
       }, [
-        h('div', { className: 'flex items-center justify-between' }, [
-          h('h3', { className: `text-xs font-bold uppercase tracking-wider ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` },
-            '📊 District Class / Stage-Wise Student Enrollment'
-          ),
-          h('span', { className: 'text-[11px] text-slate-500 dark:text-slate-400' },
-            'Source: District Schools Strength Sheet 1'
+        h('div', { className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-1.5' }, [
+          h('div', { className: 'flex items-center space-x-2' }, [
+            h('span', { className: 'text-base' }, '📊'),
+            h('h3', { className: `text-xs sm:text-sm font-black uppercase tracking-wider ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` },
+              t('DISTRICT CLASS / STAGE-WISE STUDENT ENROLLMENT')
+            ),
+            (selectedMandal !== 'ALL' || selectedSchool !== 'ALL') && h('span', {
+              className: 'ml-2 px-2 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 border border-sky-300 dark:border-sky-800'
+            }, selectedSchool !== 'ALL' ? selectedSchool : selectedMandal)
+          ]),
+          h('span', { className: 'text-[11px] text-slate-400 font-medium' },
+            t('Source: District Schools Strength Sheet 1')
           )
         ]),
 
         h('div', { className: 'grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5' },
           STAGE_KEYS.map(s => {
             const count = stageSummary[s.key] || 0;
-            const pct = summary.districtTotalStudents ? ((count / summary.districtTotalStudents) * 100).toFixed(1) : 0;
+            const denom = (summary.activeDenominator !== undefined && summary.activeDenominator > 0)
+              ? summary.activeDenominator
+              : (summary.districtTotalStudents || 74657);
+            const pct = denom > 0 ? ((count / denom) * 100).toFixed(1) : '0.0';
+            const scopeLabel = summary.scope || (selectedSchool !== 'ALL' ? t('School') : (selectedMandal !== 'ALL' ? t('Mandal') : t('District')));
+            const isSelected = selectedStage === s.key;
+
             return h('div', {
               key: s.key,
-              className: `p-3 rounded-xl border text-center transition-all ${
-                selectedStage === s.key
-                  ? 'border-sky-500 bg-sky-50 dark:bg-sky-950/60 ring-2 ring-sky-400'
-                  : (isDark ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-200')
+              onClick: () => setSelectedStage(isSelected ? 'ALL' : s.key),
+              className: `p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
+                isSelected
+                  ? 'border-sky-500 bg-sky-50 dark:bg-sky-950/60 ring-2 ring-sky-400 shadow-xs'
+                  : (isDark ? 'bg-slate-800/80 border-slate-700 hover:border-slate-600' : 'bg-slate-50/80 border-slate-200 hover:border-slate-300')
               }`
             }, [
-              h('div', { className: 'text-[11px] font-bold text-slate-600 dark:text-slate-300 truncate', title: s.desc }, s.label),
-              h('div', { className: 'text-sm sm:text-base font-black text-sky-600 dark:text-sky-400 my-0.5' }, formatNum(count)),
-              h('div', { className: 'text-[10px] text-slate-400' }, `${pct}% of District`)
+              h('div', { className: 'text-[11px] font-bold text-slate-700 dark:text-slate-300 truncate', title: s.desc }, s.label),
+              h('div', { className: 'text-base sm:text-lg font-black text-sky-600 dark:text-sky-400 my-1' }, formatNum(count)),
+              h('div', { className: 'text-[10px] text-slate-500 dark:text-slate-400 font-medium' }, `${pct}% of ${scopeLabel}`)
             ]);
           })
         )
+      ]),
+
+      // 5. INTERACTIVE FILTERS & SCHOOL CATEGORY SECTION (IMAGE 1)
+      h('div', {
+        key: 'filters-and-category-section',
+        className: `p-4 sm:p-5 rounded-2xl border shadow-sm space-y-4 ${
+          isDark ? 'bg-[#131f37] border-slate-700' : 'bg-white border-slate-200'
+        }`
+      }, [
+        // Top filter bar matching Image 1
+        h('div', { className: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-end' }, [
+          // Filter 1: Mandal
+          h('div', { key: 'f-mandal', className: 'lg:col-span-3 space-y-1' }, [
+            h('label', { className: 'block text-xs font-bold text-slate-700 dark:text-slate-300' }, [
+              t('Mandal'),
+              isMeo && h('span', { className: 'ml-1 text-amber-500 text-[10px] font-normal' }, `(${t('Locked to Assigned')})`)
+            ]),
+            h('div', { className: 'relative' }, [
+              h('span', { className: 'absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400' }, '📍'),
+              h('select', {
+                value: selectedMandal,
+                disabled: isMeo,
+                onChange: (e) => handleMandalChange(e.target.value),
+                className: `w-full pl-8 pr-3 py-2 border rounded-xl text-xs font-semibold focus:outline-none focus:border-[#0c4a7e] ${
+                  isMeo
+                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-300 dark:border-slate-700 cursor-not-allowed'
+                    : (isDark ? 'bg-slate-800 text-white border-slate-600' : 'bg-white text-slate-800 border-slate-300')
+                }`
+              }, [
+                !isMeo && h('option', { key: 'all', value: 'ALL' }, t('All Mandals')),
+                (dashboardData?.filterOptions?.mandals || [
+                  "BACHANNAPETA", "CHILPUR", "DEVARUPPALA", "GANPUR (STN)",
+                  "JANGAON", "KODAKANDLA", "LINGALAGHANPUR", "NARMETTA",
+                  "PALAKURTHI", "RAGHUNATHPALLE", "THARIGOPPULA", "ZAFFERGADH"
+                ]).map(m => h('option', { key: m, value: m }, m))
+              ])
+            ])
+          ]),
+
+          // Filter 2: School
+          h('div', { key: 'f-school', className: 'lg:col-span-4 space-y-1' }, [
+            h('label', { className: 'block text-xs font-bold text-slate-700 dark:text-slate-300' }, t('School')),
+            h('div', { className: 'relative' }, [
+              h('span', { className: 'absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400' }, '🏫'),
+              h('select', {
+                value: selectedSchool,
+                onChange: (e) => setSelectedSchool(e.target.value),
+                className: `w-full pl-8 pr-3 py-2 border rounded-xl text-xs font-semibold focus:outline-none focus:border-[#0c4a7e] ${
+                  isDark ? 'bg-slate-800 text-white border-slate-600' : 'bg-white text-slate-800 border-slate-300'
+                }`
+              }, [
+                h('option', { key: 'all', value: 'ALL' }, t('All Schools')),
+                availableSchoolsForSelect.map(s => h('option', { key: s.name, value: s.name }, `${s.name}${s.mandal && selectedMandal === 'ALL' ? ` (${s.mandal})` : ''}`))
+              ])
+            ])
+          ]),
+
+          // Filter 3: School Type (Optional)
+          h('div', { key: 'f-type', className: 'lg:col-span-3 space-y-1' }, [
+            h('label', { className: 'block text-xs font-bold text-slate-700 dark:text-slate-300' }, t('School Type (Optional)')),
+            h('div', { className: 'relative' }, [
+              h('span', { className: 'absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400' }, '⊞'),
+              h('select', {
+                value: selectedManagement,
+                onChange: (e) => setSelectedManagement(e.target.value),
+                className: `w-full pl-8 pr-3 py-2 border rounded-xl text-xs font-semibold focus:outline-none focus:border-[#0c4a7e] ${
+                  isDark ? 'bg-slate-800 text-white border-slate-600' : 'bg-white text-slate-800 border-slate-300'
+                }`
+              }, [
+                h('option', { key: 'all', value: 'ALL' }, t('All Types')),
+                MGMT_COLUMNS.map(m => h('option', { key: m.key, value: m.key }, `${m.code} - ${m.label}`))
+              ])
+            ])
+          ]),
+
+          // Filter 4: Reset Button
+          h('div', { key: 'f-reset', className: 'lg:col-span-2' }, [
+            h('button', {
+              onClick: handleResetFilters,
+              className: `w-full py-2 px-3 border border-sky-300 dark:border-sky-700 rounded-xl text-xs font-bold text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950/40 transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs`
+            }, [
+              h('span', { key: 'icon', className: 'text-sm' }, '↺'),
+              h('span', { key: 'text' }, t('Reset'))
+            ])
+          ])
+        ]),
+
+        // Divider
+        h('div', { className: 'border-t border-slate-100 dark:border-slate-800 pt-3' }),
+
+        // School Category Section Header (Image 1)
+        h('div', { className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pb-1' }, [
+          h('div', { className: 'flex items-center space-x-2' }, [
+            h('span', { className: 'p-1.5 rounded-lg bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300 text-sm' }, '🏫'),
+            h('h3', { className: `text-xs sm:text-sm font-black uppercase tracking-wider ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` },
+              t('SCHOOL CATEGORY - WISE TOTAL (NUMBER OF SCHOOLS)')
+            ),
+            (selectedMandal !== 'ALL' || selectedSchool !== 'ALL') && h('span', {
+              className: 'ml-2 px-2 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 border border-sky-300 dark:border-sky-800'
+            }, selectedSchool !== 'ALL' ? selectedSchool : selectedMandal)
+          ]),
+          h('span', { className: 'text-[11px] text-slate-400 font-medium' },
+            t('Source: District Schools Strength Sheet 1')
+          )
+        ]),
+
+        // 16 Category Cards Container (Image 1)
+        h('div', {
+          key: 'category-cards-container',
+          className: 'overflow-x-auto pb-2 pt-1'
+        }, [
+          h('div', {
+            className: 'flex gap-3 min-w-max'
+          },
+            MGMT_COLUMNS.map(mgmt => {
+              const cardData = (summary.categoryCards || []).find(c => c.code === mgmt.code || c.name === mgmt.key) || {};
+              const count = cardData.count !== undefined ? cardData.count : 0;
+              const schoolsCount = cardData.schools !== undefined ? cardData.schools : (mgmt.defaultSchools || 0);
+              const pct = cardData.percentage !== undefined ? cardData.percentage : '0.0';
+              const scopeLabel = summary.scope || (selectedSchool !== 'ALL' ? t('School') : (selectedMandal !== 'ALL' ? t('Mandal') : t('District')));
+              const isSelected = selectedManagement === mgmt.key;
+              const badgeStyle = getManagementBadgeStyle(mgmt.code);
+
+              return h('div', {
+                key: mgmt.code,
+                onClick: () => setSelectedManagement(isSelected ? 'ALL' : mgmt.key),
+                className: `p-3 rounded-2xl border text-center transition-all cursor-pointer w-[120px] sm:w-[130px] flex-shrink-0 flex flex-col items-center justify-between ${
+                  isSelected
+                    ? 'border-sky-500 bg-sky-50 dark:bg-sky-950/60 ring-2 ring-sky-400 shadow-xs'
+                    : (isDark ? 'bg-slate-800/70 border-slate-700 hover:border-slate-600' : 'bg-slate-50/70 border-slate-200 hover:border-slate-300')
+                }`
+              }, [
+                // Circular icon badge
+                h('div', {
+                  className: `w-9 h-9 rounded-full flex items-center justify-center text-base mb-1.5 shadow-2xs ${badgeStyle.circleBg} ${badgeStyle.textColor}`
+                }, badgeStyle.icon),
+
+                // Management Title
+                h('div', {
+                  className: 'text-[11px] font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight truncate w-full',
+                  title: mgmt.label
+                }, mgmt.label),
+
+                // Management Code
+                h('div', {
+                  className: 'text-[10px] text-slate-400 font-semibold'
+                }, `Code ${mgmt.code}`),
+
+                // Dynamic Student Count
+                h('div', {
+                  className: 'text-lg sm:text-xl font-black text-sky-600 dark:text-sky-400 my-1'
+                }, formatNum(count)),
+
+                // Accurate Percentage
+                h('div', {
+                  className: 'text-[10px] text-slate-500 dark:text-slate-400 font-medium'
+                }, `${pct}% of ${scopeLabel}`),
+
+                // Distinguishing School Count
+                h('div', {
+                  className: 'mt-1 text-[9px] font-bold text-slate-400 dark:text-slate-500'
+                }, `${formatNum(schoolsCount)} ${schoolsCount === 1 ? t('School') : t('Schools')}`)
+              ]);
+            })
+          )
+        ])
       ]),
 
       // 6. MAIN DATA VIEW TABS
@@ -675,11 +797,28 @@
             }, '📈 Visual Analytics & Distribution')
           ]),
 
-          h('div', { className: 'text-xs text-slate-500 dark:text-slate-400 font-semibold' },
-            activeTab === 'MANDAL_WISE'
-              ? `${filteredMandalRows.length} Mandal(s) Displayed`
-              : `${filteredDistrictRows.length} Management Categories`
-          )
+          h('div', { className: 'flex items-center space-x-2' }, [
+            h('div', { className: 'flex rounded-xl border border-slate-300 dark:border-slate-600 overflow-hidden' }, [
+              h('input', {
+                type: 'text',
+                placeholder: t('Filter table records...'),
+                value: searchTerm,
+                onChange: (e) => setSearchTerm(e.target.value),
+                className: `px-3 py-1.5 text-xs focus:outline-none ${
+                  isDark ? 'bg-slate-800 text-white' : 'bg-white text-slate-800'
+                }`
+              }),
+              searchTerm && h('button', {
+                onClick: () => setSearchTerm(''),
+                className: 'px-2 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer'
+              }, '✕')
+            ]),
+            h('div', { className: 'text-xs text-slate-500 dark:text-slate-400 font-semibold' },
+              activeTab === 'MANDAL_WISE'
+                ? `${filteredMandalRows.length} Mandal(s)`
+                : `${filteredDistrictRows.length} Categories`
+            )
+          ])
         ]),
 
         // TAB 1: MANDAL-WISE PARTICULARS MATRIX (SHEET 2)

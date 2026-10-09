@@ -63,6 +63,7 @@ class SchoolStrengthController {
       const urlObj = new URL(req.url, 'http://localhost');
       const query = {
         mandal: urlObj.searchParams.get('mandal'),
+        school: urlObj.searchParams.get('school'),
         management: urlObj.searchParams.get('management'),
         stage: urlObj.searchParams.get('stage')
       };

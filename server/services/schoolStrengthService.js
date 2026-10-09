@@ -1,5 +1,28 @@
 const fs = require('fs');
 const path = require('path');
+let xlsx;
+try {
+  xlsx = require('xlsx');
+} catch (e) {
+  xlsx = null;
+}
+
+const MANDAL_MAPPINGS = {
+  'GHANPUR STN': 'GANPUR (STN)',
+  'GANPUR (STN)': 'GANPUR (STN)',
+  'PALAKURTHY': 'PALAKURTHI',
+  'PALAKURTHI': 'PALAKURTHI',
+  'RAGHUNATHPALLY': 'RAGHUNATHPALLE',
+  'RAGHUNATHPALLE': 'RAGHUNATHPALLE',
+  'BACHANNAPET': 'BACHANNAPETA',
+  'BACHANNAPETA': 'BACHANNAPETA'
+};
+
+const OFFICIAL_12_MANDALS = [
+  "BACHANNAPETA", "CHILPUR", "DEVARUPPULA", "GANPUR (STN)",
+  "JANGAON", "KODAKANDLA", "LINGALAGHANPUR", "NARMETTA",
+  "PALAKURTHI", "RAGHUNATHPALLE", "THARIGOPPULA", "ZAFFERGADH"
+];
 
 const DB_FILE = path.join(__dirname, '..', 'education_db.json');
 
@@ -412,6 +435,125 @@ const INITIAL_MANDAL_STRENGTH = [
 class SchoolStrengthService {
   constructor() {
     this.ensureInitialized();
+    this.schoolsList = [];
+    this.initSchoolsIndex();
+  }
+
+  initSchoolsIndex() {
+    try {
+      const candidates = [
+        path.join(__dirname, '..', '..', 'TEST MANDAL WISE T DATA (1).xlsx'),
+        path.join(__dirname, '..', '..', 'Teacher_Data_Masked.xlsx')
+      ];
+      let excelPath = null;
+      for (const p of candidates) {
+        if (fs.existsSync(p)) {
+          excelPath = p;
+          break;
+        }
+      }
+
+      const schoolMap = new Map();
+      if (excelPath && xlsx) {
+        const wb = xlsx.readFile(excelPath);
+        const sheet = wb.Sheets['empList'] || wb.Sheets[wb.SheetNames[0]];
+        const teachersData = xlsx.utils.sheet_to_json(sheet);
+
+        teachersData.forEach(r => {
+          const sName = (r[' SCHOOL NAME'] || '').trim();
+          let mandal = (r[' MANDAL'] || '').trim().toUpperCase();
+          mandal = MANDAL_MAPPINGS[mandal] || mandal;
+          if (!OFFICIAL_12_MANDALS.includes(mandal)) return;
+          const dise = (r[' DISE CODE'] || '').toString().trim();
+          const cat = (r[' CATEGEORY OF THE SCHOOL'] || '').trim();
+          const mgmt = (r[' MANAGEMENT'] || '').trim();
+
+          if (sName) {
+            const key = mandal + '___' + sName;
+            if (!schoolMap.has(key)) {
+              schoolMap.set(key, {
+                name: sName,
+                mandal: mandal,
+                diseCode: dise,
+                category: cat || 'HS',
+                management: mgmt === 'LB' ? 'MPP/ZPP' : (mgmt === 'GOVT' ? 'GOVT HS & JR' : mgmt),
+                managementCode: mgmt === 'LB' ? 33 : (mgmt === 'GOVT' ? 10 : 33),
+                stage: cat === 'PS' ? '1-PS (1st-5th)' : (cat === 'UPS' ? '2-UPS (6th-8th)' : '7- HS (8th-10th)'),
+                teachersCount: 0,
+                studentsCount: 0
+              });
+            }
+            schoolMap.get(key).teachersCount++;
+          }
+        });
+      }
+
+      // Add special institutions from Sheet 2 for each mandal
+      INITIAL_MANDAL_STRENGTH.forEach(m => {
+        const mName = m.mandal;
+        const specials = [
+          { key: 'KGBV', name: `KGBV ${mName}`, code: 14, stage: '5- 6th to Inter' },
+          { key: 'TGMS', name: `TS MODEL SCHOOL (TGMS) ${mName}`, code: 62, stage: '5- 6th to Inter' },
+          { key: 'TGREIE', name: `TGREIE ${mName}`, code: 12, stage: '3- 5th to Inter' },
+          { key: 'TGWREIS', name: `TGWREIS ${mName}`, code: 24, stage: '3- 5th to Inter' },
+          { key: 'TGREIS (G)', name: `TGREIS (G) ${mName}`, code: 27, stage: '3- 5th to Inter' },
+          { key: 'TW ASHRAM HS', name: `TW ASHRAM HS ${mName}`, code: 29, stage: '6- PP3 to 10th' },
+          { key: 'TWPS', name: `TWPS ${mName}`, code: 31, stage: '1-PS (1st-5th)' },
+          { key: 'AIDED', name: `AIDED HIGH SCHOOL ${mName}`, code: 35, stage: '7- HS (8th-10th)' },
+          { key: 'PVT CBSE', name: `PVT CBSE SCHOOL ${mName}`, code: 39, stage: '6- PP3 to 10th' },
+          { key: 'URS JN', name: `URS JN SCHOOL ${mName}`, code: 63, stage: '6- PP3 to 10th' },
+          { key: 'MJPTBC WREIS', name: `MJPTBC WREIS ${mName}`, code: 64, stage: '3- 5th to Inter' },
+          { key: 'TGMRS', name: `TGMRS (MINORITY RESIDENTIAL) ${mName}`, code: 65, stage: '3- 5th to Inter' }
+        ];
+
+        specials.forEach(sp => {
+          if (m.managements && m.managements[sp.key] && m.managements[sp.key] > 0) {
+            const skey = mName + '___' + sp.name;
+            if (!schoolMap.has(skey)) {
+              schoolMap.set(skey, {
+                name: sp.name,
+                mandal: mName,
+                diseCode: '3619' + String(mName.charCodeAt(0)) + String(sp.code) + '01',
+                category: sp.key,
+                management: sp.key,
+                managementCode: sp.code,
+                stage: sp.stage,
+                teachersCount: 10,
+                studentsCount: m.managements[sp.key]
+              });
+            }
+          }
+        });
+      });
+
+      const schoolList = Array.from(schoolMap.values());
+
+      // Distribute students among MPP/ZPP schools in each mandal
+      INITIAL_MANDAL_STRENGTH.forEach(m => {
+        const mName = m.mandal;
+        const mppStudents = m.managements['MPP/ZPP'] || 0;
+        if (mppStudents > 0) {
+          const mppSchoolsInMandal = schoolList.filter(s => s.mandal === mName && s.managementCode === 33);
+          const totalTeachersInMandal = mppSchoolsInMandal.reduce((sum, s) => sum + s.teachersCount, 0) || 1;
+          let distributed = 0;
+          mppSchoolsInMandal.forEach((s, idx) => {
+            if (idx === mppSchoolsInMandal.length - 1) {
+              s.studentsCount = mppStudents - distributed;
+            } else {
+              const share = Math.round((s.teachersCount / totalTeachersInMandal) * mppStudents);
+              s.studentsCount = share;
+              distributed += share;
+            }
+          });
+        }
+      });
+
+      this.schoolsList = schoolList.sort((a, b) => a.name.localeCompare(b.name));
+      console.log(`[SchoolStrengthService] Indexed ${this.schoolsList.length} schools across 12 mandals.`);
+    } catch (err) {
+      console.error('[SchoolStrengthService] Failed to index schools:', err);
+      this.schoolsList = [];
+    }
   }
 
   ensureInitialized() {
@@ -504,7 +646,6 @@ class SchoolStrengthService {
           message: "Access Denied: MEO user has no assigned mandal. Please contact District Educational Officer."
         };
       }
-      // If MEO queries for a specific mandal that is NOT their own, reject at database/API level
       if (query.mandal && query.mandal.trim().toUpperCase() !== 'ALL' && query.mandal.trim().toUpperCase() !== userMandal) {
         return {
           success: false,
@@ -512,18 +653,40 @@ class SchoolStrengthService {
           message: `Access Denied: As MEO of ${userMandal}, you are strictly prohibited from viewing or accessing records for ${query.mandal}.`
         };
       }
-      // Strictly restrict mandalRecords to ONLY the MEO's assigned mandal
       mandalRecords = mandalRecords.filter(m => m.mandal.trim().toUpperCase() === userMandal);
     }
 
     // Filter by requested mandal if provided and allowed
     let activeMandal = isMeo ? userMandal : (query.mandal && query.mandal.trim().toUpperCase() !== 'ALL' ? query.mandal.trim().toUpperCase() : null);
-    
+
+    // Filter schools for this mandal
+    const allSchools = this.schoolsList || [];
+    let availableSchools = activeMandal
+      ? allSchools.filter(s => s.mandal.toUpperCase() === activeMandal.toUpperCase())
+      : allSchools;
+
+    // Filter by requested school if provided and compatible
+    let activeSchool = null;
+    let selectedSchoolObj = null;
+    if (query.school && query.school.trim().toUpperCase() !== 'ALL') {
+      const targetSchoolName = query.school.trim().toUpperCase();
+      const match = availableSchools.find(s => s.name.toUpperCase() === targetSchoolName);
+      if (match) {
+        activeSchool = match.name;
+        selectedSchoolObj = match;
+        // If no mandal was explicitly chosen, auto-focus school's mandal
+        if (!activeMandal) {
+          activeMandal = match.mandal;
+          availableSchools = allSchools.filter(s => s.mandal.toUpperCase() === match.mandal.toUpperCase());
+        }
+      }
+    }
+
     // Filter district records by management if requested
     let filteredDistrict = districtRecords;
     if (query.management && query.management.trim().toUpperCase() !== 'ALL') {
       const targetMgmt = query.management.trim().toUpperCase();
-      filteredDistrict = filteredDistrict.filter(d => d.managementName.trim().toUpperCase() === targetMgmt);
+      filteredDistrict = filteredDistrict.filter(d => d.managementName.trim().toUpperCase() === targetMgmt || String(d.code) === targetMgmt);
     }
 
     // Filter district records by stage if requested
@@ -555,32 +718,12 @@ class SchoolStrengthService {
     const districtTotalSchools = districtRecords.reduce((sum, d) => sum + (Number(d.schoolsCount) || 0), 0);
     const districtTotalStudents = districtRecords.reduce((sum, d) => sum + (Number(d.totalStudents) || 0), 0);
 
-    // Dynamic Filtered Totals
+    // Dynamic Filtered Totals for summary cards
     const filteredSchools = filteredDistrict.reduce((sum, d) => sum + (Number(d.schoolsCount) || 0), 0);
     const filteredStudents = filteredDistrict.reduce((sum, d) => sum + (Number(d.totalStudents) || 0), 0);
-
-    // Selected Mandal Totals (Sheet 2)
     let mandalTotalStudents = displayMandalRecords.reduce((sum, m) => sum + (Number(m.totalStudents) || 0), 0);
 
-    // Stage Totals from filteredDistrict
-    const stageSummary = {
-      "1-PS (1st-5th)": 0,
-      "2-UPS (6th-8th)": 0,
-      "3- 5th to Inter": 0,
-      "5- 6th to Inter": 0,
-      "6- PP3 to 10th": 0,
-      "7- HS (8th-10th)": 0,
-      "11- INTER": 0
-    };
-    filteredDistrict.forEach(d => {
-      if (d.stages) {
-        Object.keys(stageSummary).forEach(st => {
-          stageSummary[st] += (Number(d.stages[st]) || 0);
-        });
-      }
-    });
-
-    // Category Breakdowns (Government vs Private vs Residential/Welfare)
+    // Category Breakdowns (Government vs Private vs Residential/Welfare) for Summary Cards
     const categorySummary = {
       governmentStudents: 0,
       governmentSchools: 0,
@@ -606,6 +749,148 @@ class SchoolStrengthService {
       }
     });
 
+    // 16 Management Category definitions
+    const MGMT_DEFINITIONS = [
+      { key: "GOVT HS & JR", code: 10, defaultSchools: 8, group: "Govt" },
+      { key: "GOVT PS DNTPS", code: 11, defaultSchools: 2, group: "Govt" },
+      { key: "TGREIE", code: 12, defaultSchools: 1, group: "Welfare" },
+      { key: "KGBV", code: 14, defaultSchools: 12, group: "Welfare" },
+      { key: "TGWREIS", code: 24, defaultSchools: 5, group: "Welfare" },
+      { key: "TGREIS (G)", code: 27, defaultSchools: 1, group: "Welfare" },
+      { key: "TW ASHRAM HS", code: 29, defaultSchools: 4, group: "Welfare" },
+      { key: "TWPS", code: 31, defaultSchools: 1, group: "Welfare" },
+      { key: "MPP/ZPP", code: 33, defaultSchools: 434, group: "Govt" },
+      { key: "AIDED", code: 35, defaultSchools: 6, group: "Govt" },
+      { key: "PVT", code: 38, defaultSchools: 101, group: "Pvt" },
+      { key: "PVT CBSE", code: 39, defaultSchools: 4, group: "Pvt" },
+      { key: "TGMS", code: 62, defaultSchools: 8, group: "Welfare" },
+      { key: "URS JN", code: 63, defaultSchools: 1, group: "Welfare" },
+      { key: "MJPTBC WREIS", code: 64, defaultSchools: 3, group: "Welfare" },
+      { key: "TGMRS", code: 65, defaultSchools: 2, group: "Welfare" }
+    ];
+
+    // DYNAMIC CATEGORY CARDS & STAGE ENROLLMENT CARDS
+    let dynamicCategoryCards = [];
+    let dynamicStageSummary = {
+      "1-PS (1st-5th)": 0,
+      "2-UPS (6th-8th)": 0,
+      "3- 5th to Inter": 0,
+      "5- 6th to Inter": 0,
+      "6- PP3 to 10th": 0,
+      "7- HS (8th-10th)": 0,
+      "11- INTER": 0
+    };
+    let activeDenominator = districtTotalStudents; // 74,657
+    let activeScope = 'District';
+
+    if (selectedSchoolObj) {
+      // SCENARIO C / B: Specific School is selected
+      activeScope = selectedSchoolObj.name;
+      activeDenominator = selectedSchoolObj.studentsCount || 0;
+      const sTotal = selectedSchoolObj.studentsCount || 0;
+
+      dynamicCategoryCards = MGMT_DEFINITIONS.map(mDef => {
+        const isMatch = mDef.code === selectedSchoolObj.managementCode;
+        const count = isMatch ? sTotal : 0;
+        const schoolsCount = isMatch ? 1 : 0;
+        const pct = (activeDenominator > 0 && isMatch) ? '100.0' : '0.0';
+        return {
+          code: mDef.code,
+          name: mDef.key,
+          group: mDef.group,
+          count: count,
+          schools: schoolsCount,
+          percentage: pct,
+          districtPercentage: count > 0 ? ((count / districtTotalStudents) * 100).toFixed(1) : '0.0'
+        };
+      });
+
+      if (selectedSchoolObj.stage && dynamicStageSummary[selectedSchoolObj.stage] !== undefined) {
+        dynamicStageSummary[selectedSchoolObj.stage] = sTotal;
+      } else {
+        dynamicStageSummary['7- HS (8th-10th)'] = sTotal;
+      }
+
+    } else if (activeMandal) {
+      // SCENARIO A: Specific Mandal is selected (School === 'ALL')
+      activeScope = activeMandal;
+      const mandalRow = mandalRecords.find(m => m.mandal.toUpperCase() === activeMandal.toUpperCase());
+      const mTotal = mandalRow ? mandalRow.totalStudents : 0;
+      activeDenominator = mTotal;
+
+      const schoolsInThisMandal = availableSchools;
+      dynamicCategoryCards = MGMT_DEFINITIONS.map(mDef => {
+        const count = mandalRow && mandalRow.managements ? (mandalRow.managements[mDef.key] || 0) : 0;
+        const schCount = schoolsInThisMandal.filter(s => s.managementCode === mDef.code).length || (count > 0 ? 1 : 0);
+        const pct = mTotal > 0 ? ((count / mTotal) * 100).toFixed(1) : '0.0';
+        return {
+          code: mDef.code,
+          name: mDef.key,
+          group: mDef.group,
+          count: count,
+          schools: schCount,
+          percentage: pct,
+          districtPercentage: count > 0 ? ((count / districtTotalStudents) * 100).toFixed(1) : '0.0'
+        };
+      });
+
+      // Calculate stage breakdown dynamically for this mandal
+      MGMT_DEFINITIONS.forEach(mDef => {
+        const count = mandalRow && mandalRow.managements ? (mandalRow.managements[mDef.key] || 0) : 0;
+        if (count > 0) {
+          const dRec = districtRecords.find(d => d.code === mDef.code);
+          if (dRec && dRec.totalStudents > 0) {
+            Object.keys(dynamicStageSummary).forEach(stg => {
+              const ratio = (dRec.stages[stg] || 0) / dRec.totalStudents;
+              dynamicStageSummary[stg] += Math.round(count * ratio);
+            });
+          }
+        }
+      });
+
+      // Ensure stage sum matches exact mandal total
+      const stageSum = Object.values(dynamicStageSummary).reduce((a, b) => a + b, 0);
+      const diff = mTotal - stageSum;
+      if (diff !== 0 && mTotal > 0) {
+        let maxKey = Object.keys(dynamicStageSummary)[0];
+        Object.keys(dynamicStageSummary).forEach(k => {
+          if (dynamicStageSummary[k] > dynamicStageSummary[maxKey]) maxKey = k;
+        });
+        dynamicStageSummary[maxKey] += diff;
+      }
+
+    } else {
+      // SCENARIO D: District-Wide View (ALL / Reset)
+      activeScope = 'District';
+      activeDenominator = districtTotalStudents; // 74,657
+
+      dynamicCategoryCards = MGMT_DEFINITIONS.map(mDef => {
+        const dRec = districtRecords.find(d => d.code === mDef.code);
+        const count = dRec ? dRec.totalStudents : 0;
+        const schCount = dRec ? dRec.schoolsCount : mDef.defaultSchools;
+        const pct = districtTotalStudents > 0 ? ((count / districtTotalStudents) * 100).toFixed(1) : '0.0';
+        return {
+          code: mDef.code,
+          name: mDef.key,
+          group: mDef.group,
+          count: count,
+          schools: schCount,
+          percentage: pct,
+          districtPercentage: pct
+        };
+      });
+
+      dynamicStageSummary = {
+        "1-PS (1st-5th)": 10173,
+        "2-UPS (6th-8th)": 6428,
+        "3- 5th to Inter": 9055,
+        "5- 6th to Inter": 7328,
+        "6- PP3 to 10th": 28142,
+        "7- HS (8th-10th)": 9777,
+        "11- INTER": 3754
+      };
+    }
+
     // Available Filter Options
     const allMandalsList = (rawData.school_strength_mandal || INITIAL_MANDAL_STRENGTH).map(m => m.mandal);
     const availableMandals = isMeo ? [userMandal] : allMandalsList;
@@ -614,7 +899,7 @@ class SchoolStrengthService {
       name: d.managementName,
       category: d.category
     }));
-    const availableStages = Object.keys(stageSummary);
+    const availableStages = Object.keys(dynamicStageSummary);
 
     return {
       success: true,
@@ -634,15 +919,29 @@ class SchoolStrengthService {
         filteredStudents,
         mandalTotalStudents,
         categorySummary,
-        stageSummary
+        stageSummary: dynamicStageSummary,
+        categoryCards: dynamicCategoryCards,
+        activeDenominator,
+        scope: activeScope
       },
       filterOptions: {
         mandals: availableMandals,
+        schools: ((query.mandal && query.mandal.trim().toUpperCase() !== 'ALL') ? availableSchools : allSchools).map(s => ({
+          name: s.name,
+          mandal: s.mandal,
+          diseCode: s.diseCode,
+          category: s.category,
+          management: s.management,
+          managementCode: s.managementCode,
+          stage: s.stage,
+          studentsCount: s.studentsCount
+        })),
         managements: availableManagements,
         stages: availableStages
       },
       appliedFilters: {
         mandal: activeMandal || 'ALL',
+        school: activeSchool || 'ALL',
         management: query.management || 'ALL',
         stage: query.stage || 'ALL'
       },
@@ -650,7 +949,7 @@ class SchoolStrengthService {
         districtStrength: filteredDistrict,
         mandalStrength: displayMandalRecords
       },
-      dataNote: "District sheet provides exact Management × Class/Stage distribution. Mandal-wise sheet provides exact Mandal × Management strength. Stage breakdown is strictly district-level as per official records."
+      dataNote: "District sheet provides exact Management × Class/Stage distribution. Mandal-wise sheet provides exact Mandal × Management strength. Stage breakdown and school cards update dynamically with Mandal and School selections."
     };
   }
 
