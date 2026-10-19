@@ -2755,6 +2755,7 @@ function RoleDashboard() {
                     className: 'px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0c4a7e] hover:bg-[#08355b] transition-all cursor-pointer shadow-md'
                   }, '← Return to Dashboard Overview')
                 ])
+          )
         : (officerTab === 'STUDENTS_INFO')
         ? (
             isAuthorizedOfficer
@@ -3386,9 +3387,10 @@ function App() {
 // ==========================================
 // 15. INITIALIZE REACT 18 ROOT
 // ==========================================
-window.addEventListener('DOMContentLoaded', () => {
+function initApp() {
   const rootElement = document.getElementById('root');
-  if (rootElement) {
+  if (rootElement && !rootElement._reactRootMounted) {
+    rootElement._reactRootMounted = true;
     const root = ReactDOM.createRoot(rootElement);
     root.render(
       React.createElement(AuthProvider, null,
@@ -3396,4 +3398,10 @@ window.addEventListener('DOMContentLoaded', () => {
       )
     );
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}

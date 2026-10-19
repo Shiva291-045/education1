@@ -1156,6 +1156,7 @@
               ])
             ])
           ])
+        ]),
         // TAB 3: STUDENTS INFORMATION & ENROLLMENT DIRECTORY
         activeTab === 'STUDENT_DIRECTORY' && h('div', {
           key: 'student-directory-wrap',
