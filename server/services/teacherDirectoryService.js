@@ -625,11 +625,12 @@ class TeacherDirectoryService {
       }
     });
 
-    // Pagination
-    const page = Math.max(1, parseInt(query.page, 10) || 1);
-    const limit = Math.max(1, Math.min(100, parseInt(query.limit, 10) || 25));
+    // Pagination or complete export/print
+    const isAll = (query.all === 'true' || query.all === '1' || String(query.limit).toLowerCase() === 'all' || query.print === 'true');
+    const page = isAll ? 1 : Math.max(1, parseInt(query.page, 10) || 1);
+    const limit = isAll ? totalCount : Math.max(1, Math.min(100, parseInt(query.limit, 10) || 25));
     const startIndex = (page - 1) * limit;
-    const paginatedTeachers = records.slice(startIndex, startIndex + limit);
+    const paginatedTeachers = isAll ? records : records.slice(startIndex, startIndex + limit);
 
     // Filter dropdown options
     const availableMandals = isMeo ? [userMandal] : OFFICIAL_12_MANDALS;

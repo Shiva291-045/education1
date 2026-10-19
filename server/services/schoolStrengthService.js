@@ -971,7 +971,7 @@ class SchoolStrengthService {
       },
       filterOptions: {
         mandals: availableMandals,
-        schools: ((query.mandal && query.mandal.trim().toUpperCase() !== 'ALL') ? availableSchools : allSchools).map(s => ({
+        schools: (isMeo ? availableSchools : ((query.mandal && query.mandal.trim().toUpperCase() !== 'ALL') ? availableSchools : allSchools)).map(s => ({
           name: s.name,
           mandal: s.mandal,
           diseCode: s.diseCode,
@@ -979,7 +979,10 @@ class SchoolStrengthService {
           management: s.management,
           managementCode: s.managementCode,
           stage: s.stage,
-          studentsCount: s.studentsCount
+          medium: s.medium || 'Telugu Medium',
+          displayType: s.displayType || s.management,
+          teachersCount: s.teachersCount || 0,
+          studentsCount: s.studentsCount || 0
         })),
         managements: availableManagements,
         stages: availableStages

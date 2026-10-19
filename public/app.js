@@ -495,7 +495,7 @@ function TopGovtBar({ fontScale, setFontScale }) {
 // 3. MAIN NAVIGATION HEADER (IMAGE 2: PURE WHITE BACKGROUND)
 // ==========================================
 function MainHeader() {
-  const { user, openModal, logout, currentView, setCurrentView } = useContext(AuthContext);
+  const { user, openModal, logout, currentView, setCurrentView, setOfficerTab } = useContext(AuthContext);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -555,9 +555,46 @@ function MainHeader() {
           React.createElement('span', { key: 't' }, 'Home')
         ]),
         React.createElement('span', { key: 'abt', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'About ▾'),
-        React.createElement('span', { key: 'tch', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Teachers ▾'),
-        React.createElement('span', { key: 'sch', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Schools ▾'),
-        React.createElement('span', { key: 'stu', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Students ▾'),
+        React.createElement('span', {
+          key: 'tch',
+          onClick: () => {
+            if (user && (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer' || user.role === 'MEO')) {
+              setOfficerTab('TEACHERS_INFO');
+              setCurrentView('DASHBOARD');
+            } else if (user && user.role === 'Teacher') {
+              setCurrentView('DASHBOARD');
+            } else {
+              openModal('login');
+            }
+          },
+          className: 'hover:text-[#0c4a7e] cursor-pointer'
+        }, 'Teachers ▾'),
+        React.createElement('span', {
+          key: 'sch',
+          onClick: () => {
+            if (user && (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer' || user.role === 'MEO')) {
+              setOfficerTab('SCHOOLS_INFO');
+              setCurrentView('DASHBOARD');
+            } else {
+              const el = document.getElementById('find-school-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }
+          },
+          className: 'hover:text-[#0c4a7e] cursor-pointer'
+        }, 'Schools ▾'),
+        React.createElement('span', {
+          key: 'stu',
+          onClick: () => {
+            if (user && (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer' || user.role === 'MEO')) {
+              setOfficerTab('STUDENTS_INFO');
+              setCurrentView('DASHBOARD');
+            } else {
+              const el = document.getElementById('student-enrollment-section') || document.getElementById('stat-cards-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }
+          },
+          className: 'hover:text-[#0c4a7e] cursor-pointer'
+        }, 'Students ▾'),
         React.createElement('span', { key: 'exam', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Examinations ▾'),
         React.createElement('span', { key: 'notif', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Notifications'),
         React.createElement('span', { key: 'contact', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Contact')
@@ -2492,6 +2529,18 @@ function RoleDashboard() {
               React.createElement('span', { key: 't' }, isMeo ? `Teachers Info (${activeUser.mandal || 'Assigned Mandal'})` : 'Teachers Information')
             ]),
             React.createElement('button', {
+              key: 'btn-tab-off-stu',
+              onClick: () => setOfficerTab('STUDENTS_INFO'),
+              className: `flex items-center space-x-1 px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                officerTab === 'STUDENTS_INFO'
+                  ? 'bg-[#0c4a7e] text-white shadow-xs font-bold'
+                  : (isDark ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-900')
+              }`
+            }, [
+              React.createElement('span', { key: 'i' }, '👥'),
+              React.createElement('span', { key: 't' }, isMeo ? `Students Info (${activeUser.mandal || 'Assigned Mandal'})` : 'Students Information')
+            ]),
+            React.createElement('button', {
               key: 'btn-tab-off-ret',
               onClick: () => setOfficerTab('RETIREMENT'),
               className: `flex items-center space-x-1 px-2.5 py-1 rounded-md transition-all cursor-pointer ${
@@ -2706,6 +2755,37 @@ function RoleDashboard() {
                     className: 'px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0c4a7e] hover:bg-[#08355b] transition-all cursor-pointer shadow-md'
                   }, '← Return to Dashboard Overview')
                 ])
+        : (officerTab === 'STUDENTS_INFO')
+        ? (
+            isAuthorizedOfficer
+              ? (typeof window !== 'undefined' && (window.SchoolsInformationDashboardView || window.SchoolStrengthDashboardView)
+                  ? React.createElement(window.SchoolsInformationDashboardView || window.SchoolStrengthDashboardView, {
+                      key: 'students-info-dash',
+                      initialTab: 'STUDENT_DIRECTORY',
+                      onBack: () => setOfficerTab('OVERVIEW'),
+                      user: activeUser,
+                      isDark: isDark
+                    })
+                  : React.createElement('div', { key: 'stu-load-err', className: 'p-8 text-center text-sm font-semibold text-slate-600' }, 'Loading Students Information...')
+                )
+              : React.createElement('div', {
+                  key: 'unauthorized-box-stu',
+                  className: `p-8 max-w-xl mx-auto my-8 rounded-2xl border text-center space-y-4 shadow-lg ${
+                    isDark ? 'bg-slate-900 border-red-900/60 text-slate-100' : 'bg-white border-red-200 text-slate-800'
+                  }`
+                }, [
+                  React.createElement('div', { key: 'icon', className: 'w-16 h-16 mx-auto rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center text-3xl font-bold' }, '🔒'),
+                  React.createElement('h2', { key: 't', className: 'text-xl font-bold text-red-600 dark:text-red-400' }, '403 — Access Denied'),
+                  React.createElement('p', { key: 'st', className: 'text-sm font-semibold' }, 'Protected Officer Feature'),
+                  React.createElement('p', { key: 'desc', className: 'text-xs text-slate-500 dark:text-slate-400 leading-relaxed' },
+                    'Students Information directory is a protected dashboard feature strictly restricted to authenticated DEO, APO, and authorized MEO officers through their official logins.'
+                  ),
+                  React.createElement('button', {
+                    key: 'btn-back',
+                    onClick: () => setOfficerTab('OVERVIEW'),
+                    className: 'px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0c4a7e] hover:bg-[#08355b] transition-all cursor-pointer shadow-md'
+                  }, '← Return to Dashboard Overview')
+                ])
           )
         : (officerTab === 'RETIREMENT')
         ? (
@@ -2774,6 +2854,7 @@ function RoleDashboard() {
               isDark,
               onOpenSchoolsInfo: () => setOfficerTab('SCHOOLS_INFO'),
               onOpenTeachersInfo: () => setOfficerTab('TEACHERS_INFO'),
+              onOpenStudentsInfo: () => setOfficerTab('STUDENTS_INFO'),
               onOpenRetirement: () => setOfficerTab('RETIREMENT')
             }),
             activeUser.role === 'School Staff' && React.createElement(SchoolStaffModules, { key: 'staff-mod', user: activeUser, isDark }),
@@ -3016,7 +3097,7 @@ function StudentModules({ user, isDark }) {
   ]);
 }
 
-function OfficerModules({ user, isDark, onOpenSchoolsInfo, onOpenTeachersInfo, onOpenRetirement }) {
+function OfficerModules({ user, isDark, onOpenSchoolsInfo, onOpenTeachersInfo, onOpenStudentsInfo, onOpenRetirement }) {
   const isDeoOrApo = (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer');
   const isMeo = (user.role === 'MEO');
 
@@ -3116,6 +3197,35 @@ function OfficerModules({ user, isDark, onOpenSchoolsInfo, onOpenTeachersInfo, o
       }, [
         React.createElement('span', { key: 'i' }, '📋'),
         React.createElement('span', { key: 't' }, isMeo ? `Open Teachers Directory (${user.mandal || 'Assigned'})` : 'Open Teachers Directory')
+      ])
+    ]),
+
+    // MODULE 3: Students Information Directory
+    React.createElement('div', {
+      key: 'o-students-info',
+      className: `p-5 rounded-2xl border-2 transition-all space-y-3 relative overflow-hidden flex flex-col justify-between ${
+        isDark ? 'bg-[#131f37] border-blue-500/80 shadow-lg text-slate-100 ring-1 ring-blue-500/30' : 'bg-gradient-to-br from-white to-blue-50/70 border-blue-400 shadow-md text-slate-800 ring-1 ring-blue-300/40'
+      }`
+    }, [
+      React.createElement('div', { key: 'badge', className: 'flex items-center justify-between' }, [
+        React.createElement('span', { className: 'px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 uppercase tracking-wider' }, isMeo ? `Authorized MEO: ${user.mandal || 'Assigned Mandal'}` : 'Official Students Directory'),
+        React.createElement('span', { className: 'text-xl' }, '👥')
+      ]),
+      React.createElement('div', { key: 'body' }, [
+        React.createElement('h3', { className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '👥 Students Information'),
+        React.createElement('p', { className: `text-xs mt-1 leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}` },
+          isMeo
+            ? `View institution-wise student enrollments, medium, category, and print/PDF directory for ${user.mandal || 'your mandal'}.`
+            : 'Access institution-wise student enrollment directory across all 12 mandals, U-DISE data, and generate official print/PDF directories.'
+        )
+      ]),
+      React.createElement('button', {
+        key: 'btn',
+        onClick: onOpenStudentsInfo,
+        className: 'w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer bg-[#0c4a7e] hover:bg-[#08355b] text-white flex items-center justify-center space-x-1.5'
+      }, [
+        React.createElement('span', { key: 'i' }, '📋'),
+        React.createElement('span', { key: 't' }, isMeo ? `Open Students Directory (${user.mandal || 'Assigned'})` : 'Open Students Directory')
       ])
     ]),
 

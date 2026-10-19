@@ -210,10 +210,111 @@
         ]),
 
         h('div', { key: 'h-right', className: 'flex items-center flex-wrap gap-2' }, [
-          // Print / Export Button
+          // Print / Export Button with Modal Selection (Filtered vs All Records)
           h('button', {
             key: 'btn-print',
-            onClick: () => window.print(),
+            onClick: () => {
+              if (typeof window.openPrintDirectoryModal !== 'function') {
+                alert('Print Directory module is loading. Please try again.');
+                return;
+              }
+
+              const filterParts = [];
+              if (isMeo) {
+                filterParts.push(`Mandal: ${userMandal}`);
+              } else if (selectedMandal && selectedMandal !== 'ALL') {
+                filterParts.push(`Mandal: ${selectedMandal}`);
+              }
+              if (selectedDesignation && selectedDesignation !== 'ALL') {
+                filterParts.push(`Designation: ${selectedDesignation}`);
+              }
+              if (searchTerm.trim()) {
+                filterParts.push(`Search: "${searchTerm.trim()}"`);
+              }
+              const filterSummary = filterParts.length > 0 ? filterParts.join(' • ') : 'All Records (No Filters Active)';
+
+              const apiBase = (typeof window !== 'undefined' && window.PORTAL_API_BASE)
+                ? String(window.PORTAL_API_BASE).replace(/\/$/, '')
+                : '';
+
+              const teacherColumns = [
+                { key: '_sno', header: 'S.No', align: 'center', width: '38px' },
+                { key: 'treasuryCode', header: 'Treasury Code', align: 'center', width: '75px', style: 'font-weight: 700;' },
+                { key: 'teacherName', header: "Teacher's Name", align: 'left', width: '140px', style: 'font-weight: 700;' },
+                { key: 'designation', header: 'Designation', align: 'left', width: '110px' },
+                { key: 'mandal', header: 'Mandal', align: 'left', width: '80px' },
+                { key: 'schoolName', header: 'School Name', align: 'left', width: '145px' },
+                { key: 'dateOfFirstAppointment', header: 'Date of 1st Appt', align: 'center', width: '80px' },
+                { key: 'dateOfJoiningFeederCadre', header: 'Feeder Cadre Date', align: 'center', width: '80px' },
+                { key: 'dateOfJoiningPresentCadre', header: 'Present Cadre Date', align: 'center', width: '80px' },
+                { key: 'dateOfJoiningPresentSchool', header: 'Present School Date', align: 'center', width: '80px' },
+                { key: 'mobileNumber', header: 'Mobile No.', align: 'center', width: '80px', style: 'font-weight: 600;' }
+              ];
+
+              window.openPrintDirectoryModal({
+                directoryType: 'TEACHERS',
+                title: isMeo ? `TEACHERS INFORMATION DIRECTORY — ${userMandal} MANDAL` : 'OFFICIAL TEACHERS INFORMATION DIRECTORY — JANGAON DISTRICT',
+                subtitle: 'DEPARTMENT OF SCHOOL EDUCATION • GOVERNMENT OF TELANGANA',
+                scopeText: isMeo ? `Mandal Educational Office: ${userMandal} Mandal` : 'District Educational Office: Jangaon District (All 12 Mandals)',
+                user: user,
+                filteredCount: totalTeachers,
+                totalCount: teachersData.stats?.totalTeachers || (isMeo ? totalTeachers : 2119),
+                activeFiltersSummary: filterSummary,
+                fetchFiltered: async () => {
+                  const params = new URLSearchParams();
+                  if (isMeo) {
+                    params.append('mandal', userMandal);
+                  } else if (selectedMandal !== 'ALL') {
+                    params.append('mandal', selectedMandal);
+                  }
+                  if (selectedDesignation !== 'ALL') {
+                    params.append('designation', selectedDesignation);
+                  }
+                  if (searchTerm.trim()) {
+                    params.append('search', searchTerm.trim());
+                  }
+                  params.append('all', 'true');
+                  params.append('limit', 'all');
+
+                  const res = await fetch(`${apiBase}/api/teachers?${params.toString()}`, {
+                    credentials: 'include',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      ...(user?.accountStatus === 'PREVIEW_MODE' ? {
+                        'x-preview-role': user.role,
+                        'x-preview-mandal': user.mandal || ''
+                      } : {})
+                    }
+                  });
+                  const json = await res.json();
+                  if (!res.ok || !json.success) throw new Error(json.message || 'Failed to fetch filtered teachers');
+                  return json.teachers || [];
+                },
+                fetchAll: async () => {
+                  const params = new URLSearchParams();
+                  if (isMeo) {
+                    params.append('mandal', userMandal);
+                  }
+                  params.append('all', 'true');
+                  params.append('limit', 'all');
+
+                  const res = await fetch(`${apiBase}/api/teachers?${params.toString()}`, {
+                    credentials: 'include',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      ...(user?.accountStatus === 'PREVIEW_MODE' ? {
+                        'x-preview-role': user.role,
+                        'x-preview-mandal': user.mandal || ''
+                      } : {})
+                    }
+                  });
+                  const json = await res.json();
+                  if (!res.ok || !json.success) throw new Error(json.message || 'Failed to fetch all teachers');
+                  return json.teachers || [];
+                },
+                columns: teacherColumns
+              });
+            },
             className: `px-3 py-1.5 rounded-xl text-xs font-bold border flex items-center space-x-1.5 transition-all shadow-xs cursor-pointer ${
               isDark ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200'
             }`

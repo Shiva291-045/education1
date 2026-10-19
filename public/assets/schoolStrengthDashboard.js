@@ -92,7 +92,7 @@
     }
   }
 
-  function SchoolStrengthDashboardView({ user, isDark, onBack, previewMandal, onMandalChange }) {
+  function SchoolStrengthDashboardView({ user, isDark, onBack, previewMandal, onMandalChange, initialTab }) {
     const [loading, setLoading] = useState(true);
     const [dashboardData, setDashboardData] = useState(null);
     const [apiError, setApiError] = useState(null);
@@ -104,8 +104,10 @@
     const [selectedStage, setSelectedStage] = useState('ALL');
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Tab state
-    const [activeTab, setActiveTab] = useState('MANDAL_WISE'); // 'MANDAL_WISE' | 'DISTRICT_WISE' | 'CHARTS'
+    // Tab state & Student Directory Pagination
+    const [activeTab, setActiveTab] = useState(initialTab || 'MANDAL_WISE'); // 'MANDAL_WISE' | 'DISTRICT_WISE' | 'STUDENT_DIRECTORY' | 'CHARTS'
+    const [studentPage, setStudentPage] = useState(1);
+    const studentItemsPerPage = 20;
 
     // Editing modal state
     const [editModal, setEditModal] = useState({
@@ -333,6 +335,45 @@
       return rows;
     }, [dashboardData, searchTerm]);
 
+    // Filtered Student Schools Directory for Students Information
+    const filteredStudentSchools = useMemo(() => {
+      const allSchools = dashboardData?.filterOptions?.schools || [];
+      return allSchools.filter(s => {
+        if (selectedMandal !== 'ALL' && s.mandal && s.mandal.toUpperCase() !== selectedMandal.toUpperCase()) {
+          return false;
+        }
+        if (selectedManagement !== 'ALL' && s.management !== selectedManagement && s.displayType !== selectedManagement) {
+          return false;
+        }
+        if (selectedStage !== 'ALL' && s.stage !== selectedStage) {
+          return false;
+        }
+        if (searchTerm.trim()) {
+          const term = searchTerm.toLowerCase();
+          const matchName = (s.name || '').toLowerCase().includes(term);
+          const matchDise = (s.diseCode || '').includes(term);
+          const matchMandal = (s.mandal || '').toLowerCase().includes(term);
+          const matchMgmt = (s.management || '').toLowerCase().includes(term);
+          if (!matchName && !matchDise && !matchMandal && !matchMgmt) return false;
+        }
+        return true;
+      });
+    }, [dashboardData, selectedMandal, selectedManagement, selectedStage, searchTerm]);
+
+    const totalStudentStrength = useMemo(() => {
+      return filteredStudentSchools.reduce((sum, s) => sum + (Number(s.studentsCount) || 0), 0);
+    }, [filteredStudentSchools]);
+
+    const paginatedStudentSchools = useMemo(() => {
+      const start = (studentPage - 1) * studentItemsPerPage;
+      return filteredStudentSchools.slice(start, start + studentItemsPerPage);
+    }, [filteredStudentSchools, studentPage]);
+
+    // Reset student page to 1 when filters or search change
+    useEffect(() => {
+      setStudentPage(1);
+    }, [selectedMandal, selectedManagement, selectedStage, searchTerm]);
+
     // Summary numbers
     const summary = dashboardData?.summary || {};
     const catSummary = summary.categorySummary || {};
@@ -380,16 +421,81 @@
         ]),
 
         h('div', { key: 'h-right', className: 'flex items-center flex-wrap gap-2' }, [
-          // Print / Save Button
+          // Print / Save Button with Modal Selection (Filtered vs All Records)
           h('button', {
             key: 'btn-print',
-            onClick: () => window.print(),
+            onClick: () => {
+              if (typeof window.openPrintDirectoryModal !== 'function') {
+                alert('Print Directory module is loading. Please try again.');
+                return;
+              }
+
+              const allSchools = dashboardData?.filterOptions?.schools || [];
+              const allTotalStudents = allSchools.reduce((sum, s) => sum + (Number(s.studentsCount) || 0), 0);
+              const filteredTotalStudents = filteredStudentSchools.reduce((sum, s) => sum + (Number(s.studentsCount) || 0), 0);
+
+              const filterParts = [];
+              if (isMeo) {
+                filterParts.push(`Mandal: ${assignedMandal}`);
+              } else if (selectedMandal && selectedMandal !== 'ALL') {
+                filterParts.push(`Mandal: ${selectedMandal}`);
+              }
+              if (selectedManagement && selectedManagement !== 'ALL') {
+                filterParts.push(`Management: ${selectedManagement}`);
+              }
+              if (selectedStage && selectedStage !== 'ALL') {
+                filterParts.push(`Stage: ${selectedStage}`);
+              }
+              if (searchTerm.trim()) {
+                filterParts.push(`Search: "${searchTerm.trim()}"`);
+              }
+              const filterSummary = filterParts.length > 0 ? filterParts.join(' • ') : 'All Institutions (No Filters Active)';
+
+              const studentColumns = [
+                { key: '_sno', header: 'S.No', align: 'center', width: '38px' },
+                { key: 'diseCode', header: 'U-DISE Code', align: 'center', width: '85px', style: 'font-weight: 700;' },
+                { key: 'name', header: 'School / Institution Name', align: 'left', width: '200px', style: 'font-weight: 700;' },
+                { key: 'mandal', header: 'Mandal', align: 'left', width: '90px' },
+                { key: 'displayType', header: 'Management / Category', align: 'left', width: '120px' },
+                { key: 'stage', header: 'Stage / Classes', align: 'left', width: '110px' },
+                { key: 'medium', header: 'Medium', align: 'left', width: '90px' },
+                {
+                  key: 'studentsCount',
+                  header: 'Total Students',
+                  align: 'right',
+                  width: '80px',
+                  style: 'font-weight: 800;',
+                  render: (row) => formatNum(row.studentsCount || 0)
+                }
+              ];
+
+              window.openPrintDirectoryModal({
+                directoryType: 'STUDENTS',
+                title: isMeo ? `STUDENTS INFORMATION & ENROLLMENT DIRECTORY — ${assignedMandal} MANDAL` : 'OFFICIAL STUDENTS INFORMATION & ENROLLMENT DIRECTORY — JANGAON DISTRICT',
+                subtitle: 'DEPARTMENT OF SCHOOL EDUCATION • GOVERNMENT OF TELANGANA',
+                scopeText: isMeo ? `Mandal Educational Office: ${assignedMandal} Mandal` : 'District Educational Office: Jangaon District (All 12 Mandals)',
+                user: user,
+                filteredCount: filteredStudentSchools.length,
+                totalCount: allSchools.length,
+                activeFiltersSummary: filterSummary,
+                summaryStats: {
+                  totalStudents: filteredTotalStudents
+                },
+                fetchFiltered: async () => {
+                  return filteredStudentSchools;
+                },
+                fetchAll: async () => {
+                  return allSchools;
+                },
+                columns: studentColumns
+              });
+            },
             className: `px-3 py-1.5 rounded-xl text-xs font-bold border flex items-center space-x-1.5 transition-all shadow-xs cursor-pointer ${
               isDark ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200'
             }`
           }, [
             h('span', { key: 'icon' }, '🖨️'),
-            h('span', { key: 'text' }, 'Print Information View')
+            h('span', { key: 'text' }, 'Print Directory View')
           ]),
           // Refresh Button
           h('button', {
@@ -787,6 +893,19 @@
             }, 'Sheet 1: District Schools & Stage Breakdown'),
 
             h('button', {
+              key: 'tab-students',
+              onClick: () => {
+                setActiveTab('STUDENT_DIRECTORY');
+                setStudentPage(1);
+              },
+              className: `px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                activeTab === 'STUDENT_DIRECTORY'
+                  ? 'bg-[#0c4a7e] text-white shadow-xs'
+                  : (isDark ? 'text-slate-300 hover:bg-slate-800' : 'text-slate-600 hover:bg-slate-100')
+              }`
+            }, '👥 Students Information Directory'),
+
+            h('button', {
               key: 'tab-charts',
               onClick: () => setActiveTab('CHARTS'),
               className: `px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
@@ -816,6 +935,8 @@
             h('div', { className: 'text-xs text-slate-500 dark:text-slate-400 font-semibold' },
               activeTab === 'MANDAL_WISE'
                 ? `${filteredMandalRows.length} Mandal(s)`
+                : activeTab === 'STUDENT_DIRECTORY'
+                ? `${filteredStudentSchools.length} School(s)`
                 : `${filteredDistrictRows.length} Categories`
             )
           ])
@@ -1035,9 +1156,185 @@
               ])
             ])
           ])
+        // TAB 3: STUDENTS INFORMATION & ENROLLMENT DIRECTORY
+        activeTab === 'STUDENT_DIRECTORY' && h('div', {
+          key: 'student-directory-wrap',
+          className: `p-4 sm:p-5 rounded-2xl border shadow-sm space-y-4 ${
+            isDark ? 'bg-[#131f37] border-slate-700' : 'bg-white border-slate-200'
+          }`
+        }, [
+          // Header inside table
+          h('div', { className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100 dark:border-slate-800' }, [
+            h('div', {}, [
+              h('div', { className: 'flex items-center space-x-2' }, [
+                h('span', { className: 'text-base' }, '👥'),
+                h('h3', { className: `text-sm font-bold ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` },
+                  isMeo ? `Students Information Directory — ${assignedMandal} Mandal` : 'Students Information & Enrollment Directory — Jangaon District'
+                )
+              ]),
+              h('p', { className: 'text-xs text-slate-500 dark:text-slate-400 mt-0.5' },
+                `Showing ${paginatedStudentSchools.length} of ${formatNum(filteredStudentSchools.length)} schools (${formatNum(totalStudentStrength)} Enrolled Students)`
+              )
+            ]),
+            h('div', { className: 'flex items-center space-x-2' }, [
+              h('button', {
+                type: 'button',
+                onClick: () => {
+                  const allSchools = dashboardData?.filterOptions?.schools || [];
+                  const filteredTotalStudents = filteredStudentSchools.reduce((sum, s) => sum + (Number(s.studentsCount) || 0), 0);
+                  const filterParts = [];
+                  if (isMeo) filterParts.push(`Mandal: ${assignedMandal}`);
+                  else if (selectedMandal !== 'ALL') filterParts.push(`Mandal: ${selectedMandal}`);
+                  if (selectedManagement !== 'ALL') filterParts.push(`Management: ${selectedManagement}`);
+                  if (searchTerm.trim()) filterParts.push(`Search: "${searchTerm.trim()}"`);
+                  const filterSummary = filterParts.length > 0 ? filterParts.join(' • ') : 'All Institutions (No Filters Active)';
+
+                  const studentColumns = [
+                    { key: '_sno', header: 'S.No', align: 'center', width: '38px' },
+                    { key: 'diseCode', header: 'U-DISE Code', align: 'center', width: '85px', style: 'font-weight: 700;' },
+                    { key: 'name', header: 'School / Institution Name', align: 'left', width: '200px', style: 'font-weight: 700;' },
+                    { key: 'mandal', header: 'Mandal', align: 'left', width: '90px' },
+                    { key: 'displayType', header: 'Management / Category', align: 'left', width: '120px' },
+                    { key: 'stage', header: 'Stage / Classes', align: 'left', width: '110px' },
+                    { key: 'medium', header: 'Medium', align: 'left', width: '90px' },
+                    {
+                      key: 'studentsCount',
+                      header: 'Total Students',
+                      align: 'right',
+                      width: '80px',
+                      style: 'font-weight: 800;',
+                      render: (row) => formatNum(row.studentsCount || 0)
+                    }
+                  ];
+
+                  window.openPrintDirectoryModal({
+                    directoryType: 'STUDENTS',
+                    title: isMeo ? `STUDENTS INFORMATION & ENROLLMENT DIRECTORY — ${assignedMandal} MANDAL` : 'OFFICIAL STUDENTS INFORMATION & ENROLLMENT DIRECTORY — JANGAON DISTRICT',
+                    subtitle: 'DEPARTMENT OF SCHOOL EDUCATION • GOVERNMENT OF TELANGANA',
+                    scopeText: isMeo ? `Mandal Educational Office: ${assignedMandal} Mandal` : 'District Educational Office: Jangaon District (All 12 Mandals)',
+                    user: user,
+                    filteredCount: filteredStudentSchools.length,
+                    totalCount: allSchools.length,
+                    activeFiltersSummary: filterSummary,
+                    summaryStats: { totalStudents: filteredTotalStudents },
+                    fetchFiltered: async () => filteredStudentSchools,
+                    fetchAll: async () => allSchools,
+                    columns: studentColumns
+                  });
+                },
+                className: 'px-2.5 py-1 rounded-lg text-xs font-bold bg-[#0c4a7e] hover:bg-[#08355b] text-white flex items-center space-x-1 cursor-pointer shadow-xs'
+              }, [
+                h('span', { key: 'i' }, '🖨️'),
+                h('span', { key: 't' }, 'Print Directory View')
+              ]),
+              h('div', { className: 'text-xs font-bold text-slate-500 dark:text-slate-400' },
+                `Page ${studentPage} of ${Math.max(1, Math.ceil(filteredStudentSchools.length / studentItemsPerPage))}`
+              )
+            ])
+          ]),
+
+          // Table
+          h('div', { className: 'overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700' }, [
+            h('table', { className: 'w-full text-xs text-left border-collapse' }, [
+              h('thead', { className: isDark ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-700' }, [
+                h('tr', {}, [
+                  h('th', { className: 'p-2.5 font-bold border-b border-r dark:border-slate-700 text-center w-12' }, 'S.No'),
+                  h('th', { className: 'p-2.5 font-bold border-b border-r dark:border-slate-700 text-center min-w-[110px]' }, 'U-DISE Code'),
+                  h('th', { className: 'p-2.5 font-bold border-b border-r dark:border-slate-700 min-w-[220px]' }, 'School / Institution Name'),
+                  h('th', { className: 'p-2.5 font-bold border-b border-r dark:border-slate-700 min-w-[120px]' }, 'Mandal'),
+                  h('th', { className: 'p-2.5 font-bold border-b border-r dark:border-slate-700 min-w-[140px]' }, 'Management / Category'),
+                  h('th', { className: 'p-2.5 font-bold border-b border-r dark:border-slate-700 min-w-[130px]' }, 'Stage / Classes'),
+                  h('th', { className: 'p-2.5 font-bold border-b border-r dark:border-slate-700 min-w-[110px]' }, 'Medium'),
+                  h('th', { className: 'p-2.5 font-black border-b dark:border-slate-700 text-right min-w-[110px] bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300' }, 'Total Students')
+                ])
+              ]),
+
+              h('tbody', { className: 'divide-y divide-slate-200 dark:divide-slate-800' }, [
+                paginatedStudentSchools.length === 0 ? (
+                  h('tr', {}, [
+                    h('td', { colSpan: 8, className: 'p-8 text-center text-slate-500 font-semibold' },
+                      'No school or student records found matching the active criteria.'
+                    )
+                  ])
+                ) : (
+                  paginatedStudentSchools.map((s, idx) => {
+                    const sNo = (studentPage - 1) * studentItemsPerPage + idx + 1;
+                    return h('tr', {
+                      key: s.diseCode || idx,
+                      className: isDark ? 'hover:bg-slate-800/50' : 'hover:bg-slate-50'
+                    }, [
+                      h('td', { className: 'p-2.5 text-center font-semibold border-r dark:border-slate-700 text-slate-500' }, sNo),
+                      h('td', { className: 'p-2.5 text-center font-mono font-bold text-sky-700 dark:text-sky-300 border-r dark:border-slate-700' }, s.diseCode || '-'),
+                      h('td', { className: 'p-2.5 font-bold text-slate-900 dark:text-slate-100 border-r dark:border-slate-700' }, s.name),
+                      h('td', { className: 'p-2.5 font-semibold text-slate-700 dark:text-slate-300 border-r dark:border-slate-700' }, s.mandal),
+                      h('td', { className: 'p-2.5 border-r dark:border-slate-700' }, [
+                        h('span', {
+                          className: 'px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
+                        }, s.displayType || s.management)
+                      ]),
+                      h('td', { className: 'p-2.5 text-slate-600 dark:text-slate-400 border-r dark:border-slate-700 text-[11px]' }, s.stage || '-'),
+                      h('td', { className: 'p-2.5 text-slate-600 dark:text-slate-400 border-r dark:border-slate-700 text-[11px]' }, s.medium || 'Telugu Medium'),
+                      h('td', { className: 'p-2.5 text-right font-black border-r dark:border-slate-700 bg-emerald-50/30 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 text-xs' },
+                        formatNum(s.studentsCount || 0)
+                      )
+                    ]);
+                  })
+                ),
+
+                // Table Grand Total row
+                paginatedStudentSchools.length > 0 && h('tr', {
+                  className: isDark ? 'bg-slate-900 font-black text-slate-100' : 'bg-slate-100 font-black text-slate-900'
+                }, [
+                  h('td', { className: 'p-2.5 text-center border-r dark:border-slate-700', colSpan: 3 },
+                    `Total Matching: ${formatNum(filteredStudentSchools.length)} Institutions`
+                  ),
+                  h('td', { className: 'p-2.5 text-center border-r dark:border-slate-700 text-slate-500 font-bold', colSpan: 4 },
+                    'Enrolled Student Strength (Current Filter Selection)'
+                  ),
+                  h('td', { className: 'p-2.5 text-right text-emerald-600 dark:text-emerald-400 font-black text-xs' },
+                    formatNum(totalStudentStrength)
+                  )
+                ])
+              ])
+            ])
+          ]),
+
+          // Pagination Controls
+          filteredStudentSchools.length > studentItemsPerPage && h('div', {
+            className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs font-semibold'
+          }, [
+            h('div', { className: 'text-slate-500 dark:text-slate-400' },
+              `Showing ${(studentPage - 1) * studentItemsPerPage + 1} to ${Math.min(studentPage * studentItemsPerPage, filteredStudentSchools.length)} of ${formatNum(filteredStudentSchools.length)} records`
+            ),
+            h('div', { className: 'flex items-center space-x-2' }, [
+              h('button', {
+                type: 'button',
+                disabled: studentPage === 1,
+                onClick: () => setStudentPage(p => Math.max(1, p - 1)),
+                className: `px-3 py-1.5 rounded-lg border transition-all ${
+                  studentPage === 1
+                    ? 'opacity-40 cursor-not-allowed border-slate-200 dark:border-slate-700'
+                    : 'hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer border-slate-300 dark:border-slate-600'
+                }`
+              }, '← Previous'),
+              h('span', { className: 'px-2 font-bold text-slate-700 dark:text-slate-300' },
+                `Page ${studentPage} / ${Math.max(1, Math.ceil(filteredStudentSchools.length / studentItemsPerPage))}`
+              ),
+              h('button', {
+                type: 'button',
+                disabled: studentPage >= Math.ceil(filteredStudentSchools.length / studentItemsPerPage),
+                onClick: () => setStudentPage(p => p + 1),
+                className: `px-3 py-1.5 rounded-lg border transition-all ${
+                  studentPage >= Math.ceil(filteredStudentSchools.length / studentItemsPerPage)
+                    ? 'opacity-40 cursor-not-allowed border-slate-200 dark:border-slate-700'
+                    : 'hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer border-slate-300 dark:border-slate-600'
+                }`
+              }, 'Next →')
+            ])
+          ])
         ]),
 
-        // TAB 3: VISUAL ANALYTICS & DISTRIBUTION BARS
+        // TAB 4: VISUAL ANALYTICS & DISTRIBUTION BARS
         activeTab === 'CHARTS' && h('div', {
           key: 'charts-wrap',
           className: 'grid grid-cols-1 lg:grid-cols-2 gap-6'

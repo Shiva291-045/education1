@@ -133,11 +133,13 @@ class TeacherController {
 
       const urlObj = new URL(req.url, 'http://localhost');
       const query = {
-        mandal: urlObj.searchParams.get('mandal'),
-        designation: urlObj.searchParams.get('designation'),
-        search: urlObj.searchParams.get('search'),
-        page: urlObj.searchParams.get('page'),
-        limit: urlObj.searchParams.get('limit')
+        mandal: req.query?.mandal || urlObj.searchParams.get('mandal'),
+        designation: req.query?.designation || urlObj.searchParams.get('designation'),
+        search: req.query?.search || urlObj.searchParams.get('search'),
+        page: req.query?.page || urlObj.searchParams.get('page'),
+        limit: req.query?.limit || urlObj.searchParams.get('limit'),
+        all: req.query?.all || urlObj.searchParams.get('all'),
+        print: req.query?.print || urlObj.searchParams.get('print')
       };
 
       const result = teacherDirectoryService.getTeachersList(query, user);
