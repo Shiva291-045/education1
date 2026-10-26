@@ -37,7 +37,7 @@ async function connectMongo() {
 
   const uri = getMongoUri();
   if (!uri) {
-    console.log('[MongoDB] MONGODB_URI is not set. WebAuthn challenges and portal data will use local persistence until MongoDB Atlas is configured in .env.');
+    console.log('[MongoDB] MONGODB_URI is not set. Portal data will use local persistence until MongoDB Atlas is configured in .env.');
     return null;
   }
 
@@ -52,30 +52,23 @@ async function connectMongo() {
     mongoDb = mongoClient.db(dbName);
     client = mongoClient;
 
-    // 1. WebAuthn Challenges Collection
-    const challenges = mongoDb.collection('webauthn_challenges');
-    await challenges.createIndex({ userId: 1, registrationType: 1, consumed: 1, createdAt: -1 });
-    await challenges.createIndex({ enrollmentToken: 1 }, { unique: true, sparse: true });
-    await challenges.createIndex({ challenge: 1 }, { unique: true });
-    await challenges.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-
-    // 2. Users Collection
+    // 1. Users Collection
     const users = mongoDb.collection('users');
     await users.createIndex({ id: 1 }, { unique: true });
     await users.createIndex({ mobileNumber: 1 });
     await users.createIndex({ employeeId: 1 }, { sparse: true });
 
-    // 3. Sessions Collection
+    // 2. Sessions Collection
     const sessions = mongoDb.collection('sessions');
     await sessions.createIndex({ sessionId: 1 }, { unique: true });
     await sessions.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-    // 4. Teacher Service Records Collection
+    // 3. Teacher Service Records Collection
     const teacherRecords = mongoDb.collection('teacher_service_records');
     await teacherRecords.createIndex({ treasuryCode: 1 }, { unique: true, sparse: true });
     await teacherRecords.createIndex({ employeeId: 1 }, { sparse: true });
 
-    // 5. Mobile Import Collection (education.mobile_import)
+    // 4. Mobile Import Collection (education.mobile_import)
     try {
       const mobileImport = mongoDb.collection('mobile_import');
       await mobileImport.createIndex({ 'TREASURY CODE': 1 });
@@ -86,7 +79,7 @@ async function connectMongo() {
     }
 
     console.log(`[MongoDB] Connected successfully to Atlas cluster (${mongoDb.databaseName}).`);
-    console.log(`[MongoDB] Collections verified: users, sessions, webauthn_challenges, teacher_service_records, mobile_import.`);
+    console.log(`[MongoDB] Collections verified: users, sessions, teacher_service_records, mobile_import.`);
     return mongoDb;
   })();
 

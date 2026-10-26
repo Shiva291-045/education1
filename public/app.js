@@ -4,11 +4,115 @@
 const { useState, useEffect, useContext, createContext, useRef } = React;
 const { TelanganaEmblem, TelanganaRisingLogo, PencilBanner, SchoolBuildingGraphic, SkylineGraphic } = window.PORTAL_LOGOS;
 
+// Crisp SVG Vector Icons for Portal Top Section (Matching Reference Image)
+function HomeSvgIcon({ className = 'w-4 h-4' }) {
+  return React.createElement('svg', {
+    className,
+    viewBox: '0 0 24 24',
+    fill: 'currentColor'
+  }, [
+    React.createElement('path', { key: 'p', d: 'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z' })
+  ]);
+}
+
+function BuildingSvgIcon({ className = 'w-6 h-6' }) {
+  return React.createElement('svg', {
+    className,
+    viewBox: '0 0 24 24',
+    fill: 'currentColor'
+  }, [
+    React.createElement('path', {
+      key: 'p',
+      d: 'M12 2L2 7.5v2h2v11h16v-11h2v-2L12 2zm-5 16H5v-7h2v7zm4 0H9v-7h2v7zm4 0h-2v-7h2v7zm4 0h-2v-7h2v7zM12 4.2L18.5 7H5.5L12 4.2z'
+    })
+  ]);
+}
+
+function TeachersGroupSvgIcon({ className = 'w-6 h-6' }) {
+  return React.createElement('svg', {
+    className,
+    viewBox: '0 0 24 24',
+    fill: 'currentColor'
+  }, [
+    React.createElement('path', {
+      key: 'p',
+      d: 'M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z'
+    })
+  ]);
+}
+
+function TeardropPinSvgIcon({ className = 'w-6 h-6' }) {
+  return React.createElement('svg', {
+    className,
+    viewBox: '0 0 24 24',
+    fill: 'currentColor'
+  }, [
+    React.createElement('path', {
+      key: 'p',
+      d: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z'
+    })
+  ]);
+}
+
+function UserSilhouetteSvgIcon({ className = 'w-6 h-6' }) {
+  return React.createElement('svg', {
+    className,
+    viewBox: '0 0 24 24',
+    fill: 'currentColor'
+  }, [
+    React.createElement('path', {
+      key: 'p',
+      d: 'M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8V21.6h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z'
+    })
+  ]);
+}
+
+function GovtBuildingSvgIcon({ className = 'w-4 h-4' }) {
+  return React.createElement('svg', {
+    className,
+    viewBox: '0 0 24 24',
+    fill: 'currentColor'
+  }, [
+    React.createElement('path', {
+      key: 'p',
+      d: 'M4 10v7h3v-7H4zm6 0v7h3v-7h-3zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm10-20L2 6v2h19V6L12 2z'
+    })
+  ]);
+}
+
+function BookOpenSvgIcon({ className = 'w-4 h-4' }) {
+  return React.createElement('svg', {
+    className,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: '2',
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round'
+  }, [
+    React.createElement('path', { key: 'p1', d: 'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z' }),
+    React.createElement('path', { key: 'p2', d: 'M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z' })
+  ]);
+}
+
+function GradCapSvgIcon({ className = 'w-4 h-4' }) {
+  return React.createElement('svg', {
+    className,
+    viewBox: '0 0 24 24',
+    fill: 'currentColor'
+  }, [
+    React.createElement('path', {
+      key: 'p',
+      d: 'M12 3L1 9l11 6 9-4.91V17h2V9L12 3zm-7 10.6v3.7c0 3.1 3.1 5.7 7 5.7s7-2.6 7-5.7v-3.7l-7 3.8-7-3.8z'
+    })
+  ]);
+}
+
 // ==========================================
 // 1. AUTH CONTEXT & BACKEND API CLIENT
 // ==========================================
 // ==========================================
-// 1. AUTH CONTEXT & WEBAUTHN / PASSKEY CLIENT
+// 1. AUTH CONTEXT & BACKEND API CLIENT
 // ==========================================
 const AuthContext = createContext(null);
 
@@ -20,111 +124,14 @@ function apiUrl(path) {
   return `${API_BASE}${path}`;
 }
 
-// Real WebAuthn Base64URL and ArrayBuffer Converters
-function bufferToBase64Url(buffer) {
-  const bytes = new Uint8Array(buffer);
-  let str = '';
-  for (let i = 0; i < bytes.byteLength; i++) {
-    str += String.fromCharCode(bytes[i]);
-  }
-  return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
-
-function base64UrlToBuffer(base64url) {
-  const padding = '='.repeat((4 - (base64url.length % 4)) % 4);
-  const base64 = (base64url + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const raw = atob(base64);
-  const buffer = new Uint8Array(raw.length);
-  for (let i = 0; i < raw.length; i++) {
-    buffer[i] = raw.charCodeAt(i);
-  }
-  return buffer.buffer;
-}
-
-// Browser WebAuthn API: navigator.credentials.create()
-async function createBrowserPasskey(creationOptions) {
-  if (!window.PublicKeyCredential || !navigator.credentials || !navigator.credentials.create) {
-    throw new Error("WebAuthn / Passkeys are not supported on this browser or platform.");
-  }
-
-  const publicKey = {
-    ...creationOptions,
-    challenge: base64UrlToBuffer(creationOptions.challenge),
-    user: {
-      ...creationOptions.user,
-      id: base64UrlToBuffer(creationOptions.user.id)
-    }
-  };
-
-  if (creationOptions.excludeCredentials) {
-    publicKey.excludeCredentials = creationOptions.excludeCredentials.map(c => ({
-      ...c,
-      id: base64UrlToBuffer(c.id)
-    }));
-  }
-
-  const credential = await navigator.credentials.create({ publicKey });
-  if (!credential) {
-    throw new Error("Passkey creation cancelled or unavailable.");
-  }
-
-  return {
-    id: credential.id,
-    rawId: bufferToBase64Url(credential.rawId),
-    type: credential.type,
-    response: {
-      clientDataJSON: bufferToBase64Url(credential.response.clientDataJSON),
-      attestationObject: bufferToBase64Url(credential.response.attestationObject),
-      transports: (typeof credential.response.getTransports === 'function') ? credential.response.getTransports() : ['internal']
-    }
-  };
-}
-
-// Browser WebAuthn API: navigator.credentials.get()
-async function getBrowserPasskey(requestOptions) {
-  if (!window.PublicKeyCredential || !navigator.credentials || !navigator.credentials.get) {
-    throw new Error("WebAuthn / Passkeys are not supported on this browser or platform.");
-  }
-
-  const publicKey = {
-    ...requestOptions,
-    challenge: base64UrlToBuffer(requestOptions.challenge)
-  };
-
-  if (requestOptions.allowCredentials && requestOptions.allowCredentials.length > 0) {
-    publicKey.allowCredentials = requestOptions.allowCredentials.map(c => ({
-      ...c,
-      id: base64UrlToBuffer(c.id)
-    }));
-  }
-
-  const credential = await navigator.credentials.get({ publicKey });
-  if (!credential) {
-    throw new Error("Passkey verification cancelled.");
-  }
-
-  return {
-    id: credential.id,
-    rawId: bufferToBase64Url(credential.rawId),
-    type: credential.type,
-    response: {
-      clientDataJSON: bufferToBase64Url(credential.response.clientDataJSON),
-      authenticatorData: bufferToBase64Url(credential.response.authenticatorData),
-      signature: bufferToBase64Url(credential.response.signature),
-      userHandle: credential.response.userHandle ? bufferToBase64Url(credential.response.userHandle) : null
-    }
-  };
-}
-
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeModal, setActiveModal] = useState(null); // 'LOGIN' | 'REGISTER' | 'FORGOT' | 'ENROLL_PASSKEY'
+  const [activeModal, setActiveModal] = useState(null); // 'LOGIN' | 'REGISTER' | 'FORGOT'
   const [loginInitialTab, setLoginInitialTab] = useState('ADMIN'); // 'ADMIN' | 'TEACHER'
   const [currentView, setCurrentView] = useState('PORTAL'); // 'PORTAL' | 'DASHBOARD'
   const [officerTab, setOfficerTab] = useState('OVERVIEW'); // 'OVERVIEW' | 'SCHOOLS_INFO'
   const [theme, setTheme] = useState(() => localStorage.getItem('jangaon_portal_theme') || 'light');
-  const [pendingPasskeyEnrollment, setPendingPasskeyEnrollment] = useState(null);
   const [currentLang, setCurrentLang] = useState(() => (window.i18n ? window.i18n.getLanguage() : (localStorage.getItem('portal_language') || 'en')));
 
   const changeLanguage = (newLang) => {
@@ -202,91 +209,19 @@ function AuthProvider({ children }) {
         credentials: 'include',
         body: JSON.stringify(formData)
       });
-      return await res.json();
+      const data = await res.json();
+      if (data.success && data.user) {
+        setUser(data.user);
+        setActiveModal(null);
+        setCurrentView('DASHBOARD');
+      }
+      return data;
     } catch (err) {
       return { success: false, message: "Network connection error during registration." };
     }
   };
 
-  // 2. Complete Passkey Enrollment (navigator.credentials.create)
-  const enrollPasskey = async (userId, passkeyOptions) => {
-    try {
-      const cred = await createBrowserPasskey(passkeyOptions);
-      const attestation = {
-        id: cred.id,
-        rawId: cred.rawId,
-        type: cred.type,
-        clientDataJSON: cred.response.clientDataJSON,
-        attestationObject: cred.response.attestationObject,
-        transports: cred.response.transports
-      };
-      const res = await fetch(apiUrl('/passkey/register/finish'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ userId, response: attestation })
-      });
-      const data = await res.json();
-      if (data.success && data.user) {
-        setUser(data.user);
-        setActiveModal(null);
-        setPendingPasskeyEnrollment(null);
-        setCurrentView('DASHBOARD');
-      }
-      return data;
-    } catch (err) {
-      return { success: false, message: err.message || "Passkey registration failed or cancelled." };
-    }
-  };
-
-  // 3. Login with Passkey (navigator.credentials.get)
-  const loginWithPasskey = async (identifier) => {
-    try {
-      const optRes = await fetch(apiUrl('/passkey/login/start'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ identifier })
-      });
-      const optData = await optRes.json();
-      if (!optData.success) {
-        return optData;
-      }
-
-      const assertion = await getBrowserPasskey(optData.options);
-      const assertionPayload = {
-        id: assertion.id,
-        rawId: assertion.rawId,
-        type: assertion.type,
-        clientDataJSON: assertion.response.clientDataJSON,
-        authenticatorData: assertion.response.authenticatorData,
-        signature: assertion.response.signature,
-        userHandle: assertion.response.userHandle
-      };
-
-      const verRes = await fetch(apiUrl('/passkey/login/finish'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          identifier,
-          userId: optData.userId,
-          response: assertionPayload
-        })
-      });
-      const verData = await verRes.json();
-      if (verData.success && verData.user) {
-        setUser(verData.user);
-        setActiveModal(null);
-        setCurrentView('DASHBOARD');
-      }
-      return verData;
-    } catch (err) {
-      return { success: false, message: err.message || "Passkey login failed or was cancelled." };
-    }
-  };
-
-  // 4. Fallback Login with Password
+  // 2. Login with Password
   const loginWithPassword = async (identifier, password) => {
     try {
       const res = await fetch(apiUrl('/api/auth/login'), {
@@ -298,18 +233,8 @@ function AuthProvider({ children }) {
       const data = await res.json();
       if (data.success && data.user) {
         setUser(data.user);
-        if (!data.user.hasPasskey) {
-          setPendingPasskeyEnrollment({
-            userId: data.user.id,
-            fullName: data.user.fullName,
-            mobileNumber: data.user.mobileNumber,
-            employeeId: data.user.employeeId
-          });
-          setActiveModal('ENROLL_PASSKEY');
-        } else {
-          setActiveModal(null);
-          setCurrentView('DASHBOARD');
-        }
+        setActiveModal(null);
+        setCurrentView('DASHBOARD');
       }
       return data;
     } catch (err) {
@@ -317,7 +242,7 @@ function AuthProvider({ children }) {
     }
   };
 
-  // 5. Dedicated Teacher Login (Employee ID + Registered Mobile Number)
+  // 3. Dedicated Teacher Login (Employee ID + Registered Mobile Number)
   const loginTeacher = async (employeeId, mobileNumber) => {
     try {
       const res = await fetch(apiUrl('/api/auth/teacher/login'), {
@@ -329,36 +254,12 @@ function AuthProvider({ children }) {
       const data = await res.json();
       if (data.success && data.user) {
         setUser(data.user);
-        if (!data.hasPasskey) {
-          setPendingPasskeyEnrollment({
-            userId: data.user.id,
-            fullName: data.user.fullName,
-            employeeId: data.user.employeeId
-          });
-          setActiveModal('ENROLL_PASSKEY');
-        } else {
-          setActiveModal(null);
-          setCurrentView('DASHBOARD');
-        }
+        setActiveModal(null);
+        setCurrentView('DASHBOARD');
       }
       return data;
     } catch (err) {
       return { success: false, message: "Connection error during teacher verification." };
-    }
-  };
-
-  // 6. Request Passkey Options for user
-  const requestPasskeyOptions = async (userId) => {
-    try {
-      const res = await fetch(apiUrl('/passkey/register/start'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ userId: userId || (user && user.id) })
-      });
-      return await res.json();
-    } catch (err) {
-      return { success: false, message: "Failed to generate passkey options." };
     }
   };
 
@@ -376,7 +277,6 @@ function AuthProvider({ children }) {
   };
   const closeModal = () => {
     setActiveModal(null);
-    setPendingPasskeyEnrollment(null);
   };
 
   return React.createElement(AuthContext.Provider, {
@@ -388,13 +288,8 @@ function AuthProvider({ children }) {
       openModal,
       closeModal,
       registerUser,
-      enrollPasskey,
-      loginWithPasskey,
       loginWithPassword,
       loginTeacher,
-      requestPasskeyOptions,
-      pendingPasskeyEnrollment,
-      setPendingPasskeyEnrollment,
       logout,
       currentView,
       setCurrentView,
@@ -412,17 +307,23 @@ function AuthProvider({ children }) {
 // ==========================================
 // 2. TOP GOVERNMENT ACCESSIBILITY BAR (IMAGE 2: DEEP BLUE #0c4a7e)
 // ==========================================
+// 2. TOP GOVERNMENT ACCESSIBILITY BAR (IMAGE 2)
+// ==========================================
 function TopGovtBar({ fontScale, setFontScale }) {
   const { theme, changeTheme, currentLang, changeLanguage } = useContext(AuthContext);
 
   const handleFontChange = (scale) => {
     setFontScale(scale);
-    document.body.className = `bg-[#f0f4f8] text-slate-800 antialiased font-scale-${scale}`;
+    document.body.className = `bg-[#f0f4f8] dark:bg-[#0b1329] text-slate-800 dark:text-slate-100 antialiased font-scale-${scale}`;
   };
 
   return React.createElement('div', {
-    className: 'bg-[#0c4a7e] text-white text-xs py-1.5 px-4 sm:px-8 flex flex-wrap items-center justify-between border-b border-[#08355b]'
+    className: 'bg-[#0c4a7e] dark:bg-[#082a4d] text-white text-xs py-1.5 px-4 sm:px-6 lg:px-8 border-b border-[#08355b] dark:border-blue-950 transition-colors'
   }, [
+    React.createElement('div', {
+      key: 'top-bar-inner',
+      className: 'max-w-7xl mx-auto flex flex-wrap items-center justify-between w-full'
+    }, [
     // Left: Government of Telangana
     React.createElement('div', { key: 'l', className: 'flex items-center space-x-2' }, [
       React.createElement('span', { key: 'pin', className: 'text-white' }, '📍'),
@@ -438,23 +339,23 @@ function TopGovtBar({ fontScale, setFontScale }) {
         React.createElement('button', {
           key: 'f-sm',
           onClick: () => handleFontChange('sm'),
-          className: `px-1 hover:text-amber-300 font-bold ${fontScale === 'sm' ? 'text-amber-300' : 'text-white'}`
+          className: `px-1 hover:text-amber-300 font-bold transition-colors cursor-pointer ${fontScale === 'sm' ? 'text-amber-300' : 'text-white'}`
         }, 'A-'),
         React.createElement('button', {
           key: 'f-md',
           onClick: () => handleFontChange('md'),
-          className: `px-1 hover:text-amber-300 font-bold ${fontScale === 'md' ? 'text-amber-300' : 'text-white'}`
+          className: `px-1 hover:text-amber-300 font-bold transition-colors cursor-pointer ${fontScale === 'md' ? 'text-amber-300' : 'text-white'}`
         }, 'A'),
         React.createElement('button', {
           key: 'f-lg',
           onClick: () => handleFontChange('lg'),
-          className: `px-1 hover:text-amber-300 font-bold ${fontScale === 'lg' ? 'text-amber-300' : 'text-white'}`
+          className: `px-1 hover:text-amber-300 font-bold transition-colors cursor-pointer ${fontScale === 'lg' ? 'text-amber-300' : 'text-white'}`
         }, 'A+')
       ]),
 
       React.createElement('span', { key: 'sep2', className: 'text-blue-300' }, '|'),
 
-      // Language Select (English ↔ Telugu switch)
+      // Language Select (English <-> Telugu switch)
       React.createElement('div', { key: 'lang', className: 'relative' }, [
         React.createElement('select', {
           id: 'portal-lang-select',
@@ -469,30 +370,39 @@ function TopGovtBar({ fontScale, setFontScale }) {
 
       React.createElement('span', { key: 'sep3', className: 'text-blue-300' }, '|'),
 
-      // Icons: Search, Light, Dark toggle
-      React.createElement('button', { key: 's-icn', className: 'hover:text-amber-300 text-white transition-colors cursor-pointer', title: "Search" }, '🔍'),
+      // Icons: Search, Light, Dark toggle (Matching Image 2 exact active pill style)
+      React.createElement('button', {
+        key: 's-icn',
+        onClick: () => {
+          const el = document.getElementById('find-school-section');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        },
+        className: 'hover:text-amber-300 text-white transition-colors cursor-pointer',
+        title: "Search Schools"
+      }, '🔍'),
       React.createElement('button', {
         key: 'sun-icn',
         onClick: () => changeTheme('light'),
-        className: `flex items-center justify-center p-1 rounded transition-all cursor-pointer ${
-          theme === 'light' ? 'bg-amber-400 text-slate-900 shadow-xs' : 'text-white hover:text-amber-300 hover:bg-white/10'
+        className: `p-1 transition-all cursor-pointer hover:opacity-100 ${
+          theme === 'light' ? 'text-amber-300 drop-shadow-xs font-bold' : 'text-white/80 hover:text-amber-300'
         }`,
         title: "Light Theme"
-      }, React.createElement('span', { key: 'i' }, '☀️')),
+      }, React.createElement('span', { key: 'i', className: 'text-sm' }, '☀️')),
       React.createElement('button', {
         key: 'moon-icn',
         onClick: () => changeTheme('dark'),
-        className: `flex items-center justify-center p-1 rounded transition-all cursor-pointer ${
-          theme === 'dark' ? 'bg-amber-400 text-slate-900 shadow-xs' : 'text-white hover:text-amber-300 hover:bg-white/10'
+        className: `p-1 transition-all cursor-pointer hover:opacity-100 ${
+          theme === 'dark' ? 'text-blue-300 drop-shadow-xs font-bold' : 'text-white/80 hover:text-blue-300'
         }`,
         title: "Dark Theme"
-      }, React.createElement('span', { key: 'i' }, '🌙'))
+      }, React.createElement('span', { key: 'i', className: 'text-sm' }, '🌙'))
+    ])
     ])
   ]);
 }
 
 // ==========================================
-// 3. MAIN NAVIGATION HEADER (IMAGE 2: PURE WHITE BACKGROUND)
+// 3. MAIN NAVIGATION HEADER (IMAGE 2: PURE WHITE BACKGROUND, COMPACT & PROFESSIONAL)
 // ==========================================
 function MainHeader() {
   const { user, openModal, logout, currentView, setCurrentView, setOfficerTab } = useContext(AuthContext);
@@ -510,11 +420,11 @@ function MainHeader() {
   }, []);
 
   return React.createElement('header', {
-    className: 'bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs'
+    className: 'bg-white dark:bg-[#101b33] border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 shadow-xs transition-colors'
   }, [
     React.createElement('div', {
       key: 'header-row',
-      className: 'max-w-[1440px] mx-auto px-4 sm:px-6 py-2 flex items-center justify-between'
+      className: 'max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-1.5 flex items-center justify-between flex-nowrap'
     }, [
       // Left Brand: Telangana Green Emblem + Blue Typography
       React.createElement('div', {
@@ -526,35 +436,42 @@ function MainHeader() {
         React.createElement('div', { key: 'brand-titles', className: 'flex flex-col' }, [
           React.createElement('h1', {
             key: 'h1',
-            className: 'font-extrabold text-[#0c4a7e] text-base lg:text-[18px] leading-tight tracking-tight whitespace-nowrap'
+            className: 'font-extrabold text-[#0c4a7e] dark:text-blue-400 text-sm lg:text-[17px] leading-tight tracking-tight whitespace-nowrap'
           }, 'District Educational Office, Jangaon'),
           React.createElement('span', {
             key: 'sub1',
-            className: 'text-xs font-semibold text-slate-700 leading-tight whitespace-nowrap'
+            className: 'text-xs font-semibold text-slate-700 dark:text-slate-300 leading-tight whitespace-nowrap'
           }, 'School Education Department, Telangana'),
           React.createElement('span', {
             key: 'sub2',
-            className: 'text-[11px] font-bold text-[#1565c0] italic leading-tight whitespace-nowrap'
+            className: 'text-[11px] font-bold text-[#1565c0] dark:text-blue-300 italic leading-tight whitespace-nowrap'
           }, 'Education for a Brighter Tomorrow')
         ])
       ]),
 
-      // Center Navigation Links (Matching Reference Image)
+      // Center Navigation Links (Matching Reference Image 2: Home, About, Teachers, Schools, Students, Examinations, Notifications, Contact)
       React.createElement('nav', {
         key: 'nav',
-        className: 'hidden md:flex items-center space-x-2 lg:space-x-3.5 text-xs lg:text-[13px] font-semibold text-slate-700 whitespace-nowrap mx-2'
+        className: 'hidden md:flex items-center space-x-1.5 lg:space-x-2.5 text-xs lg:text-[12.5px] font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap mx-1'
       }, [
         React.createElement('button', {
           key: 'home',
           onClick: () => setCurrentView('PORTAL'),
-          className: `flex items-center space-x-1 px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
-            currentView === 'PORTAL' ? 'text-[#0c4a7e] bg-blue-50 font-bold' : 'hover:text-[#0c4a7e]'
+          className: `flex items-center space-x-1.5 px-3 py-1 rounded-md transition-colors cursor-pointer ${
+            currentView === 'PORTAL' ? 'text-[#0c4a7e] dark:text-blue-300 bg-[#e8f2fc] dark:bg-blue-950/70 border border-blue-200/60 dark:border-blue-800/40 font-bold' : 'hover:text-[#0c4a7e] dark:hover:text-blue-300'
           }`
         }, [
-          React.createElement('span', { key: 'i' }, '🏠'),
+          React.createElement(HomeSvgIcon, { key: 'i', className: 'w-3.5 h-3.5 text-[#0c4a7e] dark:text-blue-300' }),
           React.createElement('span', { key: 't' }, 'Home')
         ]),
-        React.createElement('span', { key: 'abt', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'About ▾'),
+        React.createElement('span', {
+          key: 'abt',
+          onClick: () => {
+            const el = document.getElementById('find-school-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          },
+          className: 'hover:text-[#0c4a7e] dark:hover:text-blue-300 cursor-pointer'
+        }, 'About ▾'),
         React.createElement('span', {
           key: 'tch',
           onClick: () => {
@@ -564,10 +481,10 @@ function MainHeader() {
             } else if (user && user.role === 'Teacher') {
               setCurrentView('DASHBOARD');
             } else {
-              openModal('login');
+              openModal('LOGIN');
             }
           },
-          className: 'hover:text-[#0c4a7e] cursor-pointer'
+          className: 'hover:text-[#0c4a7e] dark:hover:text-blue-300 cursor-pointer'
         }, 'Teachers ▾'),
         React.createElement('span', {
           key: 'sch',
@@ -580,35 +497,54 @@ function MainHeader() {
               if (el) el.scrollIntoView({ behavior: 'smooth' });
             }
           },
-          className: 'hover:text-[#0c4a7e] cursor-pointer'
+          className: 'hover:text-[#0c4a7e] dark:hover:text-blue-300 cursor-pointer'
         }, 'Schools ▾'),
         React.createElement('span', {
           key: 'stu',
           onClick: () => {
-            if (user && (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer' || user.role === 'MEO')) {
-              setOfficerTab('STUDENTS_INFO');
-              setCurrentView('DASHBOARD');
-            } else {
-              const el = document.getElementById('student-enrollment-section') || document.getElementById('stat-cards-section');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }
+            const el = document.getElementById('find-school-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
           },
-          className: 'hover:text-[#0c4a7e] cursor-pointer'
+          className: 'hover:text-[#0c4a7e] dark:hover:text-blue-300 cursor-pointer'
         }, 'Students ▾'),
-        React.createElement('span', { key: 'exam', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Examinations ▾'),
-        React.createElement('span', { key: 'notif', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Notifications'),
-        React.createElement('span', { key: 'contact', className: 'hover:text-[#0c4a7e] cursor-pointer' }, 'Contact')
+        React.createElement('span', {
+          key: 'exam',
+          onClick: () => {
+            const el = document.getElementById('find-school-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          },
+          className: 'hover:text-[#0c4a7e] dark:hover:text-blue-300 cursor-pointer'
+        }, 'Examinations ▾'),
+        React.createElement('span', {
+          key: 'notif',
+          onClick: () => {
+            const el = document.getElementById('find-school-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          },
+          className: 'hover:text-[#0c4a7e] dark:hover:text-blue-300 cursor-pointer'
+        }, 'Notifications'),
+        React.createElement('span', {
+          key: 'contact',
+          onClick: () => {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+          },
+          className: 'hover:text-[#0c4a7e] dark:hover:text-blue-300 cursor-pointer'
+        }, 'Contact')
       ]),
 
       // Right Action Buttons (Matching Reference Image)
       React.createElement('div', {
         key: 'actions',
-        className: 'flex items-center space-x-2 lg:space-x-2.5 flex-shrink-0'
+        className: 'flex items-center space-x-1.5 lg:space-x-2 flex-shrink-0'
       }, [
         // 9-dot grid icon
         React.createElement('button', {
           key: 'grid-btn',
-          className: 'text-slate-600 hover:text-[#0c4a7e] p-1 text-lg cursor-pointer'
+          onClick: () => {
+            if (user) setCurrentView('DASHBOARD');
+            else openModal('LOGIN');
+          },
+          className: 'text-slate-600 dark:text-slate-400 hover:text-[#0c4a7e] dark:hover:text-blue-300 p-1 text-lg cursor-pointer'
         }, '⠿'),
 
         !user ? (
@@ -619,7 +555,7 @@ function MainHeader() {
               key: 'btn-login',
               id: 'header-login-btn',
               onClick: () => openModal('LOGIN'),
-              className: 'flex items-center space-x-1.5 border border-[#0c4a7e] text-[#0c4a7e] hover:bg-blue-50 px-3 py-1.5 rounded-md font-semibold text-xs lg:text-sm transition-all shadow-xs cursor-pointer whitespace-nowrap'
+              className: 'flex items-center space-x-1.5 border border-[#0c4a7e] dark:border-blue-400 text-[#0c4a7e] dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-slate-800 px-3 py-1.5 rounded-md font-semibold text-xs lg:text-sm transition-all shadow-xs cursor-pointer whitespace-nowrap'
             }, [
               React.createElement('span', { key: 'icon' }, '👤'),
               React.createElement('span', { key: 'text' }, 'Login')
@@ -630,7 +566,7 @@ function MainHeader() {
               key: 'btn-register',
               id: 'header-register-btn',
               onClick: () => openModal('REGISTER'),
-              className: 'flex items-center space-x-1.5 bg-[#0c4a7e] hover:bg-[#08355b] text-white px-3 py-1.5 rounded-md font-semibold text-xs lg:text-sm transition-all shadow-xs cursor-pointer whitespace-nowrap'
+              className: 'flex items-center space-x-1.5 bg-[#0c4a7e] hover:bg-[#08355b] dark:bg-blue-600 dark:hover:bg-blue-700 text-white px-3 py-1.5 rounded-md font-semibold text-xs lg:text-sm transition-all shadow-xs cursor-pointer whitespace-nowrap'
             }, [
               React.createElement('span', { key: 'icon' }, '+'),
               React.createElement('span', { key: 'text' }, 'Register')
@@ -646,7 +582,7 @@ function MainHeader() {
             React.createElement('button', {
               key: 'user-btn',
               onClick: () => setDropdownOpen(!dropdownOpen),
-              className: 'flex items-center space-x-2 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-800 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all'
+              className: 'flex items-center space-x-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all'
             }, [
               React.createElement('div', {
                 key: 'avatar',
@@ -654,81 +590,90 @@ function MainHeader() {
               }, user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U'),
 
               React.createElement('div', { key: 'user-details', className: 'text-left max-w-[140px] truncate' }, [
-                React.createElement('div', { key: 'un', className: 'text-xs font-bold truncate text-[#0c4a7e]' }, user.fullName),
-                React.createElement('div', { key: 'ur', className: 'text-[10px] text-slate-500' }, user.role)
+                React.createElement('div', { key: 'un', className: 'text-xs font-bold truncate text-[#0c4a7e] dark:text-blue-400' }, user.fullName),
+                React.createElement('div', { key: 'ur', className: 'text-[10px] text-slate-500 dark:text-slate-400' }, user.role)
               ]),
 
-              React.createElement('span', { key: 'caret', className: 'text-xs text-slate-500' }, dropdownOpen ? '▲' : '▼')
+              React.createElement('span', { key: 'caret', className: 'text-xs text-slate-500 dark:text-slate-400' }, dropdownOpen ? '▲' : '▼')
             ]),
 
             dropdownOpen && React.createElement('div', {
               key: 'dropdown-menu',
-              className: 'absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50'
+              className: 'absolute right-0 mt-2 w-72 bg-white dark:bg-[#131f37] rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-2 z-50'
             }, [
               React.createElement('div', {
                 key: 'sum',
-                className: 'px-4 py-3 bg-[#e3f2fd] border-b border-blue-100'
+                className: 'px-4 py-3 bg-[#e3f2fd] dark:bg-blue-950/70 border-b border-blue-100 dark:border-blue-900/60'
               }, [
-                React.createElement('div', { key: 'n', className: 'font-bold text-slate-900 text-sm' }, user.fullName),
-                React.createElement('div', { key: 'm', className: 'text-xs text-slate-600' }, `+91 ${user.mobileNumber}`),
-                React.createElement('div', { key: 'role-tag', className: 'mt-1.5 flex items-center justify-between' }, [
-                  React.createElement('span', {
-                    key: 'r',
-                    className: 'inline-block bg-white text-[#0c4a7e] border border-blue-200 text-[11px] font-semibold px-2 py-0.5 rounded-full'
-                  }, user.role),
-                  React.createElement('span', {
-                    key: 'l-pend',
-                    className: 'inline-flex items-center text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full'
-                  }, '⚠ Dept Link Pending')
-                ])
+                React.createElement('div', { key: 'n', className: 'font-bold text-slate-900 dark:text-white text-sm' }, user.fullName),
+                React.createElement('div', { key: 'r', className: 'text-xs text-slate-600 dark:text-slate-300 mt-0.5' }, [
+                  React.createElement('span', { key: 'rl', className: 'font-semibold text-[#0c4a7e] dark:text-blue-400' }, user.role),
+                  user.mandal ? ` • ${user.mandal} Mandal` : ''
+                ]),
+                React.createElement('div', { key: 'm', className: 'text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-mono' }, user.mobileNumber)
               ]),
 
-              React.createElement('div', { key: 'items', className: 'py-1 text-sm text-slate-700' }, [
+              React.createElement('div', { key: 'links', className: 'py-1 text-sm text-slate-700 dark:text-slate-200' }, [
                 React.createElement('button', {
                   key: 'm-dash',
                   onClick: () => {
-                    setCurrentView('DASHBOARD');
                     setDropdownOpen(false);
+                    setCurrentView('DASHBOARD');
                   },
-                  className: 'w-full text-left px-4 py-2 hover:bg-slate-100 flex items-center space-x-2.5 font-medium text-[#0c4a7e]'
+                  className: 'w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center space-x-2.5 font-semibold text-[#0c4a7e] dark:text-blue-400'
                 }, [
                   React.createElement('span', { key: 'i' }, '📊'),
-                  React.createElement('span', { key: 't' }, 'Role Dashboard')
+                  React.createElement('span', { key: 't' }, 'My Officer Dashboard')
                 ]),
 
-                React.createElement('button', {
-                  key: 'm-portal',
+                (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer') && React.createElement('button', {
+                  key: 'm-sch',
                   onClick: () => {
-                    setCurrentView('PORTAL');
                     setDropdownOpen(false);
+                    setOfficerTab('SCHOOLS_INFO');
+                    setCurrentView('DASHBOARD');
                   },
-                  className: 'w-full text-left px-4 py-2 hover:bg-slate-100 flex items-center space-x-2.5'
+                  className: 'w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center space-x-2.5'
                 }, [
                   React.createElement('span', { key: 'i' }, '🏛️'),
-                  React.createElement('span', { key: 't' }, 'Main Portal View')
+                  React.createElement('span', { key: 't' }, 'Schools Information')
                 ]),
 
-                React.createElement('button', {
-                  key: 'm-settings',
+                (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer' || user.role === 'MEO') && React.createElement('button', {
+                  key: 'm-tch',
                   onClick: () => {
-                    openModal('FORGOT');
                     setDropdownOpen(false);
+                    setOfficerTab('TEACHERS_INFO');
+                    setCurrentView('DASHBOARD');
                   },
-                  className: 'w-full text-left px-4 py-2 hover:bg-slate-100 flex items-center space-x-2.5'
+                  className: 'w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center space-x-2.5'
                 }, [
-                  React.createElement('span', { key: 'i' }, '⚙️'),
-                  React.createElement('span', { key: 't' }, 'Change Password')
+                  React.createElement('span', { key: 'i' }, '👥'),
+                  React.createElement('span', { key: 't' }, 'Teachers Information')
+                ]),
+
+                (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer') && React.createElement('button', {
+                  key: 'm-ret',
+                  onClick: () => {
+                    setDropdownOpen(false);
+                    setOfficerTab('RETIREMENT_INFO');
+                    setCurrentView('DASHBOARD');
+                  },
+                  className: 'w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center space-x-2.5'
+                }, [
+                  React.createElement('span', { key: 'i' }, '📅'),
+                  React.createElement('span', { key: 't' }, 'Retirement Information')
                 ])
               ]),
 
-              React.createElement('div', { key: 'logout-sec', className: 'pt-1 border-t border-slate-100' }, [
+              React.createElement('div', { key: 'logout-sec', className: 'pt-1 border-t border-slate-100 dark:border-slate-800' }, [
                 React.createElement('button', {
                   key: 'm-logout',
                   onClick: () => {
                     setDropdownOpen(false);
                     logout();
                   },
-                  className: 'w-full text-left px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 flex items-center space-x-2.5'
+                  className: 'w-full text-left px-4 py-2.5 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center space-x-2.5'
                 }, [
                   React.createElement('span', { key: 'i' }, '🚪'),
                   React.createElement('span', { key: 't' }, 'Logout')
@@ -742,150 +687,309 @@ function MainHeader() {
   ]);
 }
 
+
 // ==========================================
-// 4. HERO SECTION (IMAGE 2: PURE WHITE BACKGROUND, GREEN CREST, PENCIL, RISING LOGO)
+// 4. HERO SECTION (MATCHING REFERENCE IMAGE 1: COMPACT HORIZONTAL ROW, BANNER + SLOGAN ON LEFT, CARDS ON RIGHT)
 // ==========================================
-function HeroBanner() {
+function HeroBanner({ onSelectOfficial }) {
   return React.createElement('div', {
-    className: 'bg-white py-3 sm:py-4 px-4 border-b border-slate-200'
+    className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2.5 pb-1'
   }, [
     React.createElement('div', {
       key: 'hero-grid',
-      className: 'max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6'
+      className: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-stretch w-full'
     }, [
-      // Left: Original Green Telangana Government Emblem
+      // 1. Left Section (Banner Card + Slogan Ribbon Stacked): spans 7 cols on desktop (~58% width matching reference 2)
       React.createElement('div', {
-        key: 'left-crest',
-        className: 'hidden md:flex flex-col items-center justify-center p-1'
+        key: 'left-col',
+        className: 'col-span-1 sm:col-span-2 lg:col-span-7 flex flex-col justify-between gap-1.5 h-full w-full'
       }, [
-        React.createElement(TelanganaEmblem, { className: 'w-36 h-36 md:w-44 md:h-44 drop-shadow-xs' })
+        // Main Banner Card
+        React.createElement('div', {
+          key: 'main-banner-card',
+          className: 'bg-white dark:bg-[#131f37] rounded-2xl border border-slate-200 dark:border-slate-700/80 p-2 sm:p-2.5 shadow-xs flex-1 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 transition-colors w-full'
+        }, [
+          // Left Emblem
+          React.createElement('div', {
+            key: 'left-emblem',
+            className: 'flex-shrink-0 flex items-center justify-center p-0.5'
+          }, [
+            React.createElement(TelanganaEmblem, { className: 'w-18 h-18 sm:w-20 sm:h-20 drop-shadow-xs' })
+          ]),
+
+          // Center Pencil Graphic & Titles
+          React.createElement('div', {
+            key: 'center-content',
+            className: 'flex-1 w-full flex flex-col items-center justify-center px-1 min-w-0'
+          }, [
+            React.createElement(PencilBanner, { className: 'w-full' })
+          ]),
+
+          // Right Telangana Rising
+          React.createElement('div', {
+            key: 'right-rising',
+            className: 'flex-shrink-0 hidden sm:flex items-center justify-center p-0.5'
+          }, [
+            React.createElement(TelanganaRisingLogo, { className: 'w-14 h-14 sm:w-16 sm:h-16 drop-shadow-xs' })
+          ])
+        ]),
+
+        // Bottom Slogan Ribbon (directly beneath banner, matching left column width)
+        React.createElement('div', {
+          key: 'slogan-bar',
+          className: 'bg-[#0c4a7e] dark:bg-[#082a4d] text-white py-1.5 px-3 sm:px-4 rounded-xl shadow-xs border border-blue-900/40 flex items-center justify-between sm:justify-around flex-wrap gap-2 text-[11px] sm:text-xs font-semibold transition-colors w-full'
+        }, [
+          React.createElement('div', { key: 'p1', className: 'flex items-center space-x-1' }, [
+            React.createElement(TeardropPinSvgIcon, { key: 'i', className: 'w-3.5 h-3.5 text-white flex-shrink-0' }),
+            React.createElement('span', { key: 't' }, 'Jangaon')
+          ]),
+          React.createElement('div', { key: 'p2', className: 'flex items-center space-x-1' }, [
+            React.createElement(BookOpenSvgIcon, { key: 'i', className: 'w-3.5 h-3.5 text-white flex-shrink-0' }),
+            React.createElement('span', { key: 't' }, 'Quality Education')
+          ]),
+          React.createElement('div', { key: 'p3', className: 'flex items-center space-x-1' }, [
+            React.createElement(TeachersGroupSvgIcon, { key: 'i', className: 'w-3.5 h-3.5 text-white flex-shrink-0' }),
+            React.createElement('span', { key: 't' }, 'Empowered Teachers')
+          ]),
+          React.createElement('div', { key: 'p4', className: 'flex items-center space-x-1' }, [
+            React.createElement(GradCapSvgIcon, { key: 'i', className: 'w-3.5 h-3.5 text-white flex-shrink-0' }),
+            React.createElement('span', { key: 't' }, 'Brighter Future')
+          ])
+        ])
       ]),
 
-      // Center: Giant Pencil Graphic matching IMAGE 2
-      // Line 1: GOVERNMENT OF TELANGANA (Dark green)
-      // Pencil Graphic (Red)
-      // Line 2: DEPARTMENT OF SCHOOL EDUCATION (Blue)
-      // Line 3: JANGAON DISTRICT (Red / Dark red)
+      // 2. Right Section: Combined Official Profile Card for Sri Sandeep Kumar Jha, I.A.S (spans 5 cols on desktop, matching 2nd reference image exactly)
       React.createElement('div', {
-        key: 'center-pencil',
-        className: 'flex-1 flex justify-center w-full px-2'
+        key: 'combined-official-card',
+        className: 'col-span-1 sm:col-span-2 lg:col-span-5 bg-[#f0f7fe] dark:bg-[#132238] border border-blue-200/90 dark:border-blue-800/60 rounded-2xl p-3 sm:p-3.5 lg:p-4 flex flex-col justify-between shadow-xs hover:shadow-sm transition-all h-full w-full'
       }, [
-        React.createElement(PencilBanner, { className: 'w-full max-w-2xl' })
-      ]),
+        // Top Row: "View Profile →" link on right
+        React.createElement('div', {
+          key: 'top-link-row',
+          className: 'flex justify-end w-full'
+        }, [
+          React.createElement('button', {
+            key: 'view-profile-btn',
+            onClick: () => onSelectOfficial && onSelectOfficial('SANDEEP_JHA'),
+            className: 'text-xs sm:text-[13px] font-semibold text-[#1976d2] dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 flex items-center space-x-1 cursor-pointer whitespace-nowrap hover:underline transition-colors'
+          }, [
+            React.createElement('span', { key: 'txt' }, 'View Profile'),
+            React.createElement('span', { key: 'arr' }, '→')
+          ])
+        ]),
 
-      // Right: Original 1 Telangana Rising Logo
-      React.createElement('div', {
-        key: 'right-rising',
-        className: 'hidden md:flex flex-col items-center justify-center p-1'
-      }, [
-        React.createElement(TelanganaRisingLogo, { className: 'w-32 h-32 md:w-40 md:h-40 drop-shadow-xs' })
+        // Middle Row: Large Circular Photo on Left, Vertical Divider Line, Prominent Official Details on Right
+        React.createElement('div', {
+          key: 'details-row',
+          className: 'flex items-center gap-3 sm:gap-3.5 my-auto py-0.5'
+        }, [
+          // Large Circular Portrait Photo (Matching 2nd Reference Image)
+          React.createElement('div', {
+            key: 'photo-container',
+            className: 'w-26 h-26 sm:w-28 sm:h-28 lg:w-[118px] lg:h-[118px] rounded-full ring-2 ring-blue-300/80 dark:ring-blue-700/60 border-2 border-white dark:border-slate-800 shadow-sm overflow-hidden flex items-center justify-center flex-shrink-0 bg-white'
+          }, [
+            React.createElement('img', {
+              key: 'sandeep-photo',
+              src: '/assets/officials/district_collector.png',
+              alt: 'Sri Sandeep Kumar Jha, I.A.S',
+              className: 'w-full h-full rounded-full object-cover scale-95',
+              style: { borderRadius: '50%', objectFit: 'cover' }
+            })
+          ]),
+
+          // Tall Vertical Divider Line
+          React.createElement('div', {
+            key: 'v-divider',
+            className: 'w-px h-20 sm:h-22 lg:h-[88px] bg-blue-200/80 dark:bg-blue-800/80 self-center flex-shrink-0 mx-2'
+          }),
+
+          // Names and Both Designations (Bigger, Bolder, Professional Typography)
+          React.createElement('div', {
+            key: 'text-container',
+            className: 'flex-1 min-w-0 pl-1'
+          }, [
+            // Name: Sri Sandeep Kumar Jha, I.A.S
+            React.createElement('h3', {
+              key: 'official-name',
+              className: 'font-bold text-[15px] sm:text-base lg:text-[17.5px] text-[#0f172a] dark:text-white leading-tight tracking-tight whitespace-nowrap'
+            }, 'Sri Sandeep Kumar Jha, I.A.S'),
+
+            // Designation 1: District Collector
+            React.createElement('div', {
+              key: 'desig-collector',
+              className: 'flex items-center space-x-2 mt-1.5 text-xs sm:text-[13.5px] lg:text-[14px] font-semibold text-[#0c4a7e] dark:text-blue-200 whitespace-nowrap'
+            }, [
+              React.createElement(GovtBuildingSvgIcon, { 
+                key: 'icon-collector', 
+                className: 'w-4 h-4 text-[#0c4a7e] dark:text-blue-300 flex-shrink-0',
+                style: { width: '16px', height: '16px', minWidth: '16px' }
+              }),
+              React.createElement('span', { key: 'label-collector' }, 'District Collector')
+            ]),
+
+            // Designation 2: District Educational Officer
+            React.createElement('div', {
+              key: 'desig-deo',
+              className: 'flex items-center space-x-2 mt-1 text-xs sm:text-[13.5px] lg:text-[14px] font-semibold text-[#0c4a7e] dark:text-blue-200 whitespace-nowrap'
+            }, [
+              React.createElement(GradCapSvgIcon, { 
+                key: 'icon-deo', 
+                className: 'w-4 h-4 text-[#0c4a7e] dark:text-blue-300 flex-shrink-0',
+                style: { width: '16px', height: '16px', minWidth: '16px' }
+              }),
+              React.createElement('span', { key: 'label-deo' }, 'District Educational Officer')
+            ]),
+
+            // District: Jangaon District
+            React.createElement('div', {
+              key: 'district-label',
+              className: 'text-xs sm:text-[12px] lg:text-[12.5px] text-slate-500 dark:text-slate-400 font-normal ml-6 leading-tight mt-0.5 whitespace-nowrap'
+            }, 'Jangaon District')
+          ])
+        ]),
+
+        // Bottom Row: Enclosed Rounded Quotation Card Box (Matching 2nd Reference Image Exactly)
+        React.createElement('div', {
+          key: 'quote-card-box',
+          className: 'w-full bg-white dark:bg-slate-800/90 border border-blue-100 dark:border-blue-900/40 rounded-2xl px-4 py-2 sm:py-2.5 flex items-center justify-between shadow-2xs mt-2'
+        }, [
+          React.createElement('span', {
+            key: 'q1',
+            className: 'text-[#1976d2] dark:text-blue-400 font-serif font-black text-2xl flex-shrink-0 select-none mr-3 leading-none'
+          }, '“'),
+          React.createElement('p', {
+            key: 'qt',
+            className: 'flex-1 text-center italic text-xs sm:text-[12px] lg:text-[12.5px] font-medium text-[#1e3a8a] dark:text-slate-200 leading-snug px-1'
+          }, [
+            React.createElement('span', { key: 'l1', className: 'block' }, 'Committed to inclusive development and'),
+            React.createElement('span', { key: 'l2', className: 'block' }, 'quality education for every child.')
+          ]),
+          React.createElement('span', {
+            key: 'q2',
+            className: 'text-[#1976d2] dark:text-blue-400 font-serif font-black text-2xl flex-shrink-0 select-none ml-3 leading-none'
+          }, '”')
+        ])
       ])
     ])
   ]);
 }
 
+// SloganRibbon is now integrated inside HeroBanner (returns null for compatibility)
+function SloganRibbon() {
+  return null;
+}
+
 // ==========================================
-// 5. STATISTICS / CATEGORY BAR (MATCHING IMAGE 2 EXACTLY)
-// Unified horizontal bar:
-// Left side: Deep blue bar (#0c4a7e) with pills
-// Right side: Integrated WHITE section with 4 stats
+// 5B. STANDALONE 4 STATISTICS CARDS (MATCHING REFERENCE IMAGE EXACTLY: DIVIDED WHITE BAR)
 // ==========================================
-function StatsRibbon() {
+function StandaloneStatsCards() {
+  const { user, setCurrentView, openModal, setOfficerTab } = useContext(AuthContext);
+
+  const stats = [
+    {
+      key: 'schools',
+      icon: React.createElement(BuildingSvgIcon, { className: 'w-7 h-7 sm:w-8 sm:h-8 text-[#0066cc]' }),
+      count: '1,248',
+      label: 'Schools',
+      action: () => {
+        if (user && (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer' || user.role === 'MEO')) {
+          setOfficerTab('SCHOOLS_INFO');
+          setCurrentView('DASHBOARD');
+        } else {
+          const el = document.getElementById('find-school-section');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    },
+    {
+      key: 'teachers',
+      icon: React.createElement(TeachersGroupSvgIcon, { className: 'w-7 h-7 sm:w-8 sm:h-8 text-[#007a33]' }),
+      count: '3,842',
+      label: 'Teachers',
+      action: () => {
+        if (user && (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer' || user.role === 'MEO')) {
+          setOfficerTab('TEACHERS_INFO');
+          setCurrentView('DASHBOARD');
+        } else if (user && user.role === 'Teacher') {
+          setCurrentView('DASHBOARD');
+        } else {
+          openModal('LOGIN');
+        }
+      }
+    },
+    {
+      key: 'students',
+      icon: React.createElement(TeachersGroupSvgIcon, { className: 'w-7 h-7 sm:w-8 sm:h-8 text-[#e65100]' }),
+      count: '1,45,620',
+      label: 'Students',
+      action: () => {
+        const el = document.getElementById('find-school-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    },
+    {
+      key: 'mandals',
+      icon: React.createElement(TeardropPinSvgIcon, { className: 'w-7 h-7 sm:w-8 sm:h-8 text-[#7c3aed]' }),
+      count: '29',
+      label: 'Mandals',
+      action: () => {
+        const el = document.getElementById('find-school-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  ];
+
   return React.createElement('div', {
-    className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2.5 mb-1.5'
+    className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-3'
   }, [
     React.createElement('div', {
-      key: 'ribbon-card',
-      className: 'rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col lg:flex-row items-stretch'
-    }, [
-      // Left Side: Deep Government Blue Bar (#0c4a7e) with Category Pills
+      key: 'stats-container',
+      className: 'bg-white dark:bg-[#131f37] rounded-xl border border-slate-200 dark:border-slate-700/80 shadow-xs grid grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 dark:divide-slate-700/60 p-2 sm:p-2.5 transition-colors'
+    }, stats.map((st) => (
       React.createElement('div', {
-        key: 'left-pills-bar',
-        className: 'bg-[#0c4a7e] text-white py-2 px-3 sm:px-5 flex items-center justify-between flex-wrap gap-2 text-xs sm:text-[13px] font-semibold flex-1'
+        key: st.key,
+        onClick: st.action || undefined,
+        className: `p-2 sm:p-3 flex items-center justify-between group transition-all ${
+          st.action ? 'cursor-pointer hover:bg-slate-50/80 dark:hover:bg-slate-800/40' : ''
+        }`
       }, [
         React.createElement('div', {
-          key: 'p1',
-          className: 'flex items-center space-x-1.5 bg-[#08355b] border border-blue-400/30 px-3 py-1 rounded-full'
+          key: 'left-info',
+          className: 'flex items-center space-x-2.5 sm:space-x-3.5'
         }, [
-          React.createElement('span', { key: 'i' }, '📍'),
-          React.createElement('span', { key: 't' }, 'Jangaon')
+          React.createElement('div', {
+            key: 'icon-wrap',
+            className: 'flex-shrink-0 group-hover:scale-105 transition-transform'
+          }, st.icon),
+          React.createElement('div', { key: 'text-wrap' }, [
+            React.createElement('div', {
+              key: 'count',
+              className: 'font-extrabold text-base sm:text-xl lg:text-2xl text-[#0c4a7e] dark:text-blue-400 leading-tight'
+            }, st.count),
+            React.createElement('div', {
+              key: 'label',
+              className: 'text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 font-medium'
+            }, st.label)
+          ])
         ]),
+
         React.createElement('div', {
-          key: 'p2',
-          className: 'flex items-center space-x-1.5 bg-[#08355b] border border-blue-400/30 px-3 py-1 rounded-full'
-        }, [
-          React.createElement('span', { key: 'i' }, '📖'),
-          React.createElement('span', { key: 't' }, 'Quality Education')
-        ]),
-        React.createElement('div', {
-          key: 'p3',
-          className: 'flex items-center space-x-1.5 bg-[#08355b] border border-blue-400/30 px-3 py-1 rounded-full'
-        }, [
-          React.createElement('span', { key: 'i' }, '👥'),
-          React.createElement('span', { key: 't' }, 'Empowered Teachers')
-        ]),
-        React.createElement('div', {
-          key: 'p4',
-          className: 'flex items-center space-x-1.5 bg-[#08355b] border border-blue-400/30 px-3 py-1 rounded-full'
-        }, [
-          React.createElement('span', { key: 'i' }, '🎓'),
-          React.createElement('span', { key: 't' }, 'Brighter Future')
-        ])
-      ]),
-
-      // Right Side: Integrated WHITE section with 4 Statistics (Matching IMAGE 2)
-      React.createElement('div', {
-        key: 'right-stats-bar',
-        className: 'bg-white py-2 px-4 sm:px-6 flex items-center justify-around space-x-4 sm:space-x-8 text-center border-t lg:border-t-0 lg:border-l border-slate-200'
-      }, [
-        // 1,248 Schools
-        React.createElement('div', { key: 'st-sch', className: 'flex items-center space-x-2' }, [
-          React.createElement('span', { key: 'icon', className: 'text-xl sm:text-2xl text-[#0c4a7e]' }, '🏛️'),
-          React.createElement('div', { key: 'v', className: 'text-left' }, [
-            React.createElement('div', { key: 'num', className: 'font-extrabold text-sm sm:text-base leading-tight text-[#0c4a7e]' }, '1,248'),
-            React.createElement('div', { key: 'lbl', className: 'text-[10px] sm:text-[11px] text-slate-600 font-semibold' }, 'Schools')
-          ])
-        ]),
-
-        // 3,842 Teachers
-        React.createElement('div', { key: 'st-tch', className: 'flex items-center space-x-2' }, [
-          React.createElement('span', { key: 'icon', className: 'text-xl sm:text-2xl text-[#007a33]' }, '👨‍🏫'),
-          React.createElement('div', { key: 'v', className: 'text-left' }, [
-            React.createElement('div', { key: 'num', className: 'font-extrabold text-sm sm:text-base leading-tight text-[#0c4a7e]' }, '3,842'),
-            React.createElement('div', { key: 'lbl', className: 'text-[10px] sm:text-[11px] text-slate-600 font-semibold' }, 'Teachers')
-          ])
-        ]),
-
-        // 1,45,620 Students
-        React.createElement('div', { key: 'st-stu', className: 'flex items-center space-x-2' }, [
-          React.createElement('span', { key: 'icon', className: 'text-xl sm:text-2xl text-[#0c4a7e]' }, '🎒'),
-          React.createElement('div', { key: 'v', className: 'text-left' }, [
-            React.createElement('div', { key: 'num', className: 'font-extrabold text-sm sm:text-base leading-tight text-[#0c4a7e]' }, '1,45,620'),
-            React.createElement('div', { key: 'lbl', className: 'text-[10px] sm:text-[11px] text-slate-600 font-semibold' }, 'Students')
-          ])
-        ]),
-
-        // 29 Mandals
-        React.createElement('div', { key: 'st-mnd', className: 'flex items-center space-x-2' }, [
-          React.createElement('span', { key: 'icon', className: 'text-xl sm:text-2xl text-[#c51c24]' }, '📍'),
-          React.createElement('div', { key: 'v', className: 'text-left' }, [
-            React.createElement('div', { key: 'num', className: 'font-extrabold text-sm sm:text-base leading-tight text-[#0c4a7e]' }, '29'),
-            React.createElement('div', { key: 'lbl', className: 'text-[10px] sm:text-[11px] text-slate-600 font-semibold' }, 'Mandals')
-          ])
-        ])
+          key: 'arrow-btn',
+          className: 'w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#0c4a7e] dark:text-blue-400 flex items-center justify-center font-bold text-xs sm:text-sm shadow-2xs group-hover:bg-[#0c4a7e] group-hover:text-white group-hover:border-[#0c4a7e] dark:group-hover:bg-blue-600 transition-all flex-shrink-0 mr-1'
+        }, '›')
       ])
-    ])
+    )))
   ]);
 }
 
 // ==========================================
-// 6. QUICK SERVICES (IMAGE 2: PURE WHITE SECTION WITH PASTEL CARDS)
+// 6. QUICK SERVICES (MATCHING REFERENCE IMAGE EXACTLY: PASTEL CARDS & CLEAN ICONS)
 // ==========================================
 function QuickServices() {
   const { user, setCurrentView, openModal, setOfficerTab } = useContext(AuthContext);
 
   return React.createElement('div', {
-    className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5'
+    className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 mb-2'
   }, [
     React.createElement('div', {
       key: 'qs-head',
@@ -897,13 +1001,17 @@ function QuickServices() {
           className: 'w-7 h-7 rounded-full bg-[#0c4a7e] text-white flex items-center justify-center font-bold text-xs shadow-xs'
         }, '⚡'),
         React.createElement('div', { key: 'text' }, [
-          React.createElement('h2', { key: 'h2', className: 'text-base sm:text-lg font-bold text-slate-900 leading-tight' }, 'Quick Services'),
-          React.createElement('p', { key: 'p', className: 'text-[11px] text-slate-500' }, 'Access essential information and services')
+          React.createElement('h2', { key: 'h2', className: 'text-base sm:text-lg font-bold text-[#0c4a7e] dark:text-white leading-tight' }, 'Quick Services'),
+          React.createElement('p', { key: 'p', className: 'text-[11px] text-slate-500 dark:text-slate-400' }, 'Access essential information and services')
         ])
       ]),
       React.createElement('button', {
         key: 'view-all',
-        className: 'text-xs font-semibold text-[#0c4a7e] hover:text-blue-900 flex items-center space-x-1'
+        onClick: () => {
+          const el = document.getElementById('find-school-section');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        },
+        className: 'text-xs font-semibold text-[#0c4a7e] dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-200 flex items-center space-x-1 cursor-pointer'
       }, [
         React.createElement('span', { key: 't' }, 'View All Services'),
         React.createElement('span', { key: 'a' }, '→')
@@ -914,7 +1022,7 @@ function QuickServices() {
       key: 'cards-grid',
       className: 'grid grid-cols-1 md:grid-cols-2 gap-4'
     }, [
-      // Left Card: Very light green / pale green background (#e8f5e9) with green circle icon
+      // Left Card: Very light green / pale green background (#f0fdf4) with green circle icon
       React.createElement('div', {
         key: 'c-tch',
         onClick: () => {
@@ -927,25 +1035,27 @@ function QuickServices() {
             openModal('LOGIN');
           }
         },
-        className: 'bg-[#e8f5e9] border border-[#c8e6c9] hover:border-emerald-400 rounded-xl p-3.5 sm:p-4 flex items-center justify-between cursor-pointer transition-all duration-200 hover:shadow-xs group'
+        className: 'bg-[#f0fdf4] dark:bg-[#122828] border border-emerald-200 dark:border-emerald-800/60 hover:border-emerald-400 rounded-xl p-3.5 sm:p-4 flex items-center justify-between cursor-pointer transition-all duration-200 hover:shadow-xs group'
       }, [
         React.createElement('div', { key: 'info', className: 'flex items-center space-x-3.5' }, [
           React.createElement('div', {
             key: 'icon-wrap',
-            className: 'w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#00897b] text-white flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition-transform'
-          }, '👤'),
+            className: 'w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#d1fae5] dark:bg-emerald-950/70 text-[#007a33] flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform'
+          }, [
+            React.createElement(UserSilhouetteSvgIcon, { key: 'icn', className: 'w-6 h-6' })
+          ]),
           React.createElement('div', { key: 'txt' }, [
-            React.createElement('h3', { key: 'title', className: 'text-sm sm:text-base font-bold text-[#0c4a7e] group-hover:text-blue-900' }, 'Teachers Information'),
-            React.createElement('p', { key: 'sub', className: 'text-xs text-slate-600' }, 'Transfers, Vacancies, Trainings and More')
+            React.createElement('h3', { key: 'title', className: 'text-sm sm:text-base font-bold text-[#0c4a7e] dark:text-emerald-300 group-hover:text-blue-900 dark:group-hover:text-emerald-200' }, 'Teachers Information'),
+            React.createElement('p', { key: 'sub', className: 'text-xs text-slate-600 dark:text-slate-400' }, 'Transfers, Vacancies, Trainings and More')
           ])
         ]),
         React.createElement('div', {
           key: 'arrow',
-          className: 'w-8 h-8 rounded-full bg-white text-slate-600 border border-slate-200 flex items-center justify-center text-xs font-bold shadow-xs group-hover:bg-[#00897b] group-hover:text-white group-hover:border-[#00897b] transition-all'
+          className: 'w-8 h-8 rounded-full bg-white dark:bg-slate-800 text-[#0c4a7e] dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-xs font-bold shadow-xs group-hover:bg-[#007a33] group-hover:text-white group-hover:border-[#007a33] transition-all'
         }, '→')
       ]),
 
-      // Right Card: Very light blue background (#e3f2fd) with blue circle icon
+      // Right Card: Very light blue background (#f0f7ff) with blue circle icon
       React.createElement('div', {
         key: 'c-sch',
         onClick: () => {
@@ -953,38 +1063,159 @@ function QuickServices() {
             setOfficerTab('SCHOOLS_INFO');
             setCurrentView('DASHBOARD');
           } else {
-            // Strictly NO standalone login or registration page for Schools Information
-            // Smoothly scroll down to public directory search section
             const el = document.getElementById('find-school-section');
             if (el) el.scrollIntoView({ behavior: 'smooth' });
           }
         },
-        className: 'bg-[#e3f2fd] border border-[#bbdefb] hover:border-blue-400 rounded-xl p-3.5 sm:p-4 flex items-center justify-between cursor-pointer transition-all duration-200 hover:shadow-xs group'
+        className: 'bg-[#f0f7ff] dark:bg-[#132238] border border-blue-200 dark:border-blue-800/60 hover:border-blue-400 rounded-xl p-3.5 sm:p-4 flex items-center justify-between cursor-pointer transition-all duration-200 hover:shadow-xs group'
       }, [
         React.createElement('div', { key: 'info', className: 'flex items-center space-x-3.5' }, [
           React.createElement('div', {
             key: 'icon-wrap',
-            className: 'w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#1976d2] text-white flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition-transform'
-          }, '🏛️'),
+            className: 'w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#dbeafe] dark:bg-blue-950/70 text-[#0c4a7e] flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform'
+          }, [
+            React.createElement(BuildingSvgIcon, { key: 'icn', className: 'w-6 h-6' })
+          ]),
           React.createElement('div', { key: 'txt' }, [
-            React.createElement('h3', { key: 'title', className: 'text-sm sm:text-base font-bold text-[#0c4a7e] group-hover:text-blue-900' }, 'Schools Information'),
-            React.createElement('p', { key: 'sub', className: 'text-xs text-slate-600' }, 
-              (user && (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer'))
-                ? 'Official District & Mandal School Particulars (Protected Dashboard)'
-                : (user && user.role === 'MEO')
-                ? `School Strength Particulars for ${user.mandal || 'Assigned'} Mandal (Protected Dashboard)`
-                : 'Find Schools in Jangaon District'
-            )
+            React.createElement('h3', { key: 'title', className: 'text-sm sm:text-base font-bold text-[#0c4a7e] dark:text-blue-300 group-hover:text-blue-900 dark:group-hover:text-blue-200' }, 'Schools Information'),
+            React.createElement('p', { key: 'sub', className: 'text-xs text-slate-600 dark:text-slate-400' }, 'Find Schools in Jangaon District')
           ])
         ]),
         React.createElement('div', {
           key: 'arrow',
-          className: 'w-8 h-8 rounded-full bg-white text-slate-600 border border-slate-200 flex items-center justify-center text-xs font-bold shadow-xs group-hover:bg-[#1976d2] group-hover:text-white group-hover:border-[#1976d2] transition-all'
+          className: 'w-8 h-8 rounded-full bg-white dark:bg-slate-800 text-[#0c4a7e] dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-xs font-bold shadow-xs group-hover:bg-[#0c4a7e] group-hover:text-white group-hover:border-[#0c4a7e] transition-all'
         }, '→')
       ])
     ])
   ]);
 }
+
+// ==========================================
+// 6B. OFFICIAL PROFILE MODAL (DISTRICT COLLECTOR & DEO VERIFIED DETAILS)
+// ==========================================
+function OfficialProfileModal({ official, onClose }) {
+  if (!official) return null;
+
+  const isSandeep = (official === 'SANDEEP_JHA' || official === 'COLLECTOR');
+  const officialData = isSandeep ? {
+    name: 'Sri Sandeep Kumar Jha, I.A.S',
+    title: 'District Collector & District Educational Officer',
+    district: 'Jangaon District, Telangana',
+    photo: '/assets/officials/sandeep_kumar_jha.png',
+    department: 'Revenue, District Administration & Department of School Education',
+    badgeColor: 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800',
+    office: 'Collectorate Complex, Jangaon District Headquarters, Telangana - 506167',
+    contact: 'collector-jgn@telangana.gov.in / deojangaon@gmail.com',
+    message: 'Committed to inclusive development, quality education for every child, and streamlined administrative governance across all mandals of Jangaon District.'
+  } : {
+    name: 'Sri K. Ramesh Kumar',
+    title: 'District Educational Officer (DEO)',
+    district: 'Jangaon District, Telangana',
+    photo: '/assets/officials/district_educational_officer.png',
+    department: 'Department of School Education, Telangana',
+    badgeColor: 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800',
+    office: 'O/o District Educational Officer, Near Collectorate, Jangaon, Telangana - 506167',
+    contact: 'deojangaon@gmail.com',
+    message: 'Quality education, equitable opportunities, and holistic development for every child across primary, upper primary, and secondary schools in Jangaon District.'
+  };
+
+  return React.createElement('div', {
+    className: 'fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto'
+  }, [
+    React.createElement('div', {
+      key: 'modal-card',
+      className: 'bg-white dark:bg-[#131f37] rounded-2xl max-w-lg w-full border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden'
+    }, [
+      // Top colored bar
+      React.createElement('div', {
+        key: 'top-bar',
+        className: `h-3 ${isSandeep ? 'bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800' : 'bg-gradient-to-r from-emerald-600 via-teal-700 to-green-800'}`
+      }),
+
+      React.createElement('div', {
+        key: 'content',
+        className: 'p-6 space-y-4'
+      }, [
+        React.createElement('div', {
+          key: 'header-row',
+          className: 'flex items-center justify-between'
+        }, [
+          React.createElement('span', {
+            key: 'badge',
+            className: `px-3 py-1 rounded-full text-xs font-bold border ${officialData.badgeColor}`
+          }, isCollector ? 'DISTRICT COLLECTOR' : 'DISTRICT EDUCATIONAL OFFICER'),
+          React.createElement('button', {
+            key: 'close-btn',
+            onClick: onClose,
+            className: 'text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-lg font-bold cursor-pointer'
+          }, '✕')
+        ]),
+
+        // Photo & Name
+        React.createElement('div', {
+          key: 'profile-head',
+          className: 'flex items-center space-x-4 pt-1'
+        }, [
+          React.createElement('div', {
+            key: 'photo-container',
+            className: `w-20 h-20 rounded-full p-1 ring-3 ${isCollector ? 'ring-blue-300 dark:ring-blue-600' : 'ring-emerald-300 dark:ring-emerald-600'} bg-white dark:bg-slate-800 shadow-md flex-shrink-0 overflow-hidden`
+          }, [
+            React.createElement('img', {
+              key: 'img',
+              src: officialData.photo,
+              alt: officialData.name,
+              className: 'w-full h-full rounded-full object-cover',
+              style: { borderRadius: '50%', objectFit: 'cover' }
+            })
+          ]),
+          React.createElement('div', { key: 'titles' }, [
+            React.createElement('h3', { key: 'name', className: 'text-lg font-black text-slate-900 dark:text-white leading-snug' }, officialData.name),
+            React.createElement('p', { key: 'role', className: 'text-sm font-semibold text-[#0c4a7e] dark:text-blue-400' }, officialData.title),
+            React.createElement('p', { key: 'dist', className: 'text-xs text-slate-500 dark:text-slate-400' }, officialData.district)
+          ])
+        ]),
+
+        // Details grid
+        React.createElement('div', {
+          key: 'details-box',
+          className: 'bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3.5 space-y-2 text-xs border border-slate-200/80 dark:border-slate-700/60'
+        }, [
+          React.createElement('div', { key: 'dept', className: 'flex justify-between' }, [
+            React.createElement('span', { key: 'l', className: 'text-slate-500 dark:text-slate-400 font-medium' }, 'Department:'),
+            React.createElement('span', { key: 'v', className: 'font-semibold text-slate-800 dark:text-slate-200 text-right' }, officialData.department)
+          ]),
+          React.createElement('div', { key: 'office', className: 'flex justify-between' }, [
+            React.createElement('span', { key: 'l', className: 'text-slate-500 dark:text-slate-400 font-medium' }, 'Official Office:'),
+            React.createElement('span', { key: 'v', className: 'font-semibold text-slate-800 dark:text-slate-200 text-right max-w-[260px]' }, officialData.office)
+          ]),
+          React.createElement('div', { key: 'email', className: 'flex justify-between' }, [
+            React.createElement('span', { key: 'l', className: 'text-slate-500 dark:text-slate-400 font-medium' }, 'Official Email:'),
+            React.createElement('span', { key: 'v', className: 'font-semibold text-blue-600 dark:text-blue-400 text-right' }, officialData.contact)
+          ])
+        ]),
+
+        // Vision Statement
+        React.createElement('div', {
+          key: 'statement',
+          className: 'p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 bg-blue-50/40 dark:bg-slate-800/40'
+        }, [
+          React.createElement('div', { key: 'lbl', className: 'text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1' }, 'Vision & Leadership Message'),
+          React.createElement('p', { key: 'p', className: 'text-xs text-slate-700 dark:text-slate-300 italic leading-relaxed' }, `“${officialData.message}”`)
+        ]),
+
+        // Close button
+        React.createElement('div', { key: 'btn-row', className: 'pt-2 flex justify-end' }, [
+          React.createElement('button', {
+            key: 'btn',
+            onClick: onClose,
+            className: 'px-4 py-2 bg-[#0c4a7e] hover:bg-[#08355b] dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold text-xs rounded-lg transition-colors cursor-pointer shadow-xs'
+          }, 'Close')
+        ])
+      ])
+    ])
+  ]);
+}
+
 
 // ==========================================
 // 7. LOWER CONTENT CARDS (IMAGE 2: PURE WHITE BACKGROUND, LIGHT PASTELS)
@@ -1114,7 +1345,7 @@ function PortalCardsGrid() {
       // 1. Latest Notifications (White Card, Blue Title, Light Border)
       React.createElement('div', {
         key: 'card-notif',
-        className: 'bg-white rounded-xl border border-slate-200 shadow-xs p-4 flex flex-col justify-between'
+        className: 'bg-white dark:bg-[#131f37] rounded-xl border border-slate-200 dark:border-slate-700/80 shadow-xs p-4 flex flex-col justify-between transition-colors'
       }, [
         React.createElement('div', { key: 'c1-content' }, [
           React.createElement('div', {
@@ -1171,7 +1402,7 @@ function PortalCardsGrid() {
       React.createElement('div', {
         key: 'card-stats-search',
         id: 'find-school-section',
-        className: 'bg-white rounded-xl border border-slate-200 shadow-xs p-4 flex flex-col justify-between'
+        className: 'bg-white dark:bg-[#131f37] rounded-xl border border-slate-200 dark:border-slate-700/80 shadow-xs p-4 flex flex-col justify-between transition-colors'
       }, [
         React.createElement('div', { key: 'c2-content' }, [
           React.createElement('div', {
@@ -1329,7 +1560,7 @@ function PortalCardsGrid() {
       // 3. News & Events (White Card, Blue Title, Light Border)
       React.createElement('div', {
         key: 'card-news',
-        className: 'bg-white rounded-xl border border-slate-200 shadow-xs p-4 flex flex-col justify-between'
+        className: 'bg-white dark:bg-[#131f37] rounded-xl border border-slate-200 dark:border-slate-700/80 shadow-xs p-4 flex flex-col justify-between transition-colors'
       }, [
         React.createElement('div', { key: 'c3-content' }, [
           React.createElement('div', {
@@ -1462,141 +1693,11 @@ function OfficialFooter() {
 }
 
 // ==========================================
-// 9. ENROLL PASSKEY MODAL (PROMPT FOR DEVICE WEBAUTHN ENROLLMENT)
-// ==========================================
-function EnrollPasskeyModal() {
-  const { closeModal, pendingPasskeyEnrollment, enrollPasskey, requestPasskeyOptions, setCurrentView } = useContext(AuthContext);
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
-
-  const handleCreatePasskey = async () => {
-    setErrorMsg('');
-    setLoading(true);
-
-    const userId = pendingPasskeyEnrollment ? pendingPasskeyEnrollment.userId : null;
-    const optRes = await requestPasskeyOptions(userId);
-    if (!optRes.success) {
-      setLoading(false);
-      setErrorMsg(optRes.message || "Failed to initialize passkey options.");
-      return;
-    }
-
-    const regRes = await enrollPasskey(userId, optRes.options);
-    setLoading(false);
-
-    if (regRes.success) {
-      setSuccessMsg("✓ Device Passkey registered successfully!");
-      setTimeout(() => {
-        closeModal();
-        setCurrentView('DASHBOARD');
-      }, 1500);
-    } else {
-      setErrorMsg(regRes.message || "Passkey registration was cancelled or unsupported on this device.");
-    }
-  };
-
-  const handleSkip = () => {
-    closeModal();
-    setCurrentView('DASHBOARD');
-  };
-
-  return React.createElement('div', {
-    className: 'fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4'
-  }, [
-    React.createElement('div', {
-      key: 'enroll-card',
-      className: 'bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md overflow-hidden animate-scale-up'
-    }, [
-      React.createElement('div', {
-        key: 'enroll-head',
-        className: 'bg-[#0c4a7e] text-white px-6 py-4 flex items-center justify-between border-b-2 border-amber-400'
-      }, [
-        React.createElement('div', { key: 'h-info', className: 'flex items-center space-x-3' }, [
-          React.createElement(TelanganaEmblem, { key: 'seal', className: 'w-10 h-10' }),
-          React.createElement('div', { key: 'txt' }, [
-            React.createElement('h3', { key: 't', className: 'text-base font-bold text-white' }, 'Secure with a Passkey'),
-            React.createElement('p', { key: 's', className: 'text-[11px] text-amber-300' }, 'District Educational Office, Jangaon')
-          ])
-        ]),
-        React.createElement('button', {
-          key: 'close',
-          onClick: handleSkip,
-          className: 'text-blue-100 hover:text-white text-lg font-bold p-1 rounded hover:bg-white/10'
-        }, '✕')
-      ]),
-
-      React.createElement('div', { key: 'enroll-body', className: 'p-6 space-y-4 text-center' }, [
-        React.createElement('div', {
-          key: 'icon-wrap',
-          className: 'w-16 h-16 rounded-full bg-[#e3f2fd] text-[#0c4a7e] flex items-center justify-center text-3xl mx-auto border-2 border-blue-200'
-        }, '🔐'),
-
-        React.createElement('div', { key: 'title-desc', className: 'space-y-1' }, [
-          React.createElement('h4', { key: 'h4', className: 'text-base font-bold text-slate-900' },
-            pendingPasskeyEnrollment && pendingPasskeyEnrollment.fullName
-              ? `Welcome, ${pendingPasskeyEnrollment.fullName}`
-              : 'Secure Your Official Account'
-          ),
-          React.createElement('p', { key: 'desc', className: 'text-xs text-slate-600' },
-            'Enable seamless, passwordless login using your device\'s built-in Windows Hello, Touch ID, Face authentication, or Device PIN.'
-          )
-        ]),
-
-        React.createElement('div', {
-          key: 'sec-badge',
-          className: 'bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-left flex items-start space-x-2 text-xs text-emerald-900'
-        }, [
-          React.createElement('span', { key: 'tick', className: 'text-emerald-700 font-bold' }, '🛡️'),
-          React.createElement('p', { key: 'text', className: 'text-[11px] leading-tight text-emerald-800' },
-            'FIDO2 / WebAuthn Standard: Biometric data stays strictly on your device. The portal stores only cryptographic public credentials.'
-          )
-        ]),
-
-        errorMsg && React.createElement('div', {
-          key: 'err-alert',
-          className: 'p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-semibold text-left flex items-center space-x-2'
-        }, [
-          React.createElement('span', { key: 'i' }, '❌'),
-          React.createElement('span', { key: 'm' }, errorMsg)
-        ]),
-
-        successMsg && React.createElement('div', {
-          key: 'succ-alert',
-          className: 'p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold'
-        }, successMsg),
-
-        React.createElement('div', { key: 'actions', className: 'space-y-2 pt-2' }, [
-          React.createElement('button', {
-            key: 'btn-create',
-            type: 'button',
-            disabled: loading,
-            onClick: handleCreatePasskey,
-            className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors shadow-xs disabled:opacity-60 cursor-pointer'
-          }, [
-            loading && React.createElement('div', { key: 'spin', className: 'w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' }),
-            React.createElement('span', { key: 't' }, loading ? 'Opening Device Prompt...' : '🔐 Register Device Passkey')
-          ]),
-
-          React.createElement('button', {
-            key: 'btn-skip',
-            type: 'button',
-            onClick: handleSkip,
-            className: 'w-full text-slate-500 hover:text-slate-800 font-semibold py-2 text-xs cursor-pointer'
-          }, 'Skip for now & Continue to Dashboard →')
-        ])
-      ])
-    ])
-  ]);
-}
-
-// ==========================================
-// 10. AUTH MODALS: REGISTRATION WORKFLOW (ZERO OTP + REAL WEBAUTHN PASSKEY)
+// 10. AUTH MODALS: REGISTRATION WORKFLOW (OFFICIAL ADMINISTRATIVE ACCOUNTS)
 // ==========================================
 function RegisterModal() {
-  const { closeModal, openModal, registerUser, enrollPasskey, setCurrentView } = useContext(AuthContext);
+  const { closeModal, openModal, registerUser, setCurrentView } = useContext(AuthContext);
 
-  const [step, setStep] = useState('FORM'); // 'FORM' | 'REGISTER_PASSKEY' | 'SUCCESS'
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -1608,9 +1709,6 @@ function RegisterModal() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
-  const [registeredUser, setRegisteredUser] = useState(null);
-  const [passkeyOptions, setPasskeyOptions] = useState(null);
 
   const handleAccountSubmit = async (e) => {
     e.preventDefault();
@@ -1645,29 +1743,14 @@ function RegisterModal() {
     });
     setLoading(false);
 
-    if (res.success && res.passkeyOptions) {
-      setRegisteredUser(res.user);
-      setPasskeyOptions(res.passkeyOptions);
-      setStep('REGISTER_PASSKEY');
-      setSuccessMsg("Account registered. Please create your device passkey.");
+    if (res.success) {
+      setSuccessMsg("Account registered successfully! Redirecting to dashboard...");
+      setTimeout(() => {
+        closeModal();
+        setCurrentView('DASHBOARD');
+      }, 700);
     } else {
       setErrorMsg(res.message || "Registration failed. Please try again.");
-    }
-  };
-
-  const handleDevicePasskeyCreate = async () => {
-    if (!registeredUser || !passkeyOptions) return;
-    setErrorMsg('');
-    setLoading(true);
-
-    const enrollRes = await enrollPasskey(registeredUser.id, passkeyOptions);
-    setLoading(false);
-
-    if (enrollRes.success) {
-      setStep('SUCCESS');
-      setSuccessMsg("✓ Passkey Successfully Created & Verified!");
-    } else {
-      setErrorMsg(enrollRes.message || "Passkey registration was cancelled or unsupported on this device.");
     }
   };
 
@@ -1686,7 +1769,7 @@ function RegisterModal() {
         React.createElement('div', { key: 'h-info', className: 'flex items-center space-x-3' }, [
           React.createElement(TelanganaEmblem, { key: 'seal', className: 'w-10 h-10' }),
           React.createElement('div', { key: 'txt' }, [
-            React.createElement('h3', { key: 't', className: 'text-base font-bold text-white leading-tight' }, 'Official User Registration'),
+            React.createElement('h3', { key: 't', className: 'text-base font-bold text-white' }, 'Register Official Account'),
             React.createElement('p', { key: 's', className: 'text-[11px] text-amber-300' }, 'District Educational Office, Jangaon')
           ])
         ]),
@@ -1698,10 +1781,10 @@ function RegisterModal() {
       ]),
 
       // Body
-      React.createElement('div', { key: 'modal-body', className: 'p-6 max-h-[85vh] overflow-y-auto' }, [
+      React.createElement('div', { key: 'body', className: 'p-6 max-h-[80vh] overflow-y-auto space-y-4' }, [
         errorMsg && React.createElement('div', {
           key: 'err-alert',
-          className: 'mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center space-x-2'
+          className: 'p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center space-x-2'
         }, [
           React.createElement('span', { key: 'i' }, '❌'),
           React.createElement('span', { key: 'm' }, errorMsg)
@@ -1709,61 +1792,62 @@ function RegisterModal() {
 
         successMsg && React.createElement('div', {
           key: 'succ-alert',
-          className: 'mb-4 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center space-x-2'
-        }, [
-          React.createElement('span', { key: 'i' }, '✓'),
-          React.createElement('span', { key: 'm' }, successMsg)
-        ]),
+          className: 'p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold'
+        }, successMsg),
 
-        // STEP 1: Registration Form
-        step === 'FORM' && React.createElement('form', {
-          key: 'reg-form',
+        React.createElement('form', {
+          key: 'acc-form',
           onSubmit: handleAccountSubmit,
           className: 'space-y-4'
         }, [
+          // Full Name
           React.createElement('div', { key: 'f-name' }, [
-            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Full Name *'),
+            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Full Name (as per official service record) *'),
             React.createElement('input', {
               key: 'i',
               type: 'text',
               value: fullName,
               onChange: (e) => setFullName(e.target.value),
-              placeholder: 'Enter your full name',
+              placeholder: 'e.g. Sri. K. Ramesh',
               required: true,
               className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-[#0c4a7e]'
             })
           ]),
 
+          // Role selection
           React.createElement('div', { key: 'f-role' }, [
-            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Select Authorized Role *'),
+            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Official Role / Designation *'),
             React.createElement('select', {
-              key: 'sel',
+              key: 's',
               value: role,
               onChange: (e) => setRole(e.target.value),
-              className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:border-[#0c4a7e] font-medium'
+              className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:border-[#0c4a7e]'
             }, [
-              React.createElement('option', { key: 'apo', value: 'APO' }, 'APO'),
-              React.createElement('option', { key: 'deo', value: 'DEO' }, 'DEO'),
-              React.createElement('option', { key: 'meo', value: 'MEO' }, 'MEO')
+              React.createElement('option', { key: 'apo', value: 'APO' }, 'APO — Assistant Programme Officer (District Admin)'),
+              React.createElement('option', { key: 'deo', value: 'DEO' }, 'DEO — District Educational Officer (Executive)'),
+              React.createElement('option', { key: 'meo', value: 'MEO' }, 'MEO — Mandal Educational Officer (Mandal Incharge)'),
+              React.createElement('option', { key: 'off', value: 'Officer' }, 'District Official / Inspector')
             ])
           ]),
 
+          // Mandal selection (if MEO)
           role === 'MEO' && React.createElement('div', { key: 'f-mandal' }, [
-            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Assigned Mandal (Strict Role-Based Access) *'),
+            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Assigned Mandal Jurisdiction *'),
             React.createElement('select', {
-              key: 'sel-mandal',
+              key: 'sm',
               value: mandal,
               onChange: (e) => setMandal(e.target.value),
-              className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:border-[#0c4a7e] font-semibold text-[#0c4a7e]'
+              className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:border-[#0c4a7e]'
             }, [
-              "BACHANNAPETA", "CHILPUR", "DEVARUPPALA", "GANPUR (STN)",
-              "JANGAON", "KODAKANDLA", "LINGALAGHANPUR", "NARMETTA",
-              "PALAKURTHI", "RAGHUNATHPALLE", "THARIGOPPULA", "ZAFFERGADH"
-            ].map(m => React.createElement('option', { key: m, value: m }, m)))
+              'JANGAON', 'BACHANNAPET', 'DEVARUPPULA', 'GHANPUR_STN', 'JAFFERGADH',
+              'KODAKANDLA', 'LINGALAGHANPUR', 'NARMETTA', 'PALAKURTHI', 'RAGHUNATHPALLE',
+              'TARIGOPOULA', 'ZAFARGADH'
+            ].map(m => React.createElement('option', { key: m, value: m }, m + ' Mandal')))
           ]),
 
-          React.createElement('div', { key: 'f-mobile' }, [
-            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Mobile Number *'),
+          // Mobile Number
+          React.createElement('div', { key: 'f-mob' }, [
+            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Registered Official Mobile Number *'),
             React.createElement('div', { key: 'wrap', className: 'flex rounded-lg border border-slate-300 overflow-hidden' }, [
               React.createElement('span', { key: 'cc', className: 'bg-slate-100 text-slate-600 px-3 py-2 text-sm font-semibold border-r border-slate-300' }, '+91'),
               React.createElement('input', {
@@ -1779,20 +1863,21 @@ function RegisterModal() {
             ])
           ]),
 
-          React.createElement('div', { key: 'f-pwd-grid', className: 'grid grid-cols-1 sm:grid-cols-2 gap-3' }, [
-            React.createElement('div', { key: 'f-pwd' }, [
+          // Password
+          React.createElement('div', { key: 'f-pwd', className: 'grid grid-cols-1 sm:grid-cols-2 gap-3' }, [
+            React.createElement('div', { key: 'p1' }, [
               React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Password *'),
               React.createElement('input', {
                 key: 'i',
                 type: showPassword ? 'text' : 'password',
                 value: password,
                 onChange: (e) => setPassword(e.target.value),
-                placeholder: 'Min 6 characters',
+                placeholder: 'At least 6 characters',
                 required: true,
                 className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-[#0c4a7e]'
               })
             ]),
-            React.createElement('div', { key: 'f-cpwd' }, [
+            React.createElement('div', { key: 'p2' }, [
               React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Confirm Password *'),
               React.createElement('input', {
                 key: 'i',
@@ -1825,7 +1910,7 @@ function RegisterModal() {
             className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors shadow-xs disabled:opacity-60 cursor-pointer'
           }, [
             loading && React.createElement('div', { key: 'spin', className: 'w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' }),
-            React.createElement('span', { key: 't' }, loading ? 'Creating Account...' : 'Continue to Register Passkey →')
+            React.createElement('span', { key: 't' }, loading ? 'Creating Account...' : 'Complete Registration →')
           ]),
 
           React.createElement('div', { key: 'switch-links', className: 'text-center text-xs text-slate-600 pt-3 border-t border-slate-100 space-y-1.5' }, [
@@ -1848,117 +1933,16 @@ function RegisterModal() {
               }, 'Teacher Login')
             ])
           ])
-        ]),
-
-        // STEP 2: Real Passkey Registration Prompt
-        step === 'REGISTER_PASSKEY' && React.createElement('div', {
-          key: 'passkey-screen',
-          className: 'space-y-5 text-center py-2'
-        }, [
-          React.createElement('div', {
-            key: 'icon-wrap',
-            className: 'w-16 h-16 rounded-full bg-[#e3f2fd] text-[#0c4a7e] flex items-center justify-center text-3xl mx-auto border-2 border-blue-200'
-          }, '🔐'),
-
-          React.createElement('div', { key: 'info-box', className: 'space-y-1' }, [
-            React.createElement('h4', { key: 'h4', className: 'text-base font-bold text-slate-900' }, 'Register Device Passkey'),
-            React.createElement('p', { key: 'desc', className: 'text-xs text-slate-600 max-w-sm mx-auto' },
-              'Authenticate with your device\'s fingerprint, face recognition, Windows Hello, or device PIN to secure your account.'
-            )
-          ]),
-
-          React.createElement('div', {
-            key: 'user-summary',
-            className: 'bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-left space-y-1 max-w-sm mx-auto'
-          }, [
-            React.createElement('div', { key: 'un', className: 'font-semibold text-slate-800' }, `Officer: ${registeredUser ? registeredUser.fullName : fullName}`),
-            React.createElement('div', { key: 'ur', className: 'text-slate-600' }, `Role: ${registeredUser ? registeredUser.role : role}`),
-            React.createElement('div', { key: 'um', className: 'text-slate-600' }, `Mobile: +91 ${registeredUser ? registeredUser.mobileNumber : mobileNumber}`)
-          ]),
-
-          React.createElement('div', {
-            key: 'fido-note',
-            className: 'bg-blue-50 border border-blue-200 rounded-xl p-3 text-[11px] text-blue-900 text-left flex items-start space-x-2'
-          }, [
-            React.createElement('span', { key: 'shield', className: 'text-sm' }, '🛡️'),
-            React.createElement('p', { key: 't', className: 'leading-tight' },
-              'WebAuthn / FIDO2 security standard: Your biometric credentials remain safely stored inside your device hardware and are never transmitted to the server.'
-            )
-          ]),
-
-          React.createElement('div', { key: 'actions', className: 'space-y-2 pt-2' }, [
-            React.createElement('button', {
-              key: 'btn-enroll',
-              type: 'button',
-              disabled: loading,
-              onClick: handleDevicePasskeyCreate,
-              className: 'w-full bg-[#007a33] hover:bg-emerald-800 text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors shadow-xs disabled:opacity-60 cursor-pointer'
-            }, [
-              loading && React.createElement('div', { key: 'spin', className: 'w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' }),
-              React.createElement('span', { key: 't' }, loading ? 'Opening Device Passkey Dialog...' : '🔐 Register Device Passkey')
-            ]),
-
-            React.createElement('button', {
-              key: 'btn-back',
-              type: 'button',
-              onClick: () => setStep('FORM'),
-              className: 'text-xs text-slate-500 hover:text-slate-800 font-semibold cursor-pointer'
-            }, '← Back to Account Details')
-          ])
-        ]),
-
-        // STEP 3: Passkey Success
-        step === 'SUCCESS' && React.createElement('div', {
-          key: 'success-screen',
-          className: 'space-y-4 text-center py-2'
-        }, [
-          React.createElement('div', {
-            key: 'badge-ok',
-            className: 'p-4 bg-[#e8f5e9] border border-[#c8e6c9] rounded-xl text-center text-[#2e7d32] space-y-1'
-          }, [
-            React.createElement('div', { key: 'tick', className: 'text-3xl' }, '✓'),
-            React.createElement('div', { key: 't1', className: 'font-extrabold text-base' }, 'Passkey Successfully Created & Verified'),
-            React.createElement('div', { key: 't2', className: 'text-xs text-emerald-800' }, 'Account Created Successfully')
-          ]),
-
-          React.createElement('div', {
-            key: 'unlinked-notice',
-            className: 'bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-900 text-left space-y-1.5'
-          }, [
-            React.createElement('div', { key: 'warn-head', className: 'font-bold text-sm text-amber-800 flex items-center space-x-1.5' }, [
-              React.createElement('span', { key: 'i' }, 'ℹ️'),
-              React.createElement('span', { key: 't' }, 'Administrative Verification Status')
-            ]),
-            React.createElement('p', { key: 'msg', className: 'leading-relaxed font-medium' },
-              'Official department data integration is pending. Your account and passkey have been secured successfully.'
-            ),
-            React.createElement('p', { key: 'guide', className: 'text-slate-600 text-[11px]' },
-              'You can now access your role dashboard and use your passkey for future sign-ins.'
-            )
-          ]),
-
-          React.createElement('button', {
-            key: 'btn-go-dash',
-            onClick: () => {
-              closeModal();
-              setCurrentView('DASHBOARD');
-            },
-            className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2.5 rounded-lg text-sm transition-colors shadow-xs flex items-center justify-center space-x-2 cursor-pointer'
-          }, [
-            React.createElement('span', { key: 't' }, 'Proceed to Dashboard'),
-            React.createElement('span', { key: 'a' }, '→')
-          ])
         ])
       ])
     ])
   ]);
 }
-
 // ==========================================
-// 11. AUTH MODALS: LOGIN WORKFLOW (ADMIN & TEACHER SECTIONS WITH REAL PASSKEY)
+// 11. AUTH MODALS: LOGIN WORKFLOW (ADMIN & TEACHER LOGIN)
 // ==========================================
 function LoginModal() {
-  const { closeModal, openModal, loginInitialTab, loginWithPasskey, loginWithPassword, loginTeacher } = useContext(AuthContext);
+  const { closeModal, openModal, loginInitialTab, loginWithPassword, loginTeacher } = useContext(AuthContext);
 
   const [activeTab, setActiveTab] = useState(loginInitialTab || 'ADMIN'); // 'ADMIN' | 'TEACHER'
   const [loading, setLoading] = useState(false);
@@ -1979,26 +1963,7 @@ function LoginModal() {
     }
   }, [loginInitialTab]);
 
-  // Handle Admin Passkey Login (Primary)
-  const handleAdminPasskeyLogin = async (e) => {
-    e.preventDefault();
-    setErrorMsg('');
-
-    if (!adminIdentifier.trim()) {
-      setErrorMsg("Please enter your Mobile Number or Official User ID.");
-      return;
-    }
-
-    setLoading(true);
-    const res = await loginWithPasskey(adminIdentifier.trim());
-    setLoading(false);
-
-    if (!res.success) {
-      setErrorMsg(res.message || "Passkey authentication failed.");
-    }
-  };
-
-  // Handle Admin Password Login (Fallback)
+  // Handle Admin Password Login
   const handleAdminPasswordLogin = async (e) => {
     e.preventDefault();
     setErrorMsg('');
@@ -2033,23 +1998,6 @@ function LoginModal() {
 
     if (!res.success) {
       setErrorMsg(res.message || "Teacher verification failed.");
-    }
-  };
-
-  // Handle Teacher Passkey Login
-  const handleTeacherPasskeyLogin = async () => {
-    setErrorMsg('');
-    if (!teacherEmployeeId.trim()) {
-      setErrorMsg("Please enter your Employee ID to login with Passkey.");
-      return;
-    }
-
-    setLoading(true);
-    const res = await loginWithPasskey(teacherEmployeeId.trim());
-    setLoading(false);
-
-    if (!res.success) {
-      setErrorMsg(res.message || "Teacher Passkey login failed.");
     }
   };
 
@@ -2121,44 +2069,24 @@ function LoginModal() {
           key: 'admin-section',
           className: 'space-y-4'
         }, [
-          React.createElement('div', { key: 'f-id' }, [
-            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Mobile Number / Official User ID *'),
-            React.createElement('input', {
-              key: 'i',
-              type: 'text',
-              value: adminIdentifier,
-              onChange: (e) => setAdminIdentifier(e.target.value),
-              placeholder: 'Enter 10-digit mobile or User ID',
-              required: true,
-              className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-[#0c4a7e]'
-            })
-          ]),
-
-          // Primary Passkey Action
-          React.createElement('button', {
-            key: 'btn-passkey',
-            type: 'button',
-            disabled: loading,
-            onClick: handleAdminPasskeyLogin,
-            className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors shadow-xs disabled:opacity-60 cursor-pointer'
-          }, [
-            loading && React.createElement('div', { key: 'spin', className: 'w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' }),
-            React.createElement('span', { key: 't' }, loading ? 'Verifying Passkey...' : '🔐 Login with Passkey (Primary)')
-          ]),
-
-          // Divider
-          React.createElement('div', { key: 'div', className: 'flex items-center my-3' }, [
-            React.createElement('div', { key: 'l', className: 'flex-1 border-t border-slate-200' }),
-            React.createElement('span', { key: 't', className: 'px-3 text-[11px] text-slate-400 uppercase font-bold tracking-wider' }, 'or with password'),
-            React.createElement('div', { key: 'r', className: 'flex-1 border-t border-slate-200' })
-          ]),
-
-          // Fallback Password Section
           React.createElement('form', {
-            key: 'pwd-form',
+            key: 'admin-pwd-form',
             onSubmit: handleAdminPasswordLogin,
             className: 'space-y-3'
           }, [
+            React.createElement('div', { key: 'f-id' }, [
+              React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Mobile Number / Official User ID *'),
+              React.createElement('input', {
+                key: 'i',
+                type: 'text',
+                value: adminIdentifier,
+                onChange: (e) => setAdminIdentifier(e.target.value),
+                placeholder: 'Enter 10-digit mobile or User ID',
+                required: true,
+                className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-[#0c4a7e]'
+              })
+            ]),
+
             React.createElement('div', { key: 'f-pwd' }, [
               React.createElement('div', { key: 'pwd-label-row', className: 'flex items-center justify-between mb-1' }, [
                 React.createElement('label', { key: 'l', className: 'text-xs font-bold text-slate-700' }, 'Password *'),
@@ -2175,6 +2103,7 @@ function LoginModal() {
                 value: adminPassword,
                 onChange: (e) => setAdminPassword(e.target.value),
                 placeholder: 'Enter your password',
+                required: true,
                 className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-[#0c4a7e]'
               })
             ]),
@@ -2195,9 +2124,10 @@ function LoginModal() {
               key: 'btn-pwd-login',
               type: 'submit',
               disabled: loading,
-              className: 'w-full bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold py-2 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors cursor-pointer'
+              className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors shadow-xs disabled:opacity-60 cursor-pointer'
             }, [
-              React.createElement('span', { key: 't' }, 'Login with Password')
+              loading && React.createElement('div', { key: 'spin', className: 'w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' }),
+              React.createElement('span', { key: 't' }, loading ? 'Logging In...' : 'Login to Administrative Portal')
             ])
           ]),
 
@@ -2271,23 +2201,6 @@ function LoginModal() {
             ])
           ]),
 
-          React.createElement('div', { key: 'div2', className: 'flex items-center my-2' }, [
-            React.createElement('div', { key: 'l', className: 'flex-1 border-t border-slate-200' }),
-            React.createElement('span', { key: 't', className: 'px-3 text-[11px] text-slate-400 uppercase font-bold tracking-wider' }, 'enrolled with passkey?'),
-            React.createElement('div', { key: 'r', className: 'flex-1 border-t border-slate-200' })
-          ]),
-
-          React.createElement('button', {
-            key: 'btn-tch-passkey',
-            type: 'button',
-            disabled: loading,
-            onClick: handleTeacherPasskeyLogin,
-            className: 'w-full bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold py-2 rounded-lg text-xs flex items-center justify-center space-x-2 transition-colors cursor-pointer'
-          }, [
-            React.createElement('span', { key: 'i' }, '🔐'),
-            React.createElement('span', { key: 't' }, 'Login with Teacher Passkey')
-          ]),
-
           React.createElement('div', { key: 'switch', className: 'text-center text-xs text-slate-600 pt-3 border-t border-slate-100' }, [
             React.createElement('span', { key: 't' }, 'Are you an administrative officer? '),
             React.createElement('button', {
@@ -2304,28 +2217,10 @@ function LoginModal() {
 }
 
 // ==========================================
-// 12. AUTH MODALS: OFFICIAL ACCOUNT RECOVERY (NO OTP)
+// 12. AUTH MODALS: OFFICIAL ACCOUNT RECOVERY (SUPPORT DESK)
 // ==========================================
 function ForgotPasswordModal() {
-  const { closeModal, openModal, loginWithPasskey } = useContext(AuthContext);
-  const [identifier, setIdentifier] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
-
-  const handlePasskeyRecovery = async (e) => {
-    e.preventDefault();
-    setErrorMsg('');
-    if (!identifier.trim()) {
-      setErrorMsg("Please enter your Mobile Number or Official User ID.");
-      return;
-    }
-    setLoading(true);
-    const res = await loginWithPasskey(identifier.trim());
-    setLoading(false);
-    if (!res.success) {
-      setErrorMsg(res.message || "Passkey authentication failed for recovery.");
-    }
-  };
+  const { closeModal, openModal } = useContext(AuthContext);
 
   return React.createElement('div', {
     className: 'fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4'
@@ -2343,65 +2238,39 @@ function ForgotPasswordModal() {
       ]),
 
       React.createElement('div', { key: 'fp-body', className: 'p-6 space-y-4' }, [
-        errorMsg && React.createElement('div', {
-          key: 'err',
-          className: 'p-3 rounded-lg bg-red-50 text-red-700 text-xs font-semibold'
-        }, errorMsg),
-
         React.createElement('div', {
           key: 'info',
-          className: 'bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-900 leading-relaxed space-y-1'
+          className: 'bg-blue-50 border border-blue-200 rounded-xl p-3.5 text-xs text-blue-900 leading-relaxed space-y-2'
         }, [
           React.createElement('div', { key: 'h', className: 'font-bold flex items-center space-x-1.5 text-[#0c4a7e]' }, [
             React.createElement('span', { key: 'i' }, '🛡️'),
-            React.createElement('span', { key: 't' }, 'Secure Passkey Authentication')
+            React.createElement('span', { key: 't' }, 'Official Password Assistance')
           ]),
           React.createElement('p', { key: 'p' },
-            'For security compliance, passwords can be reset by authenticating with your registered Device Passkey, or by contacting the district education office.'
+            'For security compliance, passwords for official administrative accounts are managed through the District Educational Office IT Cell. Please contact the district helpdesk with your official designation and registered phone number.'
           )
-        ]),
-
-        React.createElement('form', {
-          key: 'f-rec',
-          onSubmit: handlePasskeyRecovery,
-          className: 'space-y-3'
-        }, [
-          React.createElement('div', { key: 'inp' }, [
-            React.createElement('label', { key: 'l', className: 'block text-xs font-bold text-slate-700 mb-1' }, 'Mobile Number / Employee ID'),
-            React.createElement('input', {
-              key: 'i',
-              type: 'text',
-              value: identifier,
-              onChange: (e) => setIdentifier(e.target.value),
-              placeholder: 'Enter 10-digit mobile or Employee ID',
-              required: true,
-              className: 'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm'
-            })
-          ]),
-          React.createElement('button', {
-            key: 'btn',
-            type: 'submit',
-            disabled: loading,
-            className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center space-x-2'
-          }, [
-            loading && React.createElement('div', { key: 'spin', className: 'w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' }),
-            React.createElement('span', { key: 't' }, loading ? 'Authenticating...' : '🔐 Verify with Device Passkey')
-          ])
         ]),
 
         React.createElement('div', {
           key: 'dept-contact',
-          className: 'border-t border-slate-200 pt-3 text-xs text-slate-500 space-y-1'
+          className: 'bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs text-slate-700 space-y-2'
         }, [
-          React.createElement('div', { key: 't', className: 'font-semibold text-slate-700' }, 'District Office Support:'),
+          React.createElement('div', { key: 't', className: 'font-bold text-slate-800' }, 'District Office Support Desk:'),
           React.createElement('div', { key: 'm' }, '✉️ deo.jangaon@telangana.gov.in'),
-          React.createElement('div', { key: 'p' }, '📞 +91 8678 222 333 (10:00 AM – 5:00 PM)')
-        ])
+          React.createElement('div', { key: 'p' }, '📞 +91 8678 222 333 (10:00 AM – 5:00 PM)'),
+          React.createElement('div', { key: 'l', className: 'text-[11px] text-slate-500' }, 'Office of the District Educational Officer, Jangaon District')
+        ]),
+
+        React.createElement('button', {
+          key: 'btn-back-login',
+          type: 'button',
+          onClick: () => openModal('LOGIN', 'ADMIN'),
+          className: 'w-full bg-[#0c4a7e] hover:bg-[#08355b] text-white font-bold py-2.5 rounded-lg text-sm transition-colors cursor-pointer'
+        }, '← Return to Login')
       ])
     ])
   ]);
 }
-
 // ==========================================
 // 13. ROLE-BASED DASHBOARDS (LIGHT & DARK THEMES FULLY SUPPORTED)
 // ==========================================
@@ -2527,18 +2396,6 @@ function RoleDashboard() {
             }, [
               React.createElement('span', { key: 'i' }, '👨‍🏫'),
               React.createElement('span', { key: 't' }, isMeo ? `Teachers Info (${activeUser.mandal || 'Assigned Mandal'})` : 'Teachers Information')
-            ]),
-            React.createElement('button', {
-              key: 'btn-tab-off-stu',
-              onClick: () => setOfficerTab('STUDENTS_INFO'),
-              className: `flex items-center space-x-1 px-2.5 py-1 rounded-md transition-all cursor-pointer ${
-                officerTab === 'STUDENTS_INFO'
-                  ? 'bg-[#0c4a7e] text-white shadow-xs font-bold'
-                  : (isDark ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-900')
-              }`
-            }, [
-              React.createElement('span', { key: 'i' }, '👥'),
-              React.createElement('span', { key: 't' }, isMeo ? `Students Info (${activeUser.mandal || 'Assigned Mandal'})` : 'Students Information')
             ]),
             React.createElement('button', {
               key: 'btn-tab-off-ret',
@@ -2673,7 +2530,7 @@ function RoleDashboard() {
             React.createElement('p', {
               key: 'inst',
               className: `text-xs mt-1 ${isDark ? 'text-slate-300' : 'text-blue-100'}`
-            }, 'Official Account Status: ACTIVE • Verified by Passkey / Official Records')
+            }, 'Official Account Status: ACTIVE • Verified by Official Records')
           ])
         ]),
 
@@ -2756,38 +2613,6 @@ function RoleDashboard() {
                   }, '← Return to Dashboard Overview')
                 ])
           )
-        : (officerTab === 'STUDENTS_INFO')
-        ? (
-            isAuthorizedOfficer
-              ? (typeof window !== 'undefined' && (window.SchoolsInformationDashboardView || window.SchoolStrengthDashboardView)
-                  ? React.createElement(window.SchoolsInformationDashboardView || window.SchoolStrengthDashboardView, {
-                      key: 'students-info-dash',
-                      initialTab: 'STUDENT_DIRECTORY',
-                      onBack: () => setOfficerTab('OVERVIEW'),
-                      user: activeUser,
-                      isDark: isDark
-                    })
-                  : React.createElement('div', { key: 'stu-load-err', className: 'p-8 text-center text-sm font-semibold text-slate-600' }, 'Loading Students Information...')
-                )
-              : React.createElement('div', {
-                  key: 'unauthorized-box-stu',
-                  className: `p-8 max-w-xl mx-auto my-8 rounded-2xl border text-center space-y-4 shadow-lg ${
-                    isDark ? 'bg-slate-900 border-red-900/60 text-slate-100' : 'bg-white border-red-200 text-slate-800'
-                  }`
-                }, [
-                  React.createElement('div', { key: 'icon', className: 'w-16 h-16 mx-auto rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center text-3xl font-bold' }, '🔒'),
-                  React.createElement('h2', { key: 't', className: 'text-xl font-bold text-red-600 dark:text-red-400' }, '403 — Access Denied'),
-                  React.createElement('p', { key: 'st', className: 'text-sm font-semibold' }, 'Protected Officer Feature'),
-                  React.createElement('p', { key: 'desc', className: 'text-xs text-slate-500 dark:text-slate-400 leading-relaxed' },
-                    'Students Information directory is a protected dashboard feature strictly restricted to authenticated DEO, APO, and authorized MEO officers through their official logins.'
-                  ),
-                  React.createElement('button', {
-                    key: 'btn-back',
-                    onClick: () => setOfficerTab('OVERVIEW'),
-                    className: 'px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0c4a7e] hover:bg-[#08355b] transition-all cursor-pointer shadow-md'
-                  }, '← Return to Dashboard Overview')
-                ])
-          )
         : (officerTab === 'RETIREMENT')
         ? (
             isAuthorizedOfficer
@@ -2855,7 +2680,6 @@ function RoleDashboard() {
               isDark,
               onOpenSchoolsInfo: () => setOfficerTab('SCHOOLS_INFO'),
               onOpenTeachersInfo: () => setOfficerTab('TEACHERS_INFO'),
-              onOpenStudentsInfo: () => setOfficerTab('STUDENTS_INFO'),
               onOpenRetirement: () => setOfficerTab('RETIREMENT')
             }),
             activeUser.role === 'School Staff' && React.createElement(SchoolStaffModules, { key: 'staff-mod', user: activeUser, isDark }),
@@ -2867,7 +2691,7 @@ function RoleDashboard() {
 }
 
 function TeacherModules({ user, isDark, onOpenServiceRecord }) {
-  return React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6' }, [
+  return React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' }, [
     // PRIMARY CARD: Official Teacher Service Record
     React.createElement('div', {
       key: 'c-sr',
@@ -3098,11 +2922,11 @@ function StudentModules({ user, isDark }) {
   ]);
 }
 
-function OfficerModules({ user, isDark, onOpenSchoolsInfo, onOpenTeachersInfo, onOpenStudentsInfo, onOpenRetirement }) {
+function OfficerModules({ user, isDark, onOpenSchoolsInfo, onOpenTeachersInfo, onOpenRetirement }) {
   const isDeoOrApo = (user.role === 'DEO' || user.role === 'APO' || user.role === 'Officer');
   const isMeo = (user.role === 'MEO');
 
-  return React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6' }, [
+  return React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' }, [
     // PRIMARY MODULE: Schools Information / School Strength
     isDeoOrApo ? (
       React.createElement('div', {
@@ -3198,35 +3022,6 @@ function OfficerModules({ user, isDark, onOpenSchoolsInfo, onOpenTeachersInfo, o
       }, [
         React.createElement('span', { key: 'i' }, '📋'),
         React.createElement('span', { key: 't' }, isMeo ? `Open Teachers Directory (${user.mandal || 'Assigned'})` : 'Open Teachers Directory')
-      ])
-    ]),
-
-    // MODULE 3: Students Information Directory
-    React.createElement('div', {
-      key: 'o-students-info',
-      className: `p-5 rounded-2xl border-2 transition-all space-y-3 relative overflow-hidden flex flex-col justify-between ${
-        isDark ? 'bg-[#131f37] border-blue-500/80 shadow-lg text-slate-100 ring-1 ring-blue-500/30' : 'bg-gradient-to-br from-white to-blue-50/70 border-blue-400 shadow-md text-slate-800 ring-1 ring-blue-300/40'
-      }`
-    }, [
-      React.createElement('div', { key: 'badge', className: 'flex items-center justify-between' }, [
-        React.createElement('span', { className: 'px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 uppercase tracking-wider' }, isMeo ? `Authorized MEO: ${user.mandal || 'Assigned Mandal'}` : 'Official Students Directory'),
-        React.createElement('span', { className: 'text-xl' }, '👥')
-      ]),
-      React.createElement('div', { key: 'body' }, [
-        React.createElement('h3', { className: `font-bold text-sm ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, '👥 Students Information'),
-        React.createElement('p', { className: `text-xs mt-1 leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}` },
-          isMeo
-            ? `View institution-wise student enrollments, medium, category, and print/PDF directory for ${user.mandal || 'your mandal'}.`
-            : 'Access institution-wise student enrollment directory across all 12 mandals, U-DISE data, and generate official print/PDF directories.'
-        )
-      ]),
-      React.createElement('button', {
-        key: 'btn',
-        onClick: onOpenStudentsInfo,
-        className: 'w-full font-bold py-2 rounded-lg text-xs transition-all shadow-xs cursor-pointer bg-[#0c4a7e] hover:bg-[#08355b] text-white flex items-center justify-center space-x-1.5'
-      }, [
-        React.createElement('span', { key: 'i' }, '📋'),
-        React.createElement('span', { key: 't' }, isMeo ? `Open Students Directory (${user.mandal || 'Assigned'})` : 'Open Students Directory')
       ])
     ]),
 
@@ -3347,14 +3142,17 @@ function ParentModules({ user, isDark }) {
 // ==========================================
 // 14. ROOT APP COMPONENT (IMAGE 2: CLEAN LIGHT BACKGROUND #f0f4f8)
 // ==========================================
+// 14. ROOT APP COMPONENT (IMAGE 2: DYNAMIC THEME SUPPORT)
+// ==========================================
 function App() {
   const { user, currentView, setCurrentView, activeModal, theme } = useContext(AuthContext);
   const [fontScale, setFontScale] = useState('md');
-  const isDark = (theme === 'dark' && currentView === 'DASHBOARD');
+  const [selectedOfficial, setSelectedOfficial] = useState(null);
+  const isDark = (theme === 'dark');
 
   return React.createElement('div', {
     className: `min-h-screen flex flex-col justify-between transition-colors duration-200 ${
-      isDark ? 'bg-[#0b1329]' : 'bg-[#f0f4f8]'
+      isDark ? 'bg-[#0b1329] text-slate-100' : 'bg-[#f0f4f8] text-slate-800'
     }`
   }, [
     React.createElement('div', { key: 'top-nav' }, [
@@ -3365,8 +3163,8 @@ function App() {
     React.createElement('main', { key: 'main-content', className: 'flex-1' }, [
       currentView === 'PORTAL' ? (
         React.createElement('div', { key: 'portal-view' }, [
-          React.createElement(HeroBanner),
-          React.createElement(StatsRibbon),
+          React.createElement(HeroBanner, { onSelectOfficial: setSelectedOfficial }),
+          React.createElement(StandaloneStatsCards),
           React.createElement(QuickServices),
           React.createElement(PortalCardsGrid)
         ])
@@ -3377,15 +3175,19 @@ function App() {
 
     React.createElement(OfficialFooter, { key: 'footer' }),
 
+    selectedOfficial && React.createElement(OfficialProfileModal, {
+      key: 'official-modal',
+      official: selectedOfficial,
+      onClose: () => setSelectedOfficial(null)
+    }),
+
     activeModal === 'REGISTER' && React.createElement(RegisterModal, { key: 'reg-modal' }),
     activeModal === 'LOGIN' && React.createElement(LoginModal, { key: 'login-modal' }),
     activeModal === 'FORGOT' && React.createElement(ForgotPasswordModal, { key: 'forgot-modal' }),
-    activeModal === 'ENROLL_PASSKEY' && React.createElement(EnrollPasskeyModal, { key: 'enroll-modal' })
   ]);
 }
 
-// ==========================================
-// 15. INITIALIZE REACT 18 ROOT
+
 // ==========================================
 function initApp() {
   const rootElement = document.getElementById('root');

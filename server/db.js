@@ -8,7 +8,6 @@ const DB_FILE = path.join(__dirname, 'education_db.json');
 const defaultState = {
   users: [],
   sessions: [],
-  webauthnChallenges: [],
   notifications: [
     {
       id: "NOTIF-1",
@@ -77,14 +76,9 @@ class Database {
         }
         if (!parsed.users) parsed.users = [];
         if (!parsed.sessions) parsed.sessions = [];
-        if (!parsed.webauthnChallenges) parsed.webauthnChallenges = [];
+        if (parsed.webauthnChallenges) delete parsed.webauthnChallenges;
         // Remove otps array if present (OTP workflow completely removed)
         if (parsed.otps) delete parsed.otps;
-
-        // Ensure every user has passkeys array
-        parsed.users.forEach(u => {
-          if (!u.passkeys) u.passkeys = [];
-        });
 
         fs.writeFileSync(DB_FILE, JSON.stringify(parsed, null, 2), 'utf8');
       }
@@ -103,7 +97,6 @@ class Database {
       const data = JSON.parse(raw);
       if (!data.sessions) data.sessions = [];
       if (!data.users) data.users = [];
-      if (!data.webauthnChallenges) data.webauthnChallenges = [];
       return data;
     } catch (err) {
       console.error('Database read error:', err);
@@ -174,7 +167,6 @@ class Database {
       mandal: userData.mandal ? userData.mandal.trim().toUpperCase() : null,
       passwordHash: userData.passwordHash,
       accountStatus: userData.accountStatus || 'PENDING_VERIFICATION',
-      passkeys: [],
       officialDataLinked: false,
       officialProfileId: null,
       createdAt: new Date().toISOString(),
@@ -204,7 +196,6 @@ class Database {
         designation: employee.designation,
         schoolName: employee.schoolName,
         mandal: employee.mandal,
-        passkeys: [],
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString()
       };
@@ -217,7 +208,6 @@ class Database {
       user.designation = employee.designation;
       user.schoolName = employee.schoolName;
       user.mandal = employee.mandal;
-      if (!user.passkeys) user.passkeys = [];
     }
     this.write(data);
     try {
@@ -242,63 +232,6 @@ class Database {
 
   updateUserLastLogin(id) {
     return this.updateUser(id, { lastLogin: new Date().toISOString() });
-  }
-
-  // ==========================================
-  // WEBAUTHN / PASSKEY CREDENTIAL MANAGEMENT
-  // ==========================================
-  addPasskey(userId, passkeyData) {
-    const data = this.read();
-    const user = data.users.find(u => u.id === userId);
-    if (!user) return null;
-    if (!user.passkeys) user.passkeys = [];
-
-    // Check if credential ID already exists
-    const existingIndex = user.passkeys.findIndex(p => p.credentialId === passkeyData.credentialId);
-    if (existingIndex >= 0) {
-      user.passkeys[existingIndex] = { ...user.passkeys[existingIndex], ...passkeyData };
-    } else {
-      user.passkeys.push(passkeyData);
-    }
-
-    this.write(data);
-    try {
-      const mongo = require('./mongo');
-      mongo.syncUserToMongo(user);
-    } catch (e) {}
-    return user;
-  }
-
-  getUserPasskeys(userId) {
-    const user = this.getUserById(userId);
-    return (user && user.passkeys) ? user.passkeys : [];
-  }
-
-  getUserByCredentialId(credentialId) {
-    const data = this.read();
-    for (const user of data.users) {
-      if (user.passkeys && user.passkeys.some(p => p.credentialId === credentialId)) {
-        return user;
-      }
-    }
-    return null;
-  }
-
-  updatePasskeyCounter(userId, credentialId, newCounter) {
-    const data = this.read();
-    const user = data.users.find(u => u.id === userId);
-    if (!user || !user.passkeys) return false;
-    const pk = user.passkeys.find(p => p.credentialId === credentialId);
-    if (pk) {
-      pk.counter = newCounter;
-      this.write(data);
-      try {
-        const mongo = require('./mongo');
-        mongo.syncUserToMongo(user);
-      } catch (e) {}
-      return true;
-    }
-    return false;
   }
 
   // ==========================================
@@ -399,66 +332,6 @@ class Database {
       statistics: data.statistics,
       notifications: data.notifications
     };
-  }
-
-  // ==========================================
-  // WEBAUTHN CHALLENGE PERSISTENCE
-  // ==========================================
-  saveChallenge(challengeDoc) {
-    const data = this.read();
-    if (!data.webauthnChallenges) data.webauthnChallenges = [];
-    const nowIso = new Date().toISOString();
-    data.webauthnChallenges.forEach((item) => {
-      if (
-        item.userId === challengeDoc.userId
-        && item.registrationType === challengeDoc.registrationType
-        && !item.consumed
-      ) {
-        item.consumed = true;
-        item.consumedAt = nowIso;
-        item.superseded = true;
-      }
-    });
-    data.webauthnChallenges.push(challengeDoc);
-    this.write(data);
-    return challengeDoc;
-  }
-
-  getChallenge(userId, registrationType) {
-    const data = this.read();
-    const matches = (data.webauthnChallenges || []).filter((item) => (
-      String(item.userId) === String(userId) && item.registrationType === registrationType
-    ));
-    matches.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
-    const active = matches.find((item) => !item.consumed);
-    return active || matches[0] || null;
-  }
-
-  getChallengeByEnrollmentToken(token) {
-    if (!token) return null;
-    const data = this.read();
-    return (data.webauthnChallenges || []).find((item) => item.enrollmentToken === token) || null;
-  }
-
-  getChallengeByValue(challenge) {
-    if (!challenge) return null;
-    const data = this.read();
-    return (data.webauthnChallenges || []).find((item) => item.challenge === challenge) || null;
-  }
-
-  consumeChallenge(userId, challenge, registrationType) {
-    const data = this.read();
-    if (!data.webauthnChallenges) return false;
-    const found = data.webauthnChallenges.find((item) => (
-      String(item.userId) === String(userId)
-      && item.challenge === challenge
-      && item.registrationType === registrationType
-    ));
-    if (!found) return false;
-    found.consumed = true;
-    found.consumedAt = new Date().toISOString();
-    this.write(data);
-    return true;
   }
 }
 

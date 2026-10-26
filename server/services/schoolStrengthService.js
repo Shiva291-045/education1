@@ -616,6 +616,13 @@ class SchoolStrengthService {
         data.school_strength_mandal = JSON.parse(JSON.stringify(INITIAL_MANDAL_STRENGTH));
         changed = true;
       }
+      if (!data.school_strength_mandal_breakdown || typeof data.school_strength_mandal_breakdown !== 'object') {
+        data.school_strength_mandal_breakdown = this.generateInitialMandalBreakdown(
+          data.school_strength_district || INITIAL_DISTRICT_STRENGTH,
+          data.school_strength_mandal || INITIAL_MANDAL_STRENGTH
+        );
+        changed = true;
+      }
       if (changed) {
         fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
       }
@@ -624,18 +631,80 @@ class SchoolStrengthService {
     }
   }
 
+  generateInitialMandalBreakdown(districtRecords, mandalRecords) {
+    const breakdown = {};
+    const stageKeys = [
+      '1-PS (1st-5th)',
+      '2-UPS (6th-8th)',
+      '3- 5th to Inter',
+      '5- 6th to Inter',
+      '6- PP3 to 10th',
+      '7- HS (8th-10th)',
+      '11- INTER'
+    ];
+
+    (mandalRecords || []).forEach(m => {
+      const mName = m.mandal;
+      const mSchools = (this.schoolsList || []).filter(sch => sch.mandal === mName);
+      breakdown[mName] = (districtRecords || []).map(d => {
+        const mgmtKey = d.managementName;
+        const mgmtStudents = (m.managements && m.managements[mgmtKey]) || 0;
+        const schCount = mSchools.filter(sch => sch.management === mgmtKey || sch.managementCode === d.code).length;
+
+        const stages = {};
+        stageKeys.forEach(st => stages[st] = 0);
+
+        const dStages = d.stages || {};
+        const activeStages = stageKeys.filter(st => (dStages[st] || 0) > 0);
+        const dTotal = d.totalStudents || 1;
+
+        if (mgmtStudents > 0 && activeStages.length > 0) {
+          let distributed = 0;
+          activeStages.forEach((st, idx) => {
+            if (idx === activeStages.length - 1) {
+              stages[st] = Math.max(0, mgmtStudents - distributed);
+            } else {
+              const ratio = (dStages[st] || 0) / dTotal;
+              const count = Math.min(mgmtStudents - distributed, Math.round(ratio * mgmtStudents));
+              stages[st] = count;
+              distributed += count;
+            }
+          });
+        }
+
+        return {
+          code: d.code,
+          managementName: d.managementName,
+          category: d.category,
+          schoolsCount: schCount > 0 ? schCount : (mgmtStudents > 0 ? 1 : 0),
+          stages,
+          totalStudents: mgmtStudents
+        };
+      });
+    });
+    return breakdown;
+  }
+
   readData() {
     try {
       if (fs.existsSync(DB_FILE)) {
         const raw = fs.readFileSync(DB_FILE, 'utf8');
-        return JSON.parse(raw);
+        const data = JSON.parse(raw);
+        if (!data.school_strength_mandal_breakdown) {
+          data.school_strength_mandal_breakdown = this.generateInitialMandalBreakdown(
+            data.school_strength_district || INITIAL_DISTRICT_STRENGTH,
+            data.school_strength_mandal || INITIAL_MANDAL_STRENGTH
+          );
+        }
+        return data;
       }
     } catch (e) {
       console.error('[SchoolStrengthService] Read error:', e);
     }
     return {
       school_strength_district: INITIAL_DISTRICT_STRENGTH,
-      school_strength_mandal: INITIAL_MANDAL_STRENGTH
+      school_strength_mandal: INITIAL_MANDAL_STRENGTH,
+      school_strength_mandal_breakdown: this.generateInitialMandalBreakdown(INITIAL_DISTRICT_STRENGTH, INITIAL_MANDAL_STRENGTH)
     };
   }
 
@@ -727,14 +796,21 @@ class SchoolStrengthService {
       }
     }
 
-    // Filter district records by management if requested
-    let filteredDistrict = districtRecords;
+    // Determine Sheet 1 base records:
+    // If MEO or active mandal is selected, Sheet 1 displays that mandal's authorized school-strength data!
+    const mandalBreakdownMap = rawData.school_strength_mandal_breakdown || this.generateInitialMandalBreakdown(districtRecords, mandalRecords);
+    let baseSheet1Records = (isMeo || (activeMandal && activeMandal !== 'ALL'))
+      ? (mandalBreakdownMap[activeMandal] || districtRecords)
+      : districtRecords;
+
+    // Filter Sheet 1 records by management if requested
+    let filteredDistrict = baseSheet1Records;
     if (query.management && query.management.trim().toUpperCase() !== 'ALL') {
       const targetMgmt = query.management.trim().toUpperCase();
       filteredDistrict = filteredDistrict.filter(d => d.managementName.trim().toUpperCase() === targetMgmt || String(d.code) === targetMgmt);
     }
 
-    // Filter district records by stage if requested
+    // Filter Sheet 1 records by stage if requested
     if (query.stage && query.stage.trim().toUpperCase() !== 'ALL') {
       const targetStage = query.stage.trim();
       filteredDistrict = filteredDistrict.filter(d => (d.stages && (d.stages[targetStage] || 0) > 0));
@@ -759,9 +835,9 @@ class SchoolStrengthService {
       }).filter(m => m.totalStudents > 0);
     }
 
-    // District-Wide Totals (Constant Benchmarks from Sheet 1)
-    const districtTotalSchools = districtRecords.reduce((sum, d) => sum + (Number(d.schoolsCount) || 0), 0);
-    const districtTotalStudents = districtRecords.reduce((sum, d) => sum + (Number(d.totalStudents) || 0), 0);
+    // Base Totals (Mandal-specific when viewing mandal, District-wide otherwise)
+    const districtTotalSchools = baseSheet1Records.reduce((sum, d) => sum + (Number(d.schoolsCount) || 0), 0);
+    const districtTotalStudents = baseSheet1Records.reduce((sum, d) => sum + (Number(d.totalStudents) || 0), 0);
 
     // Dynamic Filtered Totals for summary cards
     const filteredSchools = filteredDistrict.reduce((sum, d) => sum + (Number(d.schoolsCount) || 0), 0);
@@ -955,7 +1031,7 @@ class SchoolStrengthService {
         canViewAllMandals: isDeoOrApo,
         canEditAllMandals: isDeoOrApo,
         canEditAssignedMandal: isDeoOrApo || isMeo,
-        canEditDistrictParticulars: isDeoOrApo
+        canEditDistrictParticulars: isDeoOrApo || isMeo
       },
       summary: {
         districtTotalSchools,
@@ -1081,33 +1157,145 @@ class SchoolStrengthService {
   }
 
   /**
-   * Update District-level Management Particulars
-   * DEO & APO ONLY
+   * Update Sheet 1 Management Particulars
+   * MEO: Can view and edit ONLY their assigned mandal's data (saved permanently to database)
+   * DEO & APO: Can edit any mandal or district-wide particulars
    */
-  updateDistrictData(managementCode, updates, user) {
+  updateDistrictData(managementCode, updates, user, targetMandal = null) {
     if (!user) {
       return { success: false, status: 401, message: "Authentication required. Active login session required." };
     }
 
     const role = (user.role || '').toUpperCase();
     const isDeoOrApo = (role === 'DEO' || role === 'APO' || role === 'OFFICER');
+    const isMeo = (role === 'MEO');
 
-    // Strict backend enforcement: Only DEO & APO can edit district particulars
-    if (!isDeoOrApo) {
+    if (!isDeoOrApo && !isMeo) {
       return {
         success: false,
         status: 403,
-        message: "Access Denied: Schools Information editing is strictly restricted to authenticated DEO and APO officers."
+        message: "Access Denied: You do not have permission to edit school strength data."
       };
+    }
+
+    const userMandal = (user.mandal || '').trim().toUpperCase();
+    const resolvedMandal = (targetMandal || (isMeo ? userMandal : '')).trim().toUpperCase();
+
+    // Strict backend enforcement: MEO can ONLY update their assigned mandal
+    if (isMeo) {
+      if (!userMandal) {
+        return { success: false, status: 403, message: "Access Denied: MEO user has no assigned mandal." };
+      }
+      if (resolvedMandal && resolvedMandal !== userMandal) {
+        return {
+          success: false,
+          status: 403,
+          message: `Access Denied: As MEO of ${userMandal}, you are strictly prohibited from modifying records for ${resolvedMandal}.`
+        };
+      }
     }
 
     const codeNum = Number(managementCode);
     const data = this.readData();
+    if (!data.school_strength_mandal_breakdown) {
+      data.school_strength_mandal_breakdown = this.generateInitialMandalBreakdown(
+        data.school_strength_district || INITIAL_DISTRICT_STRENGTH,
+        data.school_strength_mandal || INITIAL_MANDAL_STRENGTH
+      );
+    }
+
+    // CASE 1: Updating mandal-specific Sheet 1 particulars (for MEO or when DEO specifies targetMandal)
+    if (isMeo || (resolvedMandal && resolvedMandal !== 'ALL')) {
+      const mandalKey = isMeo ? userMandal : resolvedMandal;
+      const mandalBreakdown = data.school_strength_mandal_breakdown[mandalKey];
+      if (!mandalBreakdown) {
+        return { success: false, status: 404, message: `Mandal '${mandalKey}' breakdown not found in database.` };
+      }
+
+      const index = mandalBreakdown.findIndex(d => Number(d.code) === codeNum);
+      if (index === -1) {
+        return { success: false, status: 404, message: `Management Code ${managementCode} not found in Mandal ${mandalKey}.` };
+      }
+
+      const currentItem = mandalBreakdown[index];
+      if (updates.schoolsCount !== undefined) {
+        const sc = Number(updates.schoolsCount);
+        if (!isNaN(sc) && sc >= 0) currentItem.schoolsCount = sc;
+      }
+
+      if (updates.stages && typeof updates.stages === 'object') {
+        if (!currentItem.stages) currentItem.stages = {};
+        Object.keys(updates.stages).forEach(stageKey => {
+          const sv = Number(updates.stages[stageKey]);
+          if (!isNaN(sv) && sv >= 0) {
+            currentItem.stages[stageKey] = sv;
+          }
+        });
+        currentItem.totalStudents = Object.values(currentItem.stages).reduce((s, v) => s + (Number(v) || 0), 0);
+      }
+
+      mandalBreakdown[index] = currentItem;
+      data.school_strength_mandal_breakdown[mandalKey] = mandalBreakdown;
+
+      // Sync Sheet 2 (school_strength_mandal) for this mandal:
+      const mandalList = data.school_strength_mandal || JSON.parse(JSON.stringify(INITIAL_MANDAL_STRENGTH));
+      const mIdx = mandalList.findIndex(m => m.mandal.trim().toUpperCase() === mandalKey);
+      if (mIdx !== -1) {
+        if (!mandalList[mIdx].managements) mandalList[mIdx].managements = {};
+        mandalList[mIdx].managements[currentItem.managementName] = currentItem.totalStudents;
+        mandalList[mIdx].totalStudents = Object.values(mandalList[mIdx].managements).reduce((s, v) => s + (Number(v) || 0), 0);
+        data.school_strength_mandal = mandalList;
+      }
+
+      // Sync district consolidation (sum of all mandals for this management):
+      const districtList = data.school_strength_district || JSON.parse(JSON.stringify(INITIAL_DISTRICT_STRENGTH));
+      const dIdx = districtList.findIndex(d => Number(d.code) === codeNum);
+      if (dIdx !== -1) {
+        let sumSchools = 0;
+        let sumStudents = 0;
+        const sumStages = {};
+        Object.keys(districtList[dIdx].stages || {}).forEach(k => sumStages[k] = 0);
+
+        Object.keys(data.school_strength_mandal_breakdown).forEach(mName => {
+          const mRec = (data.school_strength_mandal_breakdown[mName] || []).find(r => Number(r.code) === codeNum);
+          if (mRec) {
+            sumSchools += (Number(mRec.schoolsCount) || 0);
+            sumStudents += (Number(mRec.totalStudents) || 0);
+            Object.keys(mRec.stages || {}).forEach(k => {
+              sumStages[k] = (sumStages[k] || 0) + (Number(mRec.stages[k]) || 0);
+            });
+          }
+        });
+
+        districtList[dIdx].schoolsCount = sumSchools;
+        districtList[dIdx].stages = sumStages;
+        districtList[dIdx].totalStudents = sumStudents;
+        data.school_strength_district = districtList;
+      }
+
+      this.saveData(data);
+
+      return {
+        success: true,
+        status: 200,
+        message: `✓ Successfully updated particulars for Management Code ${managementCode} (${currentItem.managementName}) in Mandal ${mandalKey}.`,
+        updatedItem: currentItem
+      };
+    }
+
+    // CASE 2: DEO updating district-level particulars directly without specifying a mandal
+    if (!isDeoOrApo) {
+      return {
+        success: false,
+        status: 403,
+        message: "Access Denied: District-wide benchmark editing is strictly restricted to authenticated DEO and APO officers."
+      };
+    }
+
     const districtList = data.school_strength_district || JSON.parse(JSON.stringify(INITIAL_DISTRICT_STRENGTH));
     const index = districtList.findIndex(d => Number(d.code) === codeNum);
-
     if (index === -1) {
-      return { success: false, status: 404, message: `Management Code ${managementCode} not found in official district particulars.` };
+      return { success: false, status: 404, message: `Management Code ${managementCode} not found in district particulars.` };
     }
 
     const currentItem = districtList[index];
@@ -1115,7 +1303,6 @@ class SchoolStrengthService {
       const sc = Number(updates.schoolsCount);
       if (!isNaN(sc) && sc >= 0) currentItem.schoolsCount = sc;
     }
-
     if (updates.stages && typeof updates.stages === 'object') {
       if (!currentItem.stages) currentItem.stages = {};
       Object.keys(updates.stages).forEach(stageKey => {
@@ -1124,31 +1311,19 @@ class SchoolStrengthService {
           currentItem.stages[stageKey] = sv;
         }
       });
-      // Recalculate total students for management
       currentItem.totalStudents = Object.values(currentItem.stages).reduce((s, v) => s + (Number(v) || 0), 0);
     }
-
     districtList[index] = currentItem;
-    this.saveData({ school_strength_district: districtList });
+    data.school_strength_district = districtList;
+    this.saveData(data);
 
-    // Optional Atlas sync
-    try {
-      const mongo = require('../mongo');
-      if (mongo.isMongoConnected()) {
-        const col = mongo.getCollection('school_strength_district');
-        if (col) {
-          col.updateOne({ code: currentItem.code }, { $set: currentItem }, { upsert: true });
-        }
-      }
-    } catch (e) {}
-
-      return {
-        success: true,
-        status: 200,
-        message: `✓ Successfully updated district particulars for Management Code ${managementCode} (${currentItem.managementName}).`,
-        updatedItem: currentItem
-      };
-    }
+    return {
+      success: true,
+      status: 200,
+      message: `✓ Successfully updated district particulars for Management Code ${managementCode} (${currentItem.managementName}).`,
+      updatedItem: currentItem
+    };
+  }
 
     /**
      * Search schools for "Find a School" public portal feature

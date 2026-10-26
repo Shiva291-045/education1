@@ -8,17 +8,6 @@
       "employeeId": null,
       "passwordHash": "scrypt$2831c8fc15c4246208ca6dce13ef5ae5$4ec53cde85f71bfaa0ab3c340d93d331e79abfb8038c0170b7a8bfa9a675f459ae44a0b7f1c65c3a94d931c4abc8fd1422573975d17b047f6070b08e7b012aae",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [
-        {
-          "credentialId": "uyw2F_0naS94CIHDg-07cnhG0x5Rr4WxbFuz1UeTRaY",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEeUYoidRYdvZQd0cH50cSOZetiPU-LOV4Z6eWaDkENCAwPSsAhXh3eA-d_dUK09a0x_wZ2hazErVSfWW6aJCO9w",
-          "counter": 2,
-          "transports": [
-            "internal"
-          ],
-          "createdAt": "2026-09-24T18:26:11.131Z"
-        }
-      ],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-24T18:26:11.103Z",
@@ -36,20 +25,8 @@
       "designation": "School Assistant (Mathematics)",
       "schoolName": "Zilla Parishad High School, Jangaon",
       "mandal": "Jangaon",
-      "passkeys": [
-        {
-          "credentialId": "NpqDEeDNUfWKRy5FWsDUPg",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELW2ML7LmAgtq_kR4TMwStPJ2uFCodq29HNTkRJ6FJURkRasnvMd3AXXDXU5vHmdV91pCClA0jdQmW8om9lmxRw",
-          "counter": 0,
-          "transports": [
-            "hybrid",
-            "internal"
-          ],
-          "createdAt": "2026-09-25T07:04:49.387Z"
-        }
-      ],
       "createdAt": "2026-09-24T18:26:11.185Z",
-      "lastLogin": "2026-09-25T07:04:35.020Z",
+      "lastLogin": "2026-10-24T09:43:42.502Z",
       "_id": "6ab626b3aea589eadac89f0a"
     },
     {
@@ -60,17 +37,6 @@
       "employeeId": null,
       "passwordHash": "scrypt$83abefb353d9241c3c51e88377827b10$24ef1d161fb41bd977f69dde063e27549d8cdd29649ece4279c8c6962d005fcd4cc352a3a7fdbf308ab5b2f83a63d392fcf50e66eb474b8643b14638dd370747",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [
-        {
-          "credentialId": "qPNH3V_fu1y51pkNYLiXWvZhFeV-c121r6CenUHsjDU",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWSQHgBQaZidYQaVkSBRfizs8Kqt21eSR3k8NHMCUny3yQB8H53HSqzzmRobAb6YW7gmFkAxZmfnikLLlC6WxFA",
-          "counter": 1,
-          "transports": [
-            "internal"
-          ],
-          "createdAt": "2026-09-25T06:23:21.150Z"
-        }
-      ],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:23:20.945Z",
@@ -85,17 +51,6 @@
       "employeeId": null,
       "passwordHash": "scrypt$5f6bac892094b46c11ab30a062d2478d$ff701c13fbed7717db70e8722b78d2359294f2f24f4de9862ded48fb3f0646e4fe825367c4630dff016aa80de41e7cc9ea9c615eed2d21b3f6b80634facda58e",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [
-        {
-          "credentialId": "ZGmVD82PA3iQ3atPouEbxDygP4XYZV0IjjbaCFgMd-A",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvPLyao_mR8_VjP3l8LekUMWTyApbOKwHlhP-aylYcDNF2bdQeowpgRcTyAX8eYz-hj0jZizjMKP-dyYPvlGeEg",
-          "counter": 1,
-          "transports": [
-            "internal"
-          ],
-          "createdAt": "2026-09-25T06:23:21.203Z"
-        }
-      ],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:23:21.116Z",
@@ -104,23 +59,12 @@
     },
     {
       "id": "USER-1790317401288-2217",
-      "fullName": "Root Passkey Officer",
+      "fullName": "Root Administrative Officer",
       "role": "APO",
       "mobileNumber": "9563899707",
       "employeeId": null,
       "passwordHash": "scrypt$129758f19bd270cbc78ac6fff06ce69e$09a6611cdca116229a0e7f661a775421e7b3616fffabee41fcf3fff896a48d736ba39258fa277f2c05ca6d52801f0e29d2694c419e67f8d40995299cf0a4c402",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [
-        {
-          "credentialId": "AQrI4VDlNwC_Q0xu7bS7nMFsh5x3muLDwOsNzCxSqwk",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEzb1QDhCdbjqY9KQb9emeZ_Wo9MDK89qs8WbMBMV3im1VP6H71EOF-tnuow-qNK5nHbOoiu2Lw94-Te_NOy8obA",
-          "counter": 1,
-          "transports": [
-            "internal"
-          ],
-          "createdAt": "2026-09-25T06:23:21.374Z"
-        }
-      ],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:23:21.288Z",
@@ -135,17 +79,6 @@
       "employeeId": null,
       "passwordHash": "scrypt$938e3ab72e19819dd734407e29e576ca$eb9277fde06683d1b907181b2e1db79fc33b3cae8bc99e3c0aa91199e19305dee1272dacb2fb919e9bcd584476e197c8bc2180c8e2472e9d6ac5d23756ca6c0a",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [
-        {
-          "credentialId": "6knEP48vXBg7nO_EKWyxNe2tZS3b8WGYP6dvaz0AvMA",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEAwScgosDeTtbJ9raUSoGgMRz6mde8VJfr-mex1CI2aLJm_ZsS8_oPi_pPrmPuKw2eLThSUz3FZBuXjhuq_B7tg",
-          "counter": 1,
-          "transports": [
-            "internal"
-          ],
-          "createdAt": "2026-09-25T06:23:21.489Z"
-        }
-      ],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:23:21.462Z",
@@ -160,17 +93,6 @@
       "employeeId": null,
       "passwordHash": "scrypt$8479571e86a6583faf304e8edded6db5$548bb1846eb3f7e7b9910e4237cc5b1ea5422275f5bb90582e10a22515090676152dd3193988688aadf94d7f85c4ec3a61278a78ba29abaed73ea0fe696ab9a9",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [
-        {
-          "credentialId": "LygSpWsyUGpMhYBF7UAImLIXu9tm6duI-K0TsgDkaAc",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEX7nprCR1f2zy6SszT429K1Kt1zfPVsa6bYUL7SRqIwmCyBPhPKNqf148r-KHiJxMjS4PSnyzzASN6rx2pi2YdQ",
-          "counter": 2,
-          "transports": [
-            "internal"
-          ],
-          "createdAt": "2026-09-25T06:27:38.614Z"
-        }
-      ],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:27:38.438Z",
@@ -185,17 +107,6 @@
       "employeeId": null,
       "passwordHash": "scrypt$480975976fbe85a0a4fb0508f425db60$b8697bfd2529d8d532b8f81f6f8b57d55a1fd802fb8ec6ba91d7357e09eef987acc2f0109600a8a5872a97a55d35e66f3d1d1d2e6a37245e7eaa18acab66fc1a",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [
-        {
-          "credentialId": "nCdwSvXtY-aopUwdljDvdpnRTG9Q6rmz8MPfoeMYGcs",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEfZ5StM9fEd_IyqQLNfcSY5U2Wy_zFTxcBH_v7Gfhbd6TtK1kSk4KhnhQegxwrvrSbFUGZsmdw5mMUs4yv8z64w",
-          "counter": 1,
-          "transports": [
-            "internal"
-          ],
-          "createdAt": "2026-09-25T06:27:38.667Z"
-        }
-      ],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:27:38.582Z",
@@ -204,23 +115,12 @@
     },
     {
       "id": "USER-1790317658770-6389",
-      "fullName": "Root Passkey Officer",
+      "fullName": "Root Administrative Officer",
       "role": "APO",
       "mobileNumber": "9511994038",
       "employeeId": null,
       "passwordHash": "scrypt$85a5fa6e8751012411973d32f0e2e273$d58df50821246fe1ea5dd0ef087c5ea4a3e19d6f1d86ddb60eeaeee36b81a8dfbea786eeb774c3c3820782c1c23ae79f81a1f130f9825458cd37108f405bcebf",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [
-        {
-          "credentialId": "iaiPnUO8hQvVVU7gplFNo-LljqfGEBaqm8UNOri9yTc",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE0-G5pTIIKg1ahDR4DGsXH5zfEJ1Z5qTsPa-uuXUXCpjK8QRyfoNCCkiGP7a6mJWFa__mfCQiUYRK60gdOYZLhA",
-          "counter": 1,
-          "transports": [
-            "internal"
-          ],
-          "createdAt": "2026-09-25T06:27:38.829Z"
-        }
-      ],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:27:38.770Z",
@@ -235,7 +135,6 @@
       "employeeId": null,
       "passwordHash": "scrypt$56d8b1b101aec69ca4cc1179be62276a$9e6a1d5013e4a3df9f152479704a0365fe8befbae4c99fe00d7818e7e4e1c18fec049cd8b80d173c7c36fd671f7df30544459084488bc4e5fbac79c3ad8dcee9",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:27:38.912Z",
@@ -250,17 +149,6 @@
       "employeeId": null,
       "passwordHash": "scrypt$f9c9da72934d3c4f6ba3677d203ec0bf$12d67d678f1b71014787f9852a46e0eee09ac511451969a25831ca6c69ea5e8bf5298635e2b2016212708db4f20bb451c3495a952b13c0ce906edc79d9c60ac9",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [
-        {
-          "credentialId": "CrDBOEnREIHQuz4uUnb1ps2jW1rtYo-DEvDWC3lBt3A",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEYGvAoNGp0Z8jmNffAtqOOqZkN5Ms45jNCArOFDgt5nwpyneGWVNrSxNy_JteET_pM4y0nSbs9fQ9iJQWowyQhg",
-          "counter": 2,
-          "transports": [
-            "internal"
-          ],
-          "createdAt": "2026-09-25T06:28:58.189Z"
-        }
-      ],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:28:58.027Z",
@@ -275,17 +163,6 @@
       "employeeId": null,
       "passwordHash": "scrypt$c0233daa6313f4a6af2fa8ca0989792b$3c3c5f8526463badec442ce48157e3467c32e5772145075a15448b9e6a2b01787f025b0d3273c0dcede5a8452bd2e11b35f3788a3ac85208247962d0a2d6bc05",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [
-        {
-          "credentialId": "tjBK2L2gUzAxiDWWf4kecA38su9x22D3Wr7qrA7bvTo",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEc50nvFwfQnT3cVDUWkC7tTBLZ-Umj2syM41KxVYfribOUYlyeN69tx41zrAiJ6yR9P_cl813clGzvLOvJJs2rw",
-          "counter": 1,
-          "transports": [
-            "internal"
-          ],
-          "createdAt": "2026-09-25T06:28:58.233Z"
-        }
-      ],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:28:58.166Z",
@@ -294,23 +171,12 @@
     },
     {
       "id": "USER-1790317738342-3287",
-      "fullName": "Root Passkey Officer",
+      "fullName": "Root Administrative Officer",
       "role": "APO",
       "mobileNumber": "9590214180",
       "employeeId": null,
       "passwordHash": "scrypt$f4f1099801343aa4877d850d379191ff$c687fdf3519b75893b78a8ae98235ed1aa85a279d0bb5d5d9fdc1d5e411bfe3bb68e974766b966720bf33b3c7c7d2d4f5d7eacd817f95782c2d12b13e4b6810f",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [
-        {
-          "credentialId": "mVoG6NCpxZzdGnC4rkxHszw1sDQxcbx7GuNwlmrCeFM",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE9BU60MV5GTW-eLTStyu0GJf2Lq-Wrr9fEfga8ovVN2ZU0D4TURad74VcpvwQ5ZiWGoPeKalZuMsp5UuQ-s3YMQ",
-          "counter": 1,
-          "transports": [
-            "internal"
-          ],
-          "createdAt": "2026-09-25T06:28:58.380Z"
-        }
-      ],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:28:58.342Z",
@@ -325,7 +191,6 @@
       "employeeId": null,
       "passwordHash": "scrypt$8ea6040f1de19380eaf83b2773c1adc7$d4478df95124c92d331c7a695c8349ebe18ae2158a60d46a65cf2fb892c3c9d3c30a7ec9e0fce850173b144af9794b4a7b221e5af6989158d47fdcfcc09dfa4a",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:28:58.485Z",
@@ -340,17 +205,6 @@
       "employeeId": null,
       "passwordHash": "scrypt$b79d2c5ac51136a7deb8c0fa7a4931d0$718f77fa9ae78ac6761cbf82db0feb89c01246c8fd4768261621caf1466f57b27369ffc1ddc15cd842294c487aeec137e0c903ebeec1feb40666410a007aba1d",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [
-        {
-          "credentialId": "FmEb2H66-om_znCSu9E7cEwqViYrQKD6xA5mCsuyj18",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE_-kcP5ONYPMaCjFo6pOIi_9yk2bz2YaaQqFuX759eAOcL19wWGJL9uuuKPXaORQ4XZuexyXXjvcCtp5LMLcK0w",
-          "counter": 2,
-          "transports": [
-            "internal"
-          ],
-          "createdAt": "2026-09-25T06:35:25.951Z"
-        }
-      ],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:35:25.797Z",
@@ -365,17 +219,6 @@
       "employeeId": null,
       "passwordHash": "scrypt$cb901bbb3c35eb57dbae47229aebe8e0$c9d9c8a48d12d63345b524d83dd62968ed905ba37f62f419ceed7502ce2683b00b157334d7259a065788d33bcb3019e0e699cce9b69a615f77b3f251b0e8eca3",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [
-        {
-          "credentialId": "r8-0iTX5THU_FUZG0vMXylv9r9zr4tnbua80vuQ53jQ",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEGNykyiofNT-4EqFQhhrOfJe4da7sxf5csFa1mmnceGc6PYe4DYtZraEZmMcesChHG6IzCFIjgZ9ba17LAnWTRw",
-          "counter": 1,
-          "transports": [
-            "internal"
-          ],
-          "createdAt": "2026-09-25T06:35:26.000Z"
-        }
-      ],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:35:25.928Z",
@@ -384,23 +227,12 @@
     },
     {
       "id": "USER-1790318126088-6356",
-      "fullName": "Root Passkey Officer",
+      "fullName": "Root Administrative Officer",
       "role": "APO",
       "mobileNumber": "9589773413",
       "employeeId": null,
       "passwordHash": "scrypt$3a0149d0925463d7dac9784894f09216$a4cedd163fa47bc6bdcb40308f2d05ed37f9e15c16158c4a23dcff85020ef00a2a0eba3085adb6860a35199a270e3e26915771d7ca82f7af16f9c19659073a4b",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [
-        {
-          "credentialId": "srbgOY6G01I9L8jjZzGaWfUEOmuEdG1vPwPYk3q5MF4",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEXIuYqikkIMGpUFtBHKZwwz7oNWLvhtjlT5c-NtNaNgVhnPWxGLp0cIfzCt9ZqL7VbkEZLXgL1-eBsWzlWNxasA",
-          "counter": 1,
-          "transports": [
-            "internal"
-          ],
-          "createdAt": "2026-09-25T06:35:26.131Z"
-        }
-      ],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:35:26.088Z",
@@ -415,7 +247,6 @@
       "employeeId": null,
       "passwordHash": "scrypt$be9ba2f2e73626f5de15ef9856e287b2$a4e69677f4865f917311b125680fb5697ec36c5026652e09336c3fc2d1de36cfb858cdf5f85fb3364d54f883fbc0a12ce9284277ba6397cdc7e05916b2fd2d20",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:35:26.228Z",
@@ -430,7 +261,6 @@
       "employeeId": null,
       "passwordHash": "scrypt$8de4a3f83b0a9b9df0ab5bd589a304cc$4e8e8c55d772100482db43a957b6dd8bf43223c44ec3ab80605b2df3544cacb433b16b3aaa35b60ed0c47c9401ad4f2d7124913efd411fe77f9cb4dffec12def",
       "accountStatus": "PENDING_VERIFICATION",
-      "passkeys": [],
       "officialDataLinked": false,
       "officialProfileId": null,
       "createdAt": "2026-09-25T06:38:09.428Z",
@@ -448,7 +278,6 @@
       "designation": "SA PHY SCI",
       "schoolName": "MPUPS Rolliakal",
       "mandal": "Parvathagiri",
-      "passkeys": [],
       "createdAt": "2026-09-25T07:01:39.098Z",
       "lastLogin": "2026-10-03T14:28:39.995Z",
       "_id": "6ab626b3aea589eadac89f1c"
@@ -462,22 +291,10 @@
       "mandal": null,
       "passwordHash": "scrypt$1936ddae4f69541d08f73a8a652fe91c$1a6c1b48cf3a1dce3885a4375ec849c0e07a2127fd6351c342b3ca12e23bb45a96670381a73b8cbc3abfbef04b3902f7b72934466b7aae715ce99e2583b93893",
       "accountStatus": "ACTIVE",
-      "passkeys": [
-        {
-          "credentialId": "FDYNhmsPQJ5h-fI4IPcSVg",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAENZcUNN4_IxMknG_ne3BvF-fhC3LVxmUywSI9XHF_xtmMQbruODbBvDx9CvdIcKZi60YOQQozmDq_V2eulKglYg",
-          "counter": 0,
-          "transports": [
-            "hybrid",
-            "internal"
-          ],
-          "createdAt": "2026-10-03T13:02:27.514Z"
-        }
-      ],
       "officialDataLinked": true,
       "officialProfileId": null,
       "createdAt": "2026-10-02T09:29:41.298Z",
-      "lastLogin": "2026-10-18T13:57:19.027Z",
+      "lastLogin": "2026-10-23T17:27:33.597Z",
       "_id": "6abf7bad04e9e63ade8f9e1f"
     },
     {
@@ -489,11 +306,10 @@
       "mandal": null,
       "passwordHash": "scrypt$59e07f9bbd61f55cecf270ddc97ebabc$505248bc8a5def634a6ce3d7215efdf7a1281ed10fa118de216f7a043f7d0c2c894f313335462f225bf9c86466e3dcbacffd79ef4ac81b0283238af55962b183",
       "accountStatus": "ACTIVE",
-      "passkeys": [],
       "officialDataLinked": true,
       "officialProfileId": null,
       "createdAt": "2026-10-02T09:29:41.346Z",
-      "lastLogin": "2026-10-03T09:48:12.353Z"
+      "lastLogin": "2026-10-21T05:16:23.687Z"
     },
     {
       "id": "OFFICIAL-MEO-9848033444",
@@ -502,23 +318,12 @@
       "mobileNumber": "9848033444",
       "employeeId": null,
       "mandal": "JANGAON",
-      "passwordHash": "scrypt$c7a2bf364153bfddb93c161a9f85b7ea$12ff3e85aab390d70639fb75cfaa4a352907a20e82c7cc8bf0e25b188c01634b985c327b8da4f5bbff9f9b6fedd34293d2903c3dbcb0ebf785768c7a90ab434b",
+      "passwordHash": "scrypt$bc1d9565fb1c199e7b10ea4f848f29bb$1bd16a623dc17e60d3375260bb0c1da9d4939359809df0c8c5e67f2a0391ded0bd6e446786475f0324e5d5be1062143c696f60d243a7b9eb3bf3c59b989e9eb5",
       "accountStatus": "ACTIVE",
-      "passkeys": [
-        {
-          "credentialId": "fYSzIG5ifUy-fT19aUYH6r6u0iU1s75Nit_xShUQb4g",
-          "publicKeySpki": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEo0vknhgvbsW7OafOeC-gGqSl93DIanrxxsIYUzOxWJJPiMOKCd_gblZFV8XB1oj1frFN1Rma0qV78xMY6uSsZw",
-          "counter": 0,
-          "transports": [
-            "internal"
-          ],
-          "createdAt": "2026-10-18T13:54:39.634Z"
-        }
-      ],
       "officialDataLinked": true,
       "officialProfileId": null,
       "createdAt": "2026-10-02T09:29:41.393Z",
-      "lastLogin": "2026-10-18T13:54:21.925Z",
+      "lastLogin": "2026-10-25T07:36:14.696Z",
       "_id": "6abf7bad04e9e63ade8f9e24"
     },
     {
@@ -528,32 +333,653 @@
       "mobileNumber": "9848044555",
       "employeeId": null,
       "mandal": "BACHANNAPETA",
-      "passwordHash": "scrypt$1dec14844d8b6b6600cfb38e68fa7a92$2e6582eb2bf4b837d40d14caa2029bb0efe29e0c22c31fd6726cea186f056628b9cc7db1c27904c6f38389402b716717204d31dc8245bb344bcb8a3d0318bc97",
+      "passwordHash": "scrypt$bc1d9565fb1c199e7b10ea4f848f29bb$1bd16a623dc17e60d3375260bb0c1da9d4939359809df0c8c5e67f2a0391ded0bd6e446786475f0324e5d5be1062143c696f60d243a7b9eb3bf3c59b989e9eb5",
       "accountStatus": "ACTIVE",
-      "passkeys": [],
       "officialDataLinked": true,
       "officialProfileId": null,
       "createdAt": "2026-10-02T09:29:41.442Z",
-      "lastLogin": "2026-10-03T14:28:40.215Z"
+      "lastLogin": "2026-10-25T07:36:14.542Z"
+    },
+    {
+      "id": "USER-1792558620188-8198",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9891416611",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$8759f75e48cb3af20c3238234510ced6$37eb8598ef9384b954717780994a21dc9051302628c5ae76a94d39549722f25047c8c76c76565f2e2be6d6b4c05e344280bab98ae63c3b2ccf92c5b387ee026d",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T04:57:00.188Z",
+      "lastLogin": "2026-10-21T04:57:00.188Z"
+    },
+    {
+      "id": "USER-1792558687761-2850",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9859139366",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$062fa580761caf242e659ab86a5df0f2$58114cfb5489521a9c8266900356e5033b495154889fff775c167e8a69378a5ba464e09386321b34004dd23a823b53f5cdfccd21e9f2fb1e5b3f149fb919113a",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T04:58:07.761Z",
+      "lastLogin": "2026-10-21T04:58:07.761Z"
+    },
+    {
+      "id": "USER-1792558776347-5009",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9883797369",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$e8b214de8d3e098787ffd91f0657f782$b0fa59b29ff8ba697f557990f4709d218eb4f659fde3946f5afd2b059c42372a9a90fa96b026849c44240f886e515f7f13f1ce92aa8a781dbda2747aa6f62b77",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T04:59:36.347Z",
+      "lastLogin": "2026-10-21T04:59:36.347Z"
+    },
+    {
+      "id": "USER-1792558874667-7591",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9888876458",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$90e4ee9a9d7d9b399f7fa454a4c03345$f59dc5cb1e4bcce203b7d254b3095e4f7fb8fb7b1dc30b27c564cf9bf31d925fb8cfa3f3734bf9fa6933931ff7d9beba103d9fc9fc625b1b7ef064530d728a1f",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T05:01:14.667Z",
+      "lastLogin": "2026-10-21T05:01:14.779Z"
+    },
+    {
+      "id": "USER-1792559085317-6493",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9895153363",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$f0045a0166c7b402b21dfa7eaa96b80a$44bd79cc30c5f55c3bce2b097b1b6d2a3da7af1fb99a373ccd8744b3310e5ecfd11f665fd63b73b089631c6a1549743167ab3d831f83682caee3e68735579ed9",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T05:04:45.317Z",
+      "lastLogin": "2026-10-21T05:04:45.445Z"
+    },
+    {
+      "id": "USER-1792559215902-1982",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9877299218",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$802b3e2b09412e1cd1a4ec5cd3f5a857$04e61f2aa1d33c295f29deabc900316109e5bd35cf1126cf12d1506316515a488187c8fa3b153ff3eb05ec6a5702d8a88eeb9e99fac326626898f44caecedb24",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T05:06:55.902Z",
+      "lastLogin": "2026-10-21T05:06:56.004Z"
+    },
+    {
+      "id": "USER-1792559376685-7938",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9816490974",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$a15ca38a6e2970ec7d56a7b2e65cbb7b$9d9c2eda6cb19a89b6c806496e9f6f96dc4a6a5473c38e814fa47d2a0ee50b8d06135e0858e83dd1e12ead8b176d7278f2f12127e688724576140cced624608d",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T05:09:36.685Z",
+      "lastLogin": "2026-10-21T05:09:36.786Z"
+    },
+    {
+      "id": "USER-1792560104531-3745",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9842212932",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$695126900dfac6f1e03255ccfcdc9577$43afacbf7a5bfee66b05f5fbbfbe986d9002648e032284f9559b787255ed8f61c6c75140062a45c0ce6395aec29577113a425cf18048299d2b39c3ff65447c41",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T05:21:44.531Z",
+      "lastLogin": "2026-10-21T05:21:44.637Z"
+    },
+    {
+      "id": "USER-1792561319548-9584",
+      "fullName": "Test Officer",
+      "role": "DEO",
+      "mobileNumber": "9949774066",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$948c2b2e58286ea786466341c412bad1$2e04a68b394474c14c5b721d7bfbb515f4fe125275e5f76d3ca6451a06a97ddf799717c14d3bf369200dcbfd9fe4a92cccc3c2318154b74e49f6d28572367985",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T05:41:59.548Z",
+      "lastLogin": "2026-10-21T05:41:59.548Z"
+    },
+    {
+      "id": "USER-1792561330928-3192",
+      "fullName": "Test Officer",
+      "role": "DEO",
+      "mobileNumber": "9976199768",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$e826c64f295c471f2d45e4c1c2a473d3$7c7f06cf0254974bf1609d2bc9602fedcf19c2e506cb4b0cb07e5dec185158b8c518fb686d2f328fd8b556fd5e0b3a781dfc548bee850f1fe580801975f4ea8b",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T05:42:10.928Z",
+      "lastLogin": "2026-10-21T05:42:10.928Z"
+    },
+    {
+      "id": "USER-1792561359836-8377",
+      "fullName": "Verification Officer",
+      "role": "DEO",
+      "mobileNumber": "9967334761",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$2f64a0a2b6ae35e70f999f1d3636f3fc$bda1d1dbe634403c0398a28d53d8c3cb13aeb1a554ed34e2e9d3519a81c476eddf1916313807aa05acb6661ecbb83e3317fd571f740feb4c0ac7f073d921200b",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T05:42:39.836Z",
+      "lastLogin": "2026-10-21T05:42:39.836Z"
+    },
+    {
+      "id": "USER-1792561398604-7034",
+      "fullName": "Verification Officer",
+      "role": "DEO",
+      "mobileNumber": "9975774617",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$0de05345b64126d74e87d77094ada695$818c617a04ce239f8a41df8489f3e2b0a1dc0efbed844ca217887b9a06e615c00d7453c014adcc5abd13749e3ca00da0d70b031e001732f02a6952e22d858c6f",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T05:43:18.604Z",
+      "lastLogin": "2026-10-21T05:43:18.604Z"
+    },
+    {
+      "id": "USER-1792561471432-1644",
+      "fullName": "Verification Officer",
+      "role": "DEO",
+      "mobileNumber": "9983153920",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$3634d2e8f04bb91d70946731b8043520$0c96b809816ba95393f77de6b83918dbc7ab671a7464c92d04f305b724728e6f186683644d01645fd99ecc271bc7370a0a62d0c949c1051ccad2fe88e8f27c86",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T05:44:31.432Z",
+      "lastLogin": "2026-10-21T05:44:31.432Z"
+    },
+    {
+      "id": "USER-1792561478773-7893",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9852103659",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$530e6f0a4f75459e0da595e9c350fafa$640caa721f3fd7cc0f54d38ad4ace1bed594f9a14c62cd222aa5dde372eb0441bdc398bcdb958c43022a5be537e52924e8fa56fbf1288894faecf12c77875b19",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T05:44:38.773Z",
+      "lastLogin": "2026-10-21T05:44:38.870Z"
+    },
+    {
+      "id": "USER-1792562257821-7499",
+      "fullName": "Admin Tester",
+      "role": "DEO",
+      "mobileNumber": "9980345675",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$e8c0e3fe959141de3da6af3136229ece$2ddabb4da0fbaf6007350d79ce87201346c47224f3a1bc43892cc3d679e6c1a92d4b2f7ada23fc4d9bcbdbf2b4b91e17bd79a9fdb51d4f765d5e469768b47d57",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T05:57:37.821Z",
+      "lastLogin": "2026-10-21T05:57:37.821Z"
+    },
+    {
+      "id": "USER-1792562800851-9586",
+      "fullName": "Verification Officer",
+      "role": "DEO",
+      "mobileNumber": "9938819410",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$92a87b0f6c00886c4a0213dbe27697dd$91f60b7b3cf3a999ed6eb6a89f050a8f77d05fe0f35d93c459e0713c6598f5a838e3d6e41f5c8352509ed6695af3c55623f1dbc7b2c980e3231495bde074582c",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T06:06:40.851Z",
+      "lastLogin": "2026-10-21T06:06:40.851Z"
+    },
+    {
+      "id": "USER-1792562808647-5988",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9847309740",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$439e4e53019581b6a07abeb582f73233$d90536be43bab04f7103a40c6f9ef3173e1793ea6c91a7c8aec9f859b7b904a4c43ac21aa34b6baee128ae545ed7c0cc3c86b3f74ed816ae1f3ba00ef5e282ef",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T06:06:48.647Z",
+      "lastLogin": "2026-10-21T06:06:48.737Z"
+    },
+    {
+      "id": "USER-1792563903836-5030",
+      "fullName": "DEO Officer",
+      "role": "DEO",
+      "mobileNumber": "9975845842",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$91491a49fee32dcbee8445d654869f52$a53d2b0ea87b67c156b48a48123378ff126961c964a0bb1300157b488e0901dc1f8c57e84286b3bbc513c81752a3793153f390a0c20e8ea3a314cca4f84226b0",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T06:25:03.836Z",
+      "lastLogin": "2026-10-21T06:25:03.836Z"
+    },
+    {
+      "id": "USER-1792563910546-6374",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9899137194",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$96d6ec48afc34f024643f4f6ea4dfd5a$afb1d83ad0f9dd579317274f6dbb8103b3bac978424a3dccc7e35e9d3f411908c1bd8a21a8c3917d6c007f035be3d84b6efe805c4d78ea0ce9ce049077124443",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T06:25:10.546Z",
+      "lastLogin": "2026-10-21T06:25:10.624Z"
+    },
+    {
+      "id": "USER-1792571121873-2509",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9878579705",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$8b6d58f3bbb38bdd1c98264f7faec44e$28d2101b4203e042b5b6e8fb55ff740c286607cffd26b095299d99afa4b3315b5e905b6a2760752c06706c17a2633c901afcaabe2c435d8d46b7b94eadd6daa7",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T08:25:21.873Z",
+      "lastLogin": "2026-10-21T08:25:22.058Z"
+    },
+    {
+      "id": "USER-1792571159848-1114",
+      "fullName": "DEO Officer",
+      "role": "DEO",
+      "mobileNumber": "9959547509",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$644eefb30e60e5669620fb7473718e65$9662b1789b8f15ff8d4beedd39a355dd681f8d14f8ca10bb3f49300bec6330b2cb8e33fdf215b62147901250649031c9c05489131ce5c879179256715ba21c7b",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-21T08:25:59.848Z",
+      "lastLogin": "2026-10-21T08:25:59.848Z"
+    },
+    {
+      "id": "USER-1792781901336-3193",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9838204654",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$d48b551c4d0fa7978af0c1cb600f8546$01dcc017041e328f88b51b740a72ddc855b8d7f56717d62165b2f7485f0fdda1c05789e795bed0a722549f7a35993fa863078f444d4cc7ddd2d34d4cca709a80",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-23T18:58:21.336Z",
+      "lastLogin": "2026-10-23T18:58:21.698Z"
+    },
+    {
+      "id": "USER-1792822828022-1923",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9830808978",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$553b26ff83f26c1d8ffa418f1d736929$6eecf3144d6b1b89e85dc5fd989027d47f9c2690f0aa9eb71fe4719d241181cfd833b0c090bb774ceb8fe0bffcb2f76c5ff418df9c50000bdd5535d30a697483",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-24T06:20:28.022Z",
+      "lastLogin": "2026-10-24T06:20:28.354Z"
+    },
+    {
+      "id": "USER-1792828091524-3800",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9861834282",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$02e893582f870f3bc2a01525827dfb4a$160075bdf8ceb4ede43bac80b0f9916034874417e89ef39492eb1689c1f380aefb48106bc5beed40179760d209e3234e04dcc3c41f43cdcb7c348dd281d74d90",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-24T07:48:11.525Z",
+      "lastLogin": "2026-10-24T07:48:11.700Z"
+    },
+    {
+      "id": "USER-1792830702522-5999",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9873367606",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$be94c3a7effbd242758d80aa4588a9d8$e19d6d68159b0370af14a3cfbb8e2a6bdbb39cdfc2cf6c0403aa5da0fef22c613f71cadb00e2f26ffceca2cd1efd087eccc97eef953d49eddf950579890cb06a",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-24T08:31:42.523Z",
+      "lastLogin": "2026-10-24T08:31:42.662Z"
+    },
+    {
+      "id": "USER-1792831061607-7350",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9886891539",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$6c6a3c627e01df11a36df0f62bb0f269$9274a529c027388c0e622d94e45bca27bc84b0cbb937986cd5275e3a92b936466203ebbb6b38150581fca9d5754b6d89f29da9874154dd44b3a0cad62f076b93",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-24T08:37:41.607Z",
+      "lastLogin": "2026-10-24T08:37:41.718Z"
+    },
+    {
+      "id": "USER-1792832590456-1513",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9815495826",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$7d0de98288b428f05d1bb6273bdea3b3$4977e07ba1d1789c9f8854c44b246b8930ac48b7b3127eb8615ffd1d7107007a40529274207301a4e8d36bac138d9ba0a88b2227633c105260dc6a894079c906",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-24T09:03:10.456Z",
+      "lastLogin": "2026-10-24T09:03:10.536Z"
+    },
+    {
+      "id": "USER-1792835022400-3245",
+      "fullName": "Sri. K. Ramesh",
+      "role": "APO",
+      "mobileNumber": "9874452504",
+      "employeeId": null,
+      "mandal": null,
+      "passwordHash": "scrypt$5cf9588913a4bf35cd9423fdb1320971$df747189184633290a87bb0885d5d00f1be3906a38da2ebaaff82c583c7a60ecb5a8047799dbea1106779b0df6f0dc6aaccd9d9d4f8f40df980928dba9f65ace",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": false,
+      "officialProfileId": null,
+      "createdAt": "2026-10-24T09:43:42.400Z",
+      "lastLogin": "2026-10-24T09:43:42.487Z"
+    },
+    {
+      "id": "OFFICIAL-MEO-9848044551",
+      "fullName": "Mandal Educational Officer (CHILPUR)",
+      "role": "MEO",
+      "mobileNumber": "9848044551",
+      "employeeId": null,
+      "mandal": "CHILPUR",
+      "passwordHash": "scrypt$bc1d9565fb1c199e7b10ea4f848f29bb$1bd16a623dc17e60d3375260bb0c1da9d4939359809df0c8c5e67f2a0391ded0bd6e446786475f0324e5d5be1062143c696f60d243a7b9eb3bf3c59b989e9eb5",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": true,
+      "officialProfileId": null,
+      "createdAt": "2026-10-25T07:27:57.096Z",
+      "lastLogin": "2026-10-25T07:27:57.103Z"
+    },
+    {
+      "id": "OFFICIAL-MEO-9848044552",
+      "fullName": "Mandal Educational Officer (DEVARUPPALA)",
+      "role": "MEO",
+      "mobileNumber": "9848044552",
+      "employeeId": null,
+      "mandal": "DEVARUPPALA",
+      "passwordHash": "scrypt$bc1d9565fb1c199e7b10ea4f848f29bb$1bd16a623dc17e60d3375260bb0c1da9d4939359809df0c8c5e67f2a0391ded0bd6e446786475f0324e5d5be1062143c696f60d243a7b9eb3bf3c59b989e9eb5",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": true,
+      "officialProfileId": null,
+      "createdAt": "2026-10-25T07:27:57.103Z",
+      "lastLogin": "2026-10-25T07:27:57.103Z"
+    },
+    {
+      "id": "OFFICIAL-MEO-9848044553",
+      "fullName": "Mandal Educational Officer (GANPUR (STN))",
+      "role": "MEO",
+      "mobileNumber": "9848044553",
+      "employeeId": null,
+      "mandal": "GANPUR (STN)",
+      "passwordHash": "scrypt$bc1d9565fb1c199e7b10ea4f848f29bb$1bd16a623dc17e60d3375260bb0c1da9d4939359809df0c8c5e67f2a0391ded0bd6e446786475f0324e5d5be1062143c696f60d243a7b9eb3bf3c59b989e9eb5",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": true,
+      "officialProfileId": null,
+      "createdAt": "2026-10-25T07:27:57.104Z",
+      "lastLogin": "2026-10-25T07:27:57.104Z"
+    },
+    {
+      "id": "OFFICIAL-MEO-9848044555",
+      "fullName": "Mandal Educational Officer (KODAKANDLA)",
+      "role": "MEO",
+      "mobileNumber": "9848044555",
+      "employeeId": null,
+      "mandal": "KODAKANDLA",
+      "passwordHash": "scrypt$bc1d9565fb1c199e7b10ea4f848f29bb$1bd16a623dc17e60d3375260bb0c1da9d4939359809df0c8c5e67f2a0391ded0bd6e446786475f0324e5d5be1062143c696f60d243a7b9eb3bf3c59b989e9eb5",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": true,
+      "officialProfileId": null,
+      "createdAt": "2026-10-25T07:27:57.104Z",
+      "lastLogin": "2026-10-25T07:27:57.104Z"
+    },
+    {
+      "id": "OFFICIAL-MEO-9848044556",
+      "fullName": "Mandal Educational Officer (LINGALAGHANPUR)",
+      "role": "MEO",
+      "mobileNumber": "9848044556",
+      "employeeId": null,
+      "mandal": "LINGALAGHANPUR",
+      "passwordHash": "scrypt$bc1d9565fb1c199e7b10ea4f848f29bb$1bd16a623dc17e60d3375260bb0c1da9d4939359809df0c8c5e67f2a0391ded0bd6e446786475f0324e5d5be1062143c696f60d243a7b9eb3bf3c59b989e9eb5",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": true,
+      "officialProfileId": null,
+      "createdAt": "2026-10-25T07:27:57.104Z",
+      "lastLogin": "2026-10-25T07:27:57.104Z"
+    },
+    {
+      "id": "OFFICIAL-MEO-9848044557",
+      "fullName": "Mandal Educational Officer (NARMETTA)",
+      "role": "MEO",
+      "mobileNumber": "9848044557",
+      "employeeId": null,
+      "mandal": "NARMETTA",
+      "passwordHash": "scrypt$bc1d9565fb1c199e7b10ea4f848f29bb$1bd16a623dc17e60d3375260bb0c1da9d4939359809df0c8c5e67f2a0391ded0bd6e446786475f0324e5d5be1062143c696f60d243a7b9eb3bf3c59b989e9eb5",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": true,
+      "officialProfileId": null,
+      "createdAt": "2026-10-25T07:27:57.104Z",
+      "lastLogin": "2026-10-25T07:27:57.104Z"
+    },
+    {
+      "id": "OFFICIAL-MEO-9848044558",
+      "fullName": "Mandal Educational Officer (PALAKURTHI)",
+      "role": "MEO",
+      "mobileNumber": "9848044558",
+      "employeeId": null,
+      "mandal": "PALAKURTHI",
+      "passwordHash": "scrypt$bc1d9565fb1c199e7b10ea4f848f29bb$1bd16a623dc17e60d3375260bb0c1da9d4939359809df0c8c5e67f2a0391ded0bd6e446786475f0324e5d5be1062143c696f60d243a7b9eb3bf3c59b989e9eb5",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": true,
+      "officialProfileId": null,
+      "createdAt": "2026-10-25T07:27:57.105Z",
+      "lastLogin": "2026-10-25T07:27:57.105Z"
+    },
+    {
+      "id": "OFFICIAL-MEO-9848044559",
+      "fullName": "Mandal Educational Officer (RAGHUNATHPALLE)",
+      "role": "MEO",
+      "mobileNumber": "9848044559",
+      "employeeId": null,
+      "mandal": "RAGHUNATHPALLE",
+      "passwordHash": "scrypt$bc1d9565fb1c199e7b10ea4f848f29bb$1bd16a623dc17e60d3375260bb0c1da9d4939359809df0c8c5e67f2a0391ded0bd6e446786475f0324e5d5be1062143c696f60d243a7b9eb3bf3c59b989e9eb5",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": true,
+      "officialProfileId": null,
+      "createdAt": "2026-10-25T07:27:57.105Z",
+      "lastLogin": "2026-10-25T07:27:57.105Z"
+    },
+    {
+      "id": "OFFICIAL-MEO-98480445510",
+      "fullName": "Mandal Educational Officer (THARIGOPPULA)",
+      "role": "MEO",
+      "mobileNumber": "98480445510",
+      "employeeId": null,
+      "mandal": "THARIGOPPULA",
+      "passwordHash": "scrypt$bc1d9565fb1c199e7b10ea4f848f29bb$1bd16a623dc17e60d3375260bb0c1da9d4939359809df0c8c5e67f2a0391ded0bd6e446786475f0324e5d5be1062143c696f60d243a7b9eb3bf3c59b989e9eb5",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": true,
+      "officialProfileId": null,
+      "createdAt": "2026-10-25T07:27:57.105Z",
+      "lastLogin": "2026-10-25T07:27:57.105Z"
+    },
+    {
+      "id": "OFFICIAL-MEO-98480445511",
+      "fullName": "Mandal Educational Officer (ZAFFERGADH)",
+      "role": "MEO",
+      "mobileNumber": "98480445511",
+      "employeeId": null,
+      "mandal": "ZAFFERGADH",
+      "passwordHash": "scrypt$bc1d9565fb1c199e7b10ea4f848f29bb$1bd16a623dc17e60d3375260bb0c1da9d4939359809df0c8c5e67f2a0391ded0bd6e446786475f0324e5d5be1062143c696f60d243a7b9eb3bf3c59b989e9eb5",
+      "accountStatus": "ACTIVE",
+      "officialDataLinked": true,
+      "officialProfileId": null,
+      "createdAt": "2026-10-25T07:27:57.105Z",
+      "lastLogin": "2026-10-25T07:27:57.105Z"
     }
   ],
   "sessions": [
     {
-      "sessionId": "7128b05e970dfa015b3915454d1b73d59ff87c1cf8ff36801b20ee99c885e65b",
-      "userId": "OFFICIAL-MEO-9848033444",
-      "role": "MEO",
-      "createdAt": "2026-10-18T13:54:21.942Z",
-      "expiresAt": 1792418061942,
+      "sessionId": "f4f8c641dc2dfed5b21aba11a228ff478b9b74c111801317f872d8da0a352254",
+      "userId": "USER-1792828091524-3800",
+      "role": "APO",
+      "createdAt": "2026-10-24T07:48:11.709Z",
+      "expiresAt": 1792914491709,
       "metadata": {
         "authMethod": "password"
       }
     },
     {
-      "sessionId": "42287cdd85483aaf4cdfbf731e8809b8f2759cf0b100bda5ca4842892b54be78",
-      "userId": "OFFICIAL-DEO-9848011222",
-      "role": "DEO",
-      "createdAt": "2026-10-18T13:57:19.041Z",
-      "expiresAt": 1792418239041,
+      "sessionId": "1bdf60815de9bfa5ee704f99827ef2a1cf1e3d687a090137fa08c2d79fa9fc88",
+      "userId": "TCH-TS-TCH-100234",
+      "role": "Teacher",
+      "createdAt": "2026-10-24T07:48:11.723Z",
+      "expiresAt": 1792914491723,
+      "metadata": {
+        "authMethod": "teacher_credentials"
+      }
+    },
+    {
+      "sessionId": "b1e6bbabcab7033941a84ddad1de0cea8936c833914fb15a10db9d23a8da4c78",
+      "userId": "USER-1792830702522-5999",
+      "role": "APO",
+      "createdAt": "2026-10-24T08:31:42.668Z",
+      "expiresAt": 1792917102668,
+      "metadata": {
+        "authMethod": "password"
+      }
+    },
+    {
+      "sessionId": "730331ae0002f63dfb3ee38f47ba5a22b37b7c0d0ffa475ebb8baf090ef62a73",
+      "userId": "TCH-TS-TCH-100234",
+      "role": "Teacher",
+      "createdAt": "2026-10-24T08:31:42.679Z",
+      "expiresAt": 1792917102679,
+      "metadata": {
+        "authMethod": "teacher_credentials"
+      }
+    },
+    {
+      "sessionId": "19c437251538079931e94881870017cdec0aadc784d528e757ff6e4ca180175d",
+      "userId": "USER-1792831061607-7350",
+      "role": "APO",
+      "createdAt": "2026-10-24T08:37:41.725Z",
+      "expiresAt": 1792917461725,
+      "metadata": {
+        "authMethod": "password"
+      }
+    },
+    {
+      "sessionId": "b8b8f71433bd15ac336aa1e1a8b0523a0b6c4bf8319ccd394babef6e30b9dc6a",
+      "userId": "TCH-TS-TCH-100234",
+      "role": "Teacher",
+      "createdAt": "2026-10-24T08:37:41.734Z",
+      "expiresAt": 1792917461734,
+      "metadata": {
+        "authMethod": "teacher_credentials"
+      }
+    },
+    {
+      "sessionId": "d95cb8a5348155940c8833c91632d19916e72e19edc60b26bd8d16e0b918bbc6",
+      "userId": "USER-1792832590456-1513",
+      "role": "APO",
+      "createdAt": "2026-10-24T09:03:10.543Z",
+      "expiresAt": 1792918990543,
+      "metadata": {
+        "authMethod": "password"
+      }
+    },
+    {
+      "sessionId": "9e6a38c1956182524dadb27c1e682038f9a5c3a9bd74cb3a15656c4ec800526d",
+      "userId": "TCH-TS-TCH-100234",
+      "role": "Teacher",
+      "createdAt": "2026-10-24T09:03:10.552Z",
+      "expiresAt": 1792918990552,
+      "metadata": {
+        "authMethod": "teacher_credentials"
+      }
+    },
+    {
+      "sessionId": "62753b42ca987db9927886617ef62fb0acdb438ac01441fae6168a2f14ac5562",
+      "userId": "USER-1792835022400-3245",
+      "role": "APO",
+      "createdAt": "2026-10-24T09:43:42.493Z",
+      "expiresAt": 1792921422493,
+      "metadata": {
+        "authMethod": "password"
+      }
+    },
+    {
+      "sessionId": "3765a029d09727f0557074841b085930dd8cc3adf514bea2d93293f8ae0a622b",
+      "userId": "TCH-TS-TCH-100234",
+      "role": "Teacher",
+      "createdAt": "2026-10-24T09:43:42.504Z",
+      "expiresAt": 1792921422504,
+      "metadata": {
+        "authMethod": "teacher_credentials"
+      }
+    },
+    {
+      "sessionId": "897aa227fa6d7039e6bfe314cafb9c759dc942048cffae35f1d178b6bc465237",
+      "userId": "OFFICIAL-MEO-9848033444",
+      "role": "MEO",
+      "createdAt": "2026-10-25T07:36:14.713Z",
+      "expiresAt": 1793000174713,
       "metadata": {
         "authMethod": "password"
       }
@@ -607,388 +1033,6 @@
     "studentsPerTeacher": "378",
     "schoolsWithDigitalFacilities": "72%"
   },
-  "webauthnChallenges": [
-    {
-      "userId": "USER-1790317400944-5418",
-      "challenge": "aJBjnVjKbhwruAF1lvHal2vtDLNjWM0CFByU2TYbGfY",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:23:20.959Z",
-      "createdAtIso": "2026-09-25T06:23:20.959Z",
-      "expiresAt": 1790318000959,
-      "expiresAtMs": 1790318000959,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:23:21.157Z",
-      "enrollmentToken": "a3fec960940f3a4fe5c2b73ecacc2281e93f031318a88906f0d40fe616284b3b"
-    },
-    {
-      "userId": "USER-1790317401116-1106",
-      "challenge": "14Kop00xmz8HvK5gvyAQwgDAtXh34Fqas4qQSdFSMeI",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:23:21.119Z",
-      "createdAtIso": "2026-09-25T06:23:21.119Z",
-      "expiresAt": 1790318001119,
-      "expiresAtMs": 1790318001119,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:23:21.191Z",
-      "enrollmentToken": "5265499a6900667bdb4deb5beb3d080ce98f2089876f1c095577d281ceddb5f7",
-      "superseded": true
-    },
-    {
-      "userId": "USER-1790317401116-1106",
-      "challenge": "AP2vDmPxNsldkbuPU5u11BqhFT2S2A9DyFwNACvM98c",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:23:21.189Z",
-      "createdAtIso": "2026-09-25T06:23:21.189Z",
-      "expiresAt": 1790318001189,
-      "expiresAtMs": 1790318001189,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:23:21.207Z",
-      "enrollmentToken": "b865e7f55044439458f136539cd09f16a1402a4ea0f4cccbb607608fabfddc9d"
-    },
-    {
-      "userId": "USER-1790317401288-2217",
-      "challenge": "CD1e0zc7UwOaJLjpy68qLCXjTPTyDPU8VUR7B8u6g1A",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:23:21.291Z",
-      "createdAtIso": "2026-09-25T06:23:21.291Z",
-      "expiresAt": 1790318001291,
-      "expiresAtMs": 1790318001291,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:23:21.307Z",
-      "enrollmentToken": "c98b55c6d49a67d98b6ead7b37561816ea6f539e331c57c2d4d08add012faa55",
-      "superseded": true
-    },
-    {
-      "userId": "USER-1790317401288-2217",
-      "challenge": "a-ZK2l-K5ERlAD8Gzxs_c8BjPOAJBMURwnW5xbdE1Po",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:23:21.306Z",
-      "createdAtIso": "2026-09-25T06:23:21.306Z",
-      "expiresAt": 1790318001306,
-      "expiresAtMs": 1790318001306,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:23:21.380Z",
-      "enrollmentToken": "e8716a3ab2eca77e00166935aaef47eb22948fa43077a7702df7bd903c842bc9"
-    },
-    {
-      "userId": "USER-1790317401462-8518",
-      "challenge": "6zP6JsT6madpVrUyGk8DLYIIhElrw45yV_WPNSgmq6o",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:23:21.464Z",
-      "createdAtIso": "2026-09-25T06:23:21.464Z",
-      "expiresAt": 1790317400479,
-      "expiresAtMs": 1790318001464,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:23:21.496Z",
-      "enrollmentToken": "76a8e9faccf98d1524b83c72c2e8bce683644a4a4d004ee461c6b6bf8d3959f8"
-    },
-    {
-      "userId": "USER-1790317658438-7433",
-      "challenge": "3cPzyaz9KU1sz1lkG0MtFVjpzJdFHOl3Pl2Cwi09pJg",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:27:38.443Z",
-      "createdAtIso": "2026-09-25T06:27:38.443Z",
-      "expiresAt": 1790318258443,
-      "expiresAtMs": 1790318258443,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:27:38.620Z",
-      "enrollmentToken": "29a693e4e25c0233698121e485f68d8b55b106936b931bb9c05980a303a88b81"
-    },
-    {
-      "userId": "USER-1790317658582-8493",
-      "challenge": "UupYQOopI2g_GmXyvsob7f0oR-6LDm0GYOCbQVAIp5s",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:27:38.585Z",
-      "createdAtIso": "2026-09-25T06:27:38.585Z",
-      "expiresAt": 1790318258585,
-      "expiresAtMs": 1790318258585,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:27:38.652Z",
-      "enrollmentToken": "569caa8925f30e07d189f6ff4d928809ddd8853c3940194d1edef08e2be82b89",
-      "superseded": true
-    },
-    {
-      "userId": "USER-1790317658582-8493",
-      "challenge": "AscpO4IzliQ3C-2vZhYDJ1DNS0suvDsBHTbFihKpEGM",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:27:38.651Z",
-      "createdAtIso": "2026-09-25T06:27:38.651Z",
-      "expiresAt": 1790318258651,
-      "expiresAtMs": 1790318258651,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:27:38.671Z",
-      "enrollmentToken": "ac1b86ff19d6ed0b89c849a4f54e42c1f220a5c0a91ffcef9189ff136f7a534c"
-    },
-    {
-      "userId": "USER-1790317658770-6389",
-      "challenge": "iVHfbVxsc_Ji6MQI9jySPX_DGBGb173xjuvl_M9TikY",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:27:38.773Z",
-      "createdAtIso": "2026-09-25T06:27:38.773Z",
-      "expiresAt": 1790318258773,
-      "expiresAtMs": 1790318258773,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:27:38.787Z",
-      "enrollmentToken": "8ab9937473df445f6a6782428a640259229a67ecd6d1762ba5985298aa6d2459",
-      "superseded": true
-    },
-    {
-      "userId": "USER-1790317658770-6389",
-      "challenge": "sWJabhCXwpeupeuse8sdo41qTyUVxd_jbQuLzn3OYco",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:27:38.786Z",
-      "createdAtIso": "2026-09-25T06:27:38.786Z",
-      "expiresAt": 1790318258786,
-      "expiresAtMs": 1790318258786,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:27:38.834Z",
-      "enrollmentToken": "1f06e14c559e5f755d3c960e8e0a18df189b67da2fee445ed4eb5e8df7ca8eab"
-    },
-    {
-      "userId": "USER-1790317658912-2175",
-      "challenge": "bd4UhGUq0pdlNpDXF09D2RI2Ww1tyVaRO4-m17mVkuc",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:27:38.937Z",
-      "createdAtIso": "2026-09-25T06:27:38.937Z",
-      "expiresAt": 1790317657954,
-      "expiresAtMs": 1790318258937,
-      "consumed": false,
-      "consumedAt": null,
-      "enrollmentToken": "fa0b6f807be3c5d5902a6cc5a0906fd0e253a7170649a2845d13895ff2ee03da"
-    },
-    {
-      "userId": "USER-1790317658438-7433",
-      "challenge": "S1Y9YOuoRPBqsSrA3089VVpJ3yaL9_B7hztdQZy31NQ",
-      "registrationType": "WEBAUTHN_AUTHENTICATION",
-      "createdAt": "2026-09-25T06:27:38.974Z",
-      "createdAtIso": "2026-09-25T06:27:38.974Z",
-      "expiresAt": 1790318258974,
-      "expiresAtMs": 1790318258974,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:27:39.012Z",
-      "enrollmentToken": "8ff35fd82e52992dddb0ad1c5b8262427580f948e3e493f1d7c30dccea9ff022"
-    },
-    {
-      "userId": "USER-1790317738027-6343",
-      "challenge": "QCf341sz6ycnNh-apcyLATe_bmX7vAtyEwOPbx8YX_c",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:28:58.029Z",
-      "createdAtIso": "2026-09-25T06:28:58.029Z",
-      "expiresAt": 1790318338029,
-      "expiresAtMs": 1790318338029,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:28:58.193Z",
-      "enrollmentToken": "4a99ff7aec05505de6581e79985a6e1d0a0b3e94e3861d4f6c992c9e271990da"
-    },
-    {
-      "userId": "USER-1790317738166-9521",
-      "challenge": "GXkAmPwJoz2KSaY3P9SLVghPGjOeQOdKWFgwQITJuqg",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:28:58.169Z",
-      "createdAtIso": "2026-09-25T06:28:58.169Z",
-      "expiresAt": 1790318338169,
-      "expiresAtMs": 1790318338169,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:28:58.221Z",
-      "enrollmentToken": "005ab345bc364ef6207a8b524edd8766557a6b6b17d9c14894400b7474c312da",
-      "superseded": true
-    },
-    {
-      "userId": "USER-1790317738166-9521",
-      "challenge": "lq8G9Cp24kqBnbutUwceryR9QMRMSygfygXfgme5OS8",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:28:58.220Z",
-      "createdAtIso": "2026-09-25T06:28:58.220Z",
-      "expiresAt": 1790318338220,
-      "expiresAtMs": 1790318338220,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:28:58.239Z",
-      "enrollmentToken": "e545fec004a1df22307e6df978f9dffb25920eda7307d8c674a125d60dd282c2"
-    },
-    {
-      "userId": "USER-1790317738342-3287",
-      "challenge": "tjOR7LVbuNgYJCQ8ngNEX0GGDxf4rNmOs71AHCWI78I",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:28:58.344Z",
-      "createdAtIso": "2026-09-25T06:28:58.344Z",
-      "expiresAt": 1790318338344,
-      "expiresAtMs": 1790318338344,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:28:58.357Z",
-      "enrollmentToken": "49987d50799750bd8f498a066eab0c0cc56bb1ac6662bb6f7dfdb4643d8d5d11",
-      "superseded": true
-    },
-    {
-      "userId": "USER-1790317738342-3287",
-      "challenge": "oFRKWO1ABZ7UjG6LSlrFQ4zW6_n2Dve8HZ2TccdKmK8",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:28:58.355Z",
-      "createdAtIso": "2026-09-25T06:28:58.355Z",
-      "expiresAt": 1790318338355,
-      "expiresAtMs": 1790318338355,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:28:58.385Z",
-      "enrollmentToken": "b8983d824f61be72e84b2dae22a1cad742437b1f0d4d295b432be4a33a159b53"
-    },
-    {
-      "userId": "USER-1790317738485-6185",
-      "challenge": "5YQtiy-2AdU5BlZ6SsqpgwhVEJH3EAoRcx3cn_p3ECo",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:28:58.489Z",
-      "createdAtIso": "2026-09-25T06:28:58.489Z",
-      "expiresAt": 1790317737510,
-      "expiresAtMs": 1790318338489,
-      "consumed": false,
-      "consumedAt": null,
-      "enrollmentToken": "1247ac4ccf8cf525f2ec683f2d5036785b865fd55c3e2a95feca6402a917de4c"
-    },
-    {
-      "userId": "USER-1790317738027-6343",
-      "challenge": "pjwsImlHb9AimPE1X0c8_uHfA5SL8-LrLgethde6rvY",
-      "registrationType": "WEBAUTHN_AUTHENTICATION",
-      "createdAt": "2026-09-25T06:28:58.523Z",
-      "createdAtIso": "2026-09-25T06:28:58.523Z",
-      "expiresAt": 1790318338523,
-      "expiresAtMs": 1790318338523,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:28:58.552Z",
-      "enrollmentToken": "420d3b21a4d2d64aa14f69a5952e1bd401d0f78fa5f64ecaeb513f76e6683c7c"
-    },
-    {
-      "userId": "USER-1790318125797-5075",
-      "challenge": "uT-OPWPjRhWODOZO_bl9RlMI2oX4CXUhGQ6QKtpoaXQ",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:35:25.799Z",
-      "createdAtIso": "2026-09-25T06:35:25.799Z",
-      "expiresAt": 1790318725799,
-      "expiresAtMs": 1790318725799,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:35:25.956Z",
-      "enrollmentToken": "3deb96e4914919b0f00458a890b01a23aa9f1cd4ceebb2046d867ccdaad98a02"
-    },
-    {
-      "userId": "USER-1790318125928-5624",
-      "challenge": "5iWudjRzY3sYmF7tS6wfLPdCekmo2cxV2isgEq7loWE",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:35:25.931Z",
-      "createdAtIso": "2026-09-25T06:35:25.931Z",
-      "expiresAt": 1790318725931,
-      "expiresAtMs": 1790318725931,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:35:25.987Z",
-      "enrollmentToken": "887432d34499b0ed2023650dbd1b059447918888bfb7d3480b8d6d6fd61d4ddf",
-      "superseded": true
-    },
-    {
-      "userId": "USER-1790318125928-5624",
-      "challenge": "V4fY9gPaN5cB_j9OAFW5z4G9ovQmVnnSzO0ZefAbKOU",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:35:25.985Z",
-      "createdAtIso": "2026-09-25T06:35:25.985Z",
-      "expiresAt": 1790318725985,
-      "expiresAtMs": 1790318725985,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:35:26.006Z",
-      "enrollmentToken": "8f074d67825152581767940ae8bea34426b3b5283b2606d52ba65b9d0fd1f5f6"
-    },
-    {
-      "userId": "USER-1790318126088-6356",
-      "challenge": "4Ryfy3X6sBeyw7eX9yAManf6uh6vGBY6jctv9LQ5fw0",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:35:26.090Z",
-      "createdAtIso": "2026-09-25T06:35:26.090Z",
-      "expiresAt": 1790318726090,
-      "expiresAtMs": 1790318726090,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:35:26.103Z",
-      "enrollmentToken": "fe589e73b1a4b80c603a963a02b532f7e51852ba8c2152a8ccec0ba9f37e873f",
-      "superseded": true
-    },
-    {
-      "userId": "USER-1790318126088-6356",
-      "challenge": "Jh-p8irNoJncA_DNA5atFwGBxImQzmMNoAfE66GWKjI",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:35:26.101Z",
-      "createdAtIso": "2026-09-25T06:35:26.101Z",
-      "expiresAt": 1790318726101,
-      "expiresAtMs": 1790318726101,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:35:26.136Z",
-      "enrollmentToken": "fbd1c9e0730a591f31cdefa8be4566be46678b12fa5d0e47de94b9d2406c6d2a"
-    },
-    {
-      "userId": "USER-1790318126228-2811",
-      "challenge": "GT6t2Rbsf4NrFW2R-7tMW21xYHrPgLN9Oj2F09mCBQg",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:35:26.231Z",
-      "createdAtIso": "2026-09-25T06:35:26.231Z",
-      "expiresAt": 1790318125250,
-      "expiresAtMs": 1790318726231,
-      "consumed": false,
-      "consumedAt": null,
-      "enrollmentToken": "23c9df06ceddf8883da1190462ef293610759e74f684c55cb44f5593339e6ef9"
-    },
-    {
-      "userId": "USER-1790318125797-5075",
-      "challenge": "r85sa0jpsNlNUSxpxD_-Q0iMNgQLmtTLPxUi0rP6tKc",
-      "registrationType": "WEBAUTHN_AUTHENTICATION",
-      "createdAt": "2026-09-25T06:35:26.266Z",
-      "createdAtIso": "2026-09-25T06:35:26.266Z",
-      "expiresAt": 1790318726266,
-      "expiresAtMs": 1790318726266,
-      "consumed": true,
-      "consumedAt": "2026-09-25T06:35:26.295Z",
-      "enrollmentToken": "7e7fd5898d186284a5473265786ba0c2cf603994a03c382b57e28c54a716fabb"
-    },
-    {
-      "userId": "USER-1790318289428-5356",
-      "challenge": "dEo7YE_pFy7b5wdsSDnQMbLE4me5TRUFDxyvV_KZ4GQ",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T06:38:09.433Z",
-      "createdAtIso": "2026-09-25T06:38:09.433Z",
-      "expiresAt": 1790318889433,
-      "expiresAtMs": 1790318889433,
-      "consumed": false,
-      "consumedAt": null,
-      "enrollmentToken": "ff56f53783ba645b113c85618ff8cd80c2428fa590e9e59279cb8e6304dfe6cf"
-    },
-    {
-      "userId": "TCH-TS-TCH-100234",
-      "challenge": "mT4_1R3Kify0LUkg2AS1jg3lu6WAnuxaP8nD6UdCzt4",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-09-25T07:04:38.008Z",
-      "createdAtIso": "2026-09-25T07:04:38.008Z",
-      "expiresAt": 1790320478008,
-      "expiresAtMs": 1790320478008,
-      "consumed": true,
-      "consumedAt": "2026-09-25T07:04:49.400Z",
-      "enrollmentToken": "0175b58e3f424cca5c457f52c1b2a97a8859b140c8580c7434a376b1a9951285"
-    },
-    {
-      "userId": "OFFICIAL-DEO-9848011222",
-      "challenge": "MaRAQqm_XmIjUqRuci_2UflYlDtSJy71ppGjNuwtHA4",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-10-03T13:02:16.021Z",
-      "createdAtIso": "2026-10-03T13:02:16.021Z",
-      "expiresAt": 1791033136021,
-      "expiresAtMs": 1791033136021,
-      "consumed": true,
-      "consumedAt": "2026-10-03T13:02:27.525Z",
-      "enrollmentToken": "a64e72316114121c611227bd2bdabaecf8bd92c351a1aa63f3d9da441f6aa2ad"
-    },
-    {
-      "userId": "OFFICIAL-MEO-9848033444",
-      "challenge": "NdJ59uEhcIdtN-Ao9Q2gc-NFSRyoCrwrR086fqwlhQU",
-      "registrationType": "WEBAUTHN_REGISTRATION",
-      "createdAt": "2026-10-18T13:54:24.423Z",
-      "createdAtIso": "2026-10-18T13:54:24.423Z",
-      "expiresAt": 1792332264423,
-      "expiresAtMs": 1792332264423,
-      "consumed": true,
-      "consumedAt": "2026-10-18T13:54:39.648Z",
-      "enrollmentToken": "5806c334644569622e1798952e1fb370b7fe36e9ad004b5a0c458fdc6bbe212c"
-    }
-  ],
   "school_strength_district": [
     {
       "code": 10,
@@ -1390,5 +1434,3103 @@
       },
       "totalStudents": 3610
     }
-  ]
+  ],
+  "school_strength_mandal_breakdown": {
+    "BACHANNAPETA": [
+      {
+        "code": 10,
+        "managementName": "GOVT HS & JR",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 11,
+        "managementName": "GOVT PS DNTPS",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 12,
+        "managementName": "TGREIE",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 14,
+        "managementName": "KGBV",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 315,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 315
+      },
+      {
+        "code": 24,
+        "managementName": "TGWREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 27,
+        "managementName": "TGREIS (G)",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 29,
+        "managementName": "TW ASHRAM HS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 31,
+        "managementName": "TWPS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 33,
+        "managementName": "MPP/ZPP",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 993,
+          "2-UPS (6th-8th)": 297,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 15,
+          "7- HS (8th-10th)": 952,
+          "11- INTER": 0
+        },
+        "totalStudents": 2257
+      },
+      {
+        "code": 35,
+        "managementName": "AIDED",
+        "category": "Government/Aided",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 38,
+        "managementName": "PVT",
+        "category": "Private",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 25,
+          "2-UPS (6th-8th)": 197,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 1481,
+          "7- HS (8th-10th)": 9,
+          "11- INTER": 116
+        },
+        "totalStudents": 1828
+      },
+      {
+        "code": 39,
+        "managementName": "PVT CBSE",
+        "category": "Private",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 62,
+        "managementName": "TGMS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 501,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 501
+      },
+      {
+        "code": 63,
+        "managementName": "URS JN",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 64,
+        "managementName": "MJPTBC WREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 65,
+        "managementName": "TGMRS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      }
+    ],
+    "CHILPUR": [
+      {
+        "code": 10,
+        "managementName": "GOVT HS & JR",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 11,
+        "managementName": "GOVT PS DNTPS",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 12,
+        "managementName": "TGREIE",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 14,
+        "managementName": "KGBV",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 340,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 340
+      },
+      {
+        "code": 24,
+        "managementName": "TGWREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 27,
+        "managementName": "TGREIS (G)",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 29,
+        "managementName": "TW ASHRAM HS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 31,
+        "managementName": "TWPS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 6,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 6
+      },
+      {
+        "code": 33,
+        "managementName": "MPP/ZPP",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 732,
+          "2-UPS (6th-8th)": 219,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 11,
+          "7- HS (8th-10th)": 702,
+          "11- INTER": 0
+        },
+        "totalStudents": 1664
+      },
+      {
+        "code": 35,
+        "managementName": "AIDED",
+        "category": "Government/Aided",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 38,
+        "managementName": "PVT",
+        "category": "Private",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 14,
+          "2-UPS (6th-8th)": 112,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 839,
+          "7- HS (8th-10th)": 5,
+          "11- INTER": 66
+        },
+        "totalStudents": 1036
+      },
+      {
+        "code": 39,
+        "managementName": "PVT CBSE",
+        "category": "Private",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 62,
+        "managementName": "TGMS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 63,
+        "managementName": "URS JN",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 64,
+        "managementName": "MJPTBC WREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 65,
+        "managementName": "TGMRS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      }
+    ],
+    "DEVARUPPALA": [
+      {
+        "code": 10,
+        "managementName": "GOVT HS & JR",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 25,
+          "11- INTER": 120
+        },
+        "totalStudents": 145
+      },
+      {
+        "code": 11,
+        "managementName": "GOVT PS DNTPS",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 12,
+        "managementName": "TGREIE",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 14,
+        "managementName": "KGBV",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 247,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 247
+      },
+      {
+        "code": 24,
+        "managementName": "TGWREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 27,
+        "managementName": "TGREIS (G)",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 29,
+        "managementName": "TW ASHRAM HS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 31,
+        "managementName": "TWPS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 33,
+        "managementName": "MPP/ZPP",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 833,
+          "2-UPS (6th-8th)": 249,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 12,
+          "7- HS (8th-10th)": 800,
+          "11- INTER": 0
+        },
+        "totalStudents": 1894
+      },
+      {
+        "code": 35,
+        "managementName": "AIDED",
+        "category": "Government/Aided",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 38,
+        "managementName": "PVT",
+        "category": "Private",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 27,
+          "2-UPS (6th-8th)": 217,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 1629,
+          "7- HS (8th-10th)": 10,
+          "11- INTER": 128
+        },
+        "totalStudents": 2011
+      },
+      {
+        "code": 39,
+        "managementName": "PVT CBSE",
+        "category": "Private",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 62,
+        "managementName": "TGMS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 63,
+        "managementName": "URS JN",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 64,
+        "managementName": "MJPTBC WREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 65,
+        "managementName": "TGMRS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      }
+    ],
+    "GANPUR (STN)": [
+      {
+        "code": 10,
+        "managementName": "GOVT HS & JR",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 93,
+          "11- INTER": 456
+        },
+        "totalStudents": 549
+      },
+      {
+        "code": 11,
+        "managementName": "GOVT PS DNTPS",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 12,
+        "managementName": "TGREIE",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 14,
+        "managementName": "KGBV",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 363,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 363
+      },
+      {
+        "code": 24,
+        "managementName": "TGWREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 434,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 434
+      },
+      {
+        "code": 27,
+        "managementName": "TGREIS (G)",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 29,
+        "managementName": "TW ASHRAM HS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 33,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 243,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 276
+      },
+      {
+        "code": 31,
+        "managementName": "TWPS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 33,
+        "managementName": "MPP/ZPP",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 865,
+          "2-UPS (6th-8th)": 259,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 13,
+          "7- HS (8th-10th)": 830,
+          "11- INTER": 0
+        },
+        "totalStudents": 1967
+      },
+      {
+        "code": 35,
+        "managementName": "AIDED",
+        "category": "Government/Aided",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 38,
+        "managementName": "PVT",
+        "category": "Private",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 67,
+          "2-UPS (6th-8th)": 533,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 4003,
+          "7- HS (8th-10th)": 24,
+          "11- INTER": 314
+        },
+        "totalStudents": 4941
+      },
+      {
+        "code": 39,
+        "managementName": "PVT CBSE",
+        "category": "Private",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 62,
+        "managementName": "TGMS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 625,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 625
+      },
+      {
+        "code": 63,
+        "managementName": "URS JN",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 64,
+        "managementName": "MJPTBC WREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 1148,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 1148
+      },
+      {
+        "code": 65,
+        "managementName": "TGMRS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 410,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 410
+      }
+    ],
+    "JANGAON": [
+      {
+        "code": 10,
+        "managementName": "GOVT HS & JR",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 165,
+          "11- INTER": 809
+        },
+        "totalStudents": 974
+      },
+      {
+        "code": 11,
+        "managementName": "GOVT PS DNTPS",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 12,
+        "managementName": "TGREIE",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 14,
+        "managementName": "KGBV",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 367,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 367
+      },
+      {
+        "code": 24,
+        "managementName": "TGWREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 889,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 889
+      },
+      {
+        "code": 27,
+        "managementName": "TGREIS (G)",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 29,
+        "managementName": "TW ASHRAM HS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 18,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 136,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 154
+      },
+      {
+        "code": 31,
+        "managementName": "TWPS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 33,
+        "managementName": "MPP/ZPP",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 1512,
+          "2-UPS (6th-8th)": 452,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 23,
+          "7- HS (8th-10th)": 1452,
+          "11- INTER": 0
+        },
+        "totalStudents": 3439
+      },
+      {
+        "code": 35,
+        "managementName": "AIDED",
+        "category": "Government/Aided",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 114,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 50,
+          "11- INTER": 0
+        },
+        "totalStudents": 164
+      },
+      {
+        "code": 38,
+        "managementName": "PVT",
+        "category": "Private",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 176,
+          "2-UPS (6th-8th)": 1406,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 10554,
+          "7- HS (8th-10th)": 63,
+          "11- INTER": 828
+        },
+        "totalStudents": 13027
+      },
+      {
+        "code": 39,
+        "managementName": "PVT CBSE",
+        "category": "Private",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 1513,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 1245,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 2758
+      },
+      {
+        "code": 62,
+        "managementName": "TGMS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 361,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 361
+      },
+      {
+        "code": 63,
+        "managementName": "URS JN",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 95,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 95
+      },
+      {
+        "code": 64,
+        "managementName": "MJPTBC WREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 1468,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 1468
+      },
+      {
+        "code": 65,
+        "managementName": "TGMRS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 351,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 351
+      }
+    ],
+    "KODAKANDLA": [
+      {
+        "code": 10,
+        "managementName": "GOVT HS & JR",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 18,
+          "11- INTER": 89
+        },
+        "totalStudents": 107
+      },
+      {
+        "code": 11,
+        "managementName": "GOVT PS DNTPS",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 12,
+        "managementName": "TGREIE",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 616,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 616
+      },
+      {
+        "code": 14,
+        "managementName": "KGBV",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 247,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 247
+      },
+      {
+        "code": 24,
+        "managementName": "TGWREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 27,
+        "managementName": "TGREIS (G)",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 29,
+        "managementName": "TW ASHRAM HS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 31,
+        "managementName": "TWPS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 33,
+        "managementName": "MPP/ZPP",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 450,
+          "2-UPS (6th-8th)": 135,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 7,
+          "7- HS (8th-10th)": 431,
+          "11- INTER": 0
+        },
+        "totalStudents": 1023
+      },
+      {
+        "code": 35,
+        "managementName": "AIDED",
+        "category": "Government/Aided",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 38,
+        "managementName": "PVT",
+        "category": "Private",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 5,
+          "2-UPS (6th-8th)": 43,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 321,
+          "7- HS (8th-10th)": 2,
+          "11- INTER": 25
+        },
+        "totalStudents": 396
+      },
+      {
+        "code": 39,
+        "managementName": "PVT CBSE",
+        "category": "Private",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 62,
+        "managementName": "TGMS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 527,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 527
+      },
+      {
+        "code": 63,
+        "managementName": "URS JN",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 64,
+        "managementName": "MJPTBC WREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 499,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 499
+      },
+      {
+        "code": 65,
+        "managementName": "TGMRS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      }
+    ],
+    "LINGALAGHANPUR": [
+      {
+        "code": 10,
+        "managementName": "GOVT HS & JR",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 11,
+        "managementName": "GOVT PS DNTPS",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 12,
+        "managementName": "TGREIE",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 14,
+        "managementName": "KGBV",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 268,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 268
+      },
+      {
+        "code": 24,
+        "managementName": "TGWREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 27,
+        "managementName": "TGREIS (G)",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 29,
+        "managementName": "TW ASHRAM HS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 31,
+        "managementName": "TWPS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 33,
+        "managementName": "MPP/ZPP",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 654,
+          "2-UPS (6th-8th)": 196,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 10,
+          "7- HS (8th-10th)": 628,
+          "11- INTER": 0
+        },
+        "totalStudents": 1488
+      },
+      {
+        "code": 35,
+        "managementName": "AIDED",
+        "category": "Government/Aided",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 38,
+        "managementName": "PVT",
+        "category": "Private",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 14,
+          "2-UPS (6th-8th)": 112,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 841,
+          "7- HS (8th-10th)": 5,
+          "11- INTER": 66
+        },
+        "totalStudents": 1038
+      },
+      {
+        "code": 39,
+        "managementName": "PVT CBSE",
+        "category": "Private",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 62,
+        "managementName": "TGMS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 546,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 546
+      },
+      {
+        "code": 63,
+        "managementName": "URS JN",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 64,
+        "managementName": "MJPTBC WREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 65,
+        "managementName": "TGMRS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      }
+    ],
+    "NARMETTA": [
+      {
+        "code": 10,
+        "managementName": "GOVT HS & JR",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 25,
+          "11- INTER": 124
+        },
+        "totalStudents": 149
+      },
+      {
+        "code": 11,
+        "managementName": "GOVT PS DNTPS",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 12,
+        "managementName": "TGREIE",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 14,
+        "managementName": "KGBV",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 263,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 263
+      },
+      {
+        "code": 24,
+        "managementName": "TGWREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 27,
+        "managementName": "TGREIS (G)",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 29,
+        "managementName": "TW ASHRAM HS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 22,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 159,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 181
+      },
+      {
+        "code": 31,
+        "managementName": "TWPS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 33,
+        "managementName": "MPP/ZPP",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 413,
+          "2-UPS (6th-8th)": 124,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 6,
+          "7- HS (8th-10th)": 397,
+          "11- INTER": 0
+        },
+        "totalStudents": 940
+      },
+      {
+        "code": 35,
+        "managementName": "AIDED",
+        "category": "Government/Aided",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 38,
+        "managementName": "PVT",
+        "category": "Private",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 22,
+          "2-UPS (6th-8th)": 178,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 1334,
+          "7- HS (8th-10th)": 8,
+          "11- INTER": 104
+        },
+        "totalStudents": 1646
+      },
+      {
+        "code": 39,
+        "managementName": "PVT CBSE",
+        "category": "Private",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 62,
+        "managementName": "TGMS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 476,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 476
+      },
+      {
+        "code": 63,
+        "managementName": "URS JN",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 64,
+        "managementName": "MJPTBC WREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 65,
+        "managementName": "TGMRS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      }
+    ],
+    "PALAKURTHI": [
+      {
+        "code": 10,
+        "managementName": "GOVT HS & JR",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 11,
+        "managementName": "GOVT PS DNTPS",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 4,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 4
+      },
+      {
+        "code": 12,
+        "managementName": "TGREIE",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 14,
+        "managementName": "KGBV",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 350,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 350
+      },
+      {
+        "code": 24,
+        "managementName": "TGWREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 604,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 604
+      },
+      {
+        "code": 27,
+        "managementName": "TGREIS (G)",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 595,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 595
+      },
+      {
+        "code": 29,
+        "managementName": "TW ASHRAM HS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 31,
+        "managementName": "TWPS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 33,
+        "managementName": "MPP/ZPP",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 948,
+          "2-UPS (6th-8th)": 283,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 14,
+          "7- HS (8th-10th)": 910,
+          "11- INTER": 0
+        },
+        "totalStudents": 2155
+      },
+      {
+        "code": 35,
+        "managementName": "AIDED",
+        "category": "Government/Aided",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 38,
+        "managementName": "PVT",
+        "category": "Private",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 53,
+          "2-UPS (6th-8th)": 427,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 3206,
+          "7- HS (8th-10th)": 19,
+          "11- INTER": 252
+        },
+        "totalStudents": 3957
+      },
+      {
+        "code": 39,
+        "managementName": "PVT CBSE",
+        "category": "Private",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 62,
+        "managementName": "TGMS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 63,
+        "managementName": "URS JN",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 64,
+        "managementName": "MJPTBC WREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 65,
+        "managementName": "TGMRS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      }
+    ],
+    "RAGHUNATHPALLE": [
+      {
+        "code": 10,
+        "managementName": "GOVT HS & JR",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 11,
+        "managementName": "GOVT PS DNTPS",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 12,
+        "managementName": "TGREIE",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 14,
+        "managementName": "KGBV",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 233,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 233
+      },
+      {
+        "code": 24,
+        "managementName": "TGWREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 27,
+        "managementName": "TGREIS (G)",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 29,
+        "managementName": "TW ASHRAM HS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 31,
+        "managementName": "TWPS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 33,
+        "managementName": "MPP/ZPP",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 1076,
+          "2-UPS (6th-8th)": 322,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 16,
+          "7- HS (8th-10th)": 1033,
+          "11- INTER": 0
+        },
+        "totalStudents": 2447
+      },
+      {
+        "code": 35,
+        "managementName": "AIDED",
+        "category": "Government/Aided",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 38,
+        "managementName": "PVT",
+        "category": "Private",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 22,
+          "2-UPS (6th-8th)": 178,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 1336,
+          "7- HS (8th-10th)": 8,
+          "11- INTER": 105
+        },
+        "totalStudents": 1649
+      },
+      {
+        "code": 39,
+        "managementName": "PVT CBSE",
+        "category": "Private",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 62,
+        "managementName": "TGMS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 301,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 301
+      },
+      {
+        "code": 63,
+        "managementName": "URS JN",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 64,
+        "managementName": "MJPTBC WREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 65,
+        "managementName": "TGMRS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      }
+    ],
+    "THARIGOPPULA": [
+      {
+        "code": 10,
+        "managementName": "GOVT HS & JR",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 11,
+        "managementName": "GOVT PS DNTPS",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 4,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 4
+      },
+      {
+        "code": 12,
+        "managementName": "TGREIE",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 14,
+        "managementName": "KGBV",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 233,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 233
+      },
+      {
+        "code": 24,
+        "managementName": "TGWREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 27,
+        "managementName": "TGREIS (G)",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 29,
+        "managementName": "TW ASHRAM HS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 31,
+        "managementName": "TWPS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 33,
+        "managementName": "MPP/ZPP",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 355,
+          "2-UPS (6th-8th)": 106,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 5,
+          "7- HS (8th-10th)": 341,
+          "11- INTER": 0
+        },
+        "totalStudents": 807
+      },
+      {
+        "code": 35,
+        "managementName": "AIDED",
+        "category": "Government/Aided",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 38,
+        "managementName": "PVT",
+        "category": "Private",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 4,
+          "2-UPS (6th-8th)": 32,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 238,
+          "7- HS (8th-10th)": 1,
+          "11- INTER": 19
+        },
+        "totalStudents": 294
+      },
+      {
+        "code": 39,
+        "managementName": "PVT CBSE",
+        "category": "Private",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 62,
+        "managementName": "TGMS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 63,
+        "managementName": "URS JN",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 64,
+        "managementName": "MJPTBC WREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 65,
+        "managementName": "TGMRS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      }
+    ],
+    "ZAFFERGADH": [
+      {
+        "code": 10,
+        "managementName": "GOVT HS & JR",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 21,
+          "11- INTER": 106
+        },
+        "totalStudents": 127
+      },
+      {
+        "code": 11,
+        "managementName": "GOVT PS DNTPS",
+        "category": "Government",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 12,
+        "managementName": "TGREIE",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 14,
+        "managementName": "KGBV",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 328,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 328
+      },
+      {
+        "code": 24,
+        "managementName": "TGWREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 528,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 528
+      },
+      {
+        "code": 27,
+        "managementName": "TGREIS (G)",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 29,
+        "managementName": "TW ASHRAM HS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 31,
+        "managementName": "TWPS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 33,
+        "managementName": "MPP/ZPP",
+        "category": "Government",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 779,
+          "2-UPS (6th-8th)": 233,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 12,
+          "7- HS (8th-10th)": 747,
+          "11- INTER": 0
+        },
+        "totalStudents": 1771
+      },
+      {
+        "code": 35,
+        "managementName": "AIDED",
+        "category": "Government/Aided",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 38,
+        "managementName": "PVT",
+        "category": "Private",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 6,
+          "2-UPS (6th-8th)": 45,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 339,
+          "7- HS (8th-10th)": 2,
+          "11- INTER": 27
+        },
+        "totalStudents": 419
+      },
+      {
+        "code": 39,
+        "managementName": "PVT CBSE",
+        "category": "Private",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 62,
+        "managementName": "TGMS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 1,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 437,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 437
+      },
+      {
+        "code": 63,
+        "managementName": "URS JN",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 64,
+        "managementName": "MJPTBC WREIS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      },
+      {
+        "code": 65,
+        "managementName": "TGMRS",
+        "category": "Residential/Welfare",
+        "schoolsCount": 0,
+        "stages": {
+          "1-PS (1st-5th)": 0,
+          "2-UPS (6th-8th)": 0,
+          "3- 5th to Inter": 0,
+          "5- 6th to Inter": 0,
+          "6- PP3 to 10th": 0,
+          "7- HS (8th-10th)": 0,
+          "11- INTER": 0
+        },
+        "totalStudents": 0
+      }
+    ]
+  }
 }

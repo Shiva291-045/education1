@@ -22,13 +22,17 @@ try {
   router.get('/teacher/service-record', (req, res) => teacherController.getServiceRecord(req, res));
   router.get('/teacher/preview-record', (req, res) => teacherController.getPreviewRecord(req, res));
 
+  // Teachers Information Directory & Retirements Routes
+  router.get('/teachers/retirements', (req, res) => teacherController.getRetirements(req, res));
+  router.get('/teachers', (req, res) => teacherController.getTeachersDirectory(req, res));
+  router.get('/teachers/profile/:treasuryCode', (req, res) => teacherController.getTeacherProfile(req, res, req.params.treasuryCode));
+  router.put('/teachers/profile/:treasuryCode', (req, res) => teacherController.updateTeacherProfile(req, res, req.params.treasuryCode));
+  router.get('/teachers/:treasuryCode', (req, res) => teacherController.getTeacherProfile(req, res, req.params.treasuryCode));
+  router.put('/teachers/:treasuryCode', (req, res) => teacherController.updateTeacherProfile(req, res, req.params.treasuryCode));
+
   // Portal Data & Statistics Routes
   router.get('/portal-data', (req, res) => authController.portalData(req, res));
   router.get('/official/link-status', (req, res) => authController.linkStatus(req, res));
-  router.post('/passkey/register/start', (req, res) => authController.passkeyRegisterStart(req, res));
-  router.post('/passkey/register/finish', (req, res) => authController.passkeyRegisterFinish(req, res));
-  router.post('/passkey/login/start', (req, res) => authController.passkeyLoginStart(req, res));
-  router.post('/passkey/login/finish', (req, res) => authController.passkeyLoginFinish(req, res));
 
   // Search schools endpoint for "Find a School" search widget
   router.get('/schools/search', (req, res) => schoolStrengthController.searchSchools(req, res));

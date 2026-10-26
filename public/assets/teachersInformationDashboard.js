@@ -30,7 +30,7 @@
     const [selectedDesignation, setSelectedDesignation] = useState('ALL');
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 20;
+    const [itemsPerPage, setItemsPerPage] = useState(25);
 
     // Individual Teacher Profile view state
     const [selectedTeacherCode, setSelectedTeacherCode] = useState(null);
@@ -123,7 +123,7 @@
         setSelectedMandal(userMandal);
       }
       fetchTeachers();
-    }, [selectedMandal, selectedDesignation, currentPage, isMeo, userMandal]);
+    }, [selectedMandal, selectedDesignation, currentPage, itemsPerPage, isMeo, userMandal]);
 
     // Handle Search Submission / Trigger
     const handleSearchSubmit = (e) => {
@@ -147,6 +147,7 @@
 
     const teachersList = teachersData.teachers || [];
     const totalTeachers = teachersData.total || 0;
+    const totalPages = itemsPerPage === 'all' ? 1 : Math.max(1, Math.ceil(totalTeachers / (itemsPerPage || 25)));
     const filterOptions = teachersData.filterOptions || {};
     const availableMandals = filterOptions.mandals || [];
     const availableDesignations = filterOptions.designations || [];
@@ -597,12 +598,40 @@
               'Official Teacher Records Directory'
             ),
             h('p', { className: 'text-xs text-slate-500 dark:text-slate-400 mt-0.5' },
-              `Showing ${teachersList.length} of ${formatNum(totalTeachers)} teachers matching your criteria.`
+              itemsPerPage === 'all'
+                ? `Showing all ${formatNum(totalTeachers)} teachers matching your criteria.`
+                : totalTeachers === 0
+                ? 'Showing 0 teachers matching your criteria.'
+                : `Showing ${(currentPage - 1) * itemsPerPage + 1}–${Math.min(currentPage * itemsPerPage, totalTeachers)} of ${formatNum(totalTeachers)} teachers matching your criteria.`
             )
           ]),
-          h('div', { className: 'text-xs font-bold text-slate-500 dark:text-slate-400' },
-            `Page ${currentPage} of ${Math.max(1, Math.ceil(totalTeachers / itemsPerPage))}`
-          )
+          h('div', { className: 'flex items-center space-x-3 text-xs font-bold text-slate-500 dark:text-slate-400' }, [
+            h('div', { className: 'flex items-center space-x-1.5' }, [
+              h('span', { className: 'font-semibold' }, 'Rows per page:'),
+              h('select', {
+                value: itemsPerPage,
+                onChange: (e) => {
+                  const val = e.target.value === 'all' ? 'all' : parseInt(e.target.value, 10);
+                  setItemsPerPage(val);
+                  setCurrentPage(1);
+                },
+                className: `p-1 rounded-md border text-xs font-semibold focus:outline-none cursor-pointer ${
+                  isDark ? 'bg-slate-800 text-slate-200 border-slate-600' : 'bg-slate-50 text-slate-700 border-slate-300'
+                }`
+              }, [
+                { label: '10', value: 10 },
+                { label: '25', value: 25 },
+                { label: '50', value: 50 },
+                { label: '100', value: 100 },
+                { label: 'All', value: 'all' }
+              ].map(opt => h('option', { key: opt.value, value: opt.value }, opt.label)))
+            ]),
+            h('div', { className: 'border-l pl-3 dark:border-slate-700' },
+              itemsPerPage === 'all'
+                ? 'Page 1 of 1'
+                : `Page ${currentPage} of ${totalPages}`
+            )
+          ])
         ]),
 
         // Error Notice
@@ -646,7 +675,7 @@
                 ])
               ) : (
                 teachersList.map((t, idx) => {
-                  const sNo = (currentPage - 1) * itemsPerPage + idx + 1;
+                  const sNo = itemsPerPage === 'all' ? (idx + 1) : ((currentPage - 1) * itemsPerPage + idx + 1);
                   return h('tr', {
                     key: t.treasuryCode || idx,
                     className: `transition-colors ${
@@ -685,34 +714,80 @@
         ]),
 
         // Pagination Controls
-        totalTeachers > itemsPerPage && h('div', {
+        h('div', {
           className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs'
         }, [
-          h('div', { className: 'text-slate-500 font-semibold' },
-            `Showing ${(currentPage - 1) * itemsPerPage + 1}–${Math.min(currentPage * itemsPerPage, totalTeachers)} of ${formatNum(totalTeachers)} Teachers`
-          ),
+          h('div', { className: 'flex items-center space-x-3 text-slate-500 font-semibold' }, [
+            h('span', {},
+              itemsPerPage === 'all'
+                ? `Showing all ${formatNum(totalTeachers)} Teachers`
+                : totalTeachers === 0
+                ? 'Showing 0 Teachers'
+                : `Showing ${(currentPage - 1) * itemsPerPage + 1}–${Math.min(currentPage * itemsPerPage, totalTeachers)} of ${formatNum(totalTeachers)} Teachers`
+            ),
+            h('div', { className: 'hidden sm:flex items-center space-x-1.5 border-l pl-3 dark:border-slate-700' }, [
+              h('span', {}, 'Rows per page:'),
+              h('select', {
+                value: itemsPerPage,
+                onChange: (e) => {
+                  const val = e.target.value === 'all' ? 'all' : parseInt(e.target.value, 10);
+                  setItemsPerPage(val);
+                  setCurrentPage(1);
+                },
+                className: `p-1 rounded-md border text-xs font-semibold focus:outline-none cursor-pointer ${
+                  isDark ? 'bg-slate-800 text-slate-200 border-slate-600' : 'bg-slate-50 text-slate-700 border-slate-300'
+                }`
+              }, [
+                { label: '10', value: 10 },
+                { label: '25', value: 25 },
+                { label: '50', value: 50 },
+                { label: '100', value: 100 },
+                { label: 'All', value: 'all' }
+              ].map(opt => h('option', { key: opt.value, value: opt.value }, opt.label)))
+            ])
+          ]),
           h('div', { className: 'flex items-center space-x-2' }, [
             h('button', {
+              onClick: () => setCurrentPage(1),
+              disabled: currentPage <= 1 || itemsPerPage === 'all',
+              className: `px-2.5 py-1 rounded-lg border font-bold transition-all ${
+                currentPage <= 1 || itemsPerPage === 'all'
+                  ? 'opacity-40 cursor-not-allowed bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-200'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-300 hover:bg-slate-50 cursor-pointer shadow-xs'
+              }`
+            }, '« First'),
+            h('button', {
               onClick: () => setCurrentPage(p => Math.max(1, p - 1)),
-              disabled: currentPage === 1,
+              disabled: currentPage <= 1 || itemsPerPage === 'all',
               className: `px-3 py-1.5 rounded-lg border font-bold transition-all ${
-                currentPage === 1
+                currentPage <= 1 || itemsPerPage === 'all'
                   ? 'opacity-40 cursor-not-allowed bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-200'
                   : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-300 hover:bg-slate-50 cursor-pointer shadow-xs'
               }`
             }, '← Previous'),
             h('span', { className: 'px-2 font-bold text-slate-700 dark:text-slate-300' },
-              `Page ${currentPage} of ${Math.ceil(totalTeachers / itemsPerPage)}`
+              itemsPerPage === 'all'
+                ? 'Page 1 of 1'
+                : `Page ${currentPage} of ${totalPages}`
             ),
             h('button', {
-              onClick: () => setCurrentPage(p => Math.min(Math.ceil(totalTeachers / itemsPerPage), p + 1)),
-              disabled: currentPage >= Math.ceil(totalTeachers / itemsPerPage),
+              onClick: () => setCurrentPage(p => Math.min(totalPages, p + 1)),
+              disabled: currentPage >= totalPages || itemsPerPage === 'all',
               className: `px-3 py-1.5 rounded-lg border font-bold transition-all ${
-                currentPage >= Math.ceil(totalTeachers / itemsPerPage)
+                currentPage >= totalPages || itemsPerPage === 'all'
                   ? 'opacity-40 cursor-not-allowed bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-200'
                   : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-300 hover:bg-slate-50 cursor-pointer shadow-xs'
               }`
-            }, 'Next →')
+            }, 'Next →'),
+            h('button', {
+              onClick: () => setCurrentPage(totalPages),
+              disabled: currentPage >= totalPages || itemsPerPage === 'all',
+              className: `px-2.5 py-1 rounded-lg border font-bold transition-all ${
+                currentPage >= totalPages || itemsPerPage === 'all'
+                  ? 'opacity-40 cursor-not-allowed bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-200'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-300 hover:bg-slate-50 cursor-pointer shadow-xs'
+              }`
+            }, 'Last »')
           ])
         ])
       ])

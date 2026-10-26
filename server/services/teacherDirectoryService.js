@@ -627,8 +627,9 @@ class TeacherDirectoryService {
 
     // Pagination or complete export/print
     const isAll = (query.all === 'true' || query.all === '1' || String(query.limit).toLowerCase() === 'all' || query.print === 'true');
-    const page = isAll ? 1 : Math.max(1, parseInt(query.page, 10) || 1);
-    const limit = isAll ? totalCount : Math.max(1, Math.min(100, parseInt(query.limit, 10) || 25));
+    const limit = isAll ? Math.max(1, totalCount) : Math.max(1, parseInt(query.limit, 10) || 25);
+    const totalPages = isAll ? 1 : Math.max(1, Math.ceil(totalCount / limit));
+    const page = isAll ? 1 : Math.min(Math.max(1, parseInt(query.page, 10) || 1), totalPages);
     const startIndex = (page - 1) * limit;
     const paginatedTeachers = isAll ? records : records.slice(startIndex, startIndex + limit);
 
@@ -643,8 +644,8 @@ class TeacherDirectoryService {
       isRestrictedToMandal: isMeo,
       total: totalCount,
       page,
-      limit,
-      totalPages: Math.ceil(totalCount / limit),
+      limit: isAll ? 'all' : limit,
+      totalPages,
       teachers: paginatedTeachers,
       stats: {
         totalTeachers: totalCount,
@@ -986,7 +987,7 @@ class TeacherDirectoryService {
     }
 
     const availableYears = [...allYearsSet].sort((a, b) => a - b);
-    const mode = (query.mode || 'THIS_MONTH').toUpperCase();
+    const mode = (query.mode || 'UPCOMING').toUpperCase();
     const selectedYear = parseInt(query.year, 10) || currentYear;
     const selectedMonth = parseInt(query.month, 10) || currentMonth;
 
@@ -1004,22 +1005,25 @@ class TeacherDirectoryService {
     } else if (mode === 'EVERY_YEAR') {
       filtered = filtered.filter(item => item.year === selectedYear);
       filtered.sort((a, b) => a.retDateTimestamp - b.retDateTimestamp);
-    } else if (mode === 'UPCOMING') {
-      filtered = filtered.filter(item => item.status === 'UPCOMING');
-      filtered.sort((a, b) => a.daysRemaining - b.daysRemaining);
     } else if (mode === 'RETIRED') {
       filtered = filtered.filter(item => item.status === 'RETIRED');
       filtered.sort((a, b) => b.retDateTimestamp - a.retDateTimestamp);
-    } else {
-      // ALL
+    } else if (mode === 'ALL_RECORDS' || mode === 'ALL') {
+      // Complete dataset of all district retirements sorted chronologically
       filtered.sort((a, b) => a.retDateTimestamp - b.retDateTimestamp);
+    } else {
+      // UPCOMING (default)
+      filtered = filtered.filter(item => item.status === 'UPCOMING');
+      filtered.sort((a, b) => a.daysRemaining - b.daysRemaining);
     }
 
     const totalFiltered = filtered.length;
-    const page = Math.max(1, parseInt(query.page, 10) || 1);
-    const limit = Math.max(1, Math.min(200, parseInt(query.limit, 10) || 25));
+    const isAll = (query.all === 'true' || query.all === '1' || String(query.limit).toLowerCase() === 'all' || query.print === 'true');
+    const limit = isAll ? Math.max(1, totalFiltered) : Math.max(1, parseInt(query.limit, 10) || 25);
+    const totalPages = isAll ? 1 : Math.max(1, Math.ceil(totalFiltered / limit));
+    const page = isAll ? 1 : Math.min(Math.max(1, parseInt(query.page, 10) || 1), totalPages);
     const startIndex = (page - 1) * limit;
-    const paginated = filtered.slice(startIndex, startIndex + limit);
+    const paginated = isAll ? filtered : filtered.slice(startIndex, startIndex + limit);
 
     return {
       success: true,
@@ -1044,8 +1048,8 @@ class TeacherDirectoryService {
       },
       total: totalFiltered,
       page,
-      limit,
-      totalPages: Math.ceil(totalFiltered / limit),
+      limit: isAll ? 'all' : limit,
+      totalPages,
       teachers: paginated,
       filterOptions: {
         mandals: isMeo ? [userMandal] : OFFICIAL_12_MANDALS,

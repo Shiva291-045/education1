@@ -37,7 +37,7 @@
     const currentMonth = today.getMonth() + 1; // 1-12
 
     // View mode: 'THIS_MONTH' | 'EVERY_MONTH' | 'THIS_YEAR' | 'EVERY_YEAR' | 'UPCOMING' | 'RETIRED'
-    const [activeMode, setActiveMode] = useState('THIS_MONTH');
+    const [activeMode, setActiveMode] = useState('UPCOMING');
 
     // Filter states
     const [selectedYear, setSelectedYear] = useState(currentYear);
@@ -54,7 +54,7 @@
     const isMeo = (userRole === 'MEO');
     const userMandal = user?.mandal ? user.mandal.toUpperCase() : null;
 
-    // Fetch retirements from backend
+    // Fetch retirements from backend with full dataset for current mode/filter to enable instant dynamic pagination
     const fetchRetirements = async () => {
       setLoading(true);
       setApiError(null);
@@ -73,8 +73,8 @@
         if (searchTerm && searchTerm.trim()) {
           params.set('search', searchTerm.trim());
         }
-        params.set('page', String(currentPage));
-        params.set('limit', String(itemsPerPage));
+        params.set('page', '1');
+        params.set('limit', 'all');
 
         const res = await fetch(`${apiBase}/api/teachers/retirements?${params.toString()}`, {
           credentials: 'include',
@@ -89,6 +89,7 @@
         const data = await res.json();
         if (data.success) {
           setRetData(data);
+          setCurrentPage(1);
         } else {
           setApiError(data.message || 'Failed to retrieve retirement data.');
         }
@@ -101,7 +102,7 @@
 
     useEffect(() => {
       fetchRetirements();
-    }, [activeMode, selectedYear, selectedMonth, selectedMandal, currentPage, itemsPerPage]);
+    }, [activeMode, selectedYear, selectedMonth, selectedMandal]);
 
     const handleSearchSubmit = (e) => {
       e.preventDefault();
@@ -123,9 +124,34 @@
     }
 
     const summary = retData.summary || {};
-    const teachersList = retData.teachers || [];
-    const totalCount = retData.total || 0;
-    const totalPages = retData.totalPages || 1;
+    const allTeachers = retData.teachers || [];
+    const totalCount = retData.total || allTeachers.length;
+    const numLimit = itemsPerPage === 'all' ? Math.max(1, totalCount) : (parseInt(itemsPerPage, 10) || 25);
+    const totalPages = itemsPerPage === 'all' ? 1 : Math.max(1, Math.ceil(totalCount / numLimit));
+    const safeCurrentPage = itemsPerPage === 'all' ? 1 : Math.min(Math.max(1, currentPage), totalPages);
+
+    const displayedTeachers = useMemo(() => {
+      if (itemsPerPage === 'all') return allTeachers;
+      const start = (safeCurrentPage - 1) * numLimit;
+      return allTeachers.slice(start, start + numLimit);
+    }, [allTeachers, safeCurrentPage, numLimit, itemsPerPage]);
+
+    const handleRowsPerPageChange = (e) => {
+      const val = e.target.value === 'all' ? 'all' : parseInt(e.target.value, 10);
+      setItemsPerPage(val);
+      setCurrentPage(1);
+    };
+
+    const rangeText = useMemo(() => {
+      if (totalCount === 0) return 'Showing 0 employees';
+      if (itemsPerPage === 'all' || totalCount <= numLimit) {
+        return `Showing all ${formatNum(totalCount)} employees`;
+      }
+      const start = (safeCurrentPage - 1) * numLimit + 1;
+      const end = Math.min(safeCurrentPage * numLimit, totalCount);
+      return `Showing ${start}–${end} of ${formatNum(totalCount)} employees`;
+    }, [totalCount, itemsPerPage, numLimit, safeCurrentPage]);
+
     const availableYears = summary.availableYears || [currentYear - 1, currentYear, currentYear + 1, currentYear + 2];
     const monthCountsForSelectedYear = summary.monthCountsForSelectedYear || {};
     const availableMandals = retData.filterOptions?.mandals || [];
@@ -305,11 +331,12 @@
         className: 'flex items-center space-x-2 overflow-x-auto pb-2 border-b dark:border-slate-700'
       }, [
         [
+          { id: 'UPCOMING', label: '⏳ Upcoming Retirements', desc: 'All upcoming countdowns' },
           { id: 'THIS_MONTH', label: '🗓️ This Month', desc: 'Retiring in current month' },
           { id: 'EVERY_MONTH', label: '📅 Every Month', desc: 'Select any month & year' },
           { id: 'THIS_YEAR', label: '📆 This Year', desc: 'Full current year schedule' },
           { id: 'EVERY_YEAR', label: '📊 Every Year', desc: 'Select any year' },
-          { id: 'UPCOMING', label: '⏳ Upcoming Retirements', desc: 'Closest countdowns' },
+          { id: 'ALL_RECORDS', label: '📋 All Records', desc: 'Complete district dataset' },
           { id: 'RETIRED', label: '✅ Retired Archive', desc: 'Past retirements' }
         ].map(tab => {
           const isActive = activeMode === tab.id;
@@ -473,153 +500,188 @@
         ])
       ]),
 
-      // Active Filter Subtitle Bar
-      h('div', { className: 'flex items-center justify-between text-xs text-slate-600 dark:text-slate-300 px-1' }, [
-        h('div', { className: 'font-semibold flex items-center space-x-1.5' }, [
-          h('span', {}, 'Showing:'),
-          h('span', { className: 'font-bold text-[#0c4a7e] dark:text-sky-300' },
-            activeMode === 'THIS_MONTH'
-              ? `Retiring This Month (${MONTH_NAMES[currentMonth - 1]} ${currentYear})`
-              : activeMode === 'EVERY_MONTH'
-              ? `Retirements in ${MONTH_NAMES[selectedMonth - 1]} ${selectedYear}`
-              : activeMode === 'THIS_YEAR'
-              ? `All Retirements in Current Year (${currentYear})`
-              : activeMode === 'EVERY_YEAR'
-              ? `All Retirements in Year ${selectedYear}`
-              : activeMode === 'UPCOMING'
-              ? 'All Upcoming Retirements (Nearest First)'
-              : 'Retired Personnel Archive'
-          ),
-          h('span', {}, `— (${formatNum(totalCount)} records)`)
-        ]),
-        h('div', { className: 'flex items-center space-x-2' }, [
-          h('span', {}, 'Rows per page:'),
-          h('select', {
-            value: itemsPerPage,
-            onChange: (e) => { setItemsPerPage(parseInt(e.target.value, 10)); setCurrentPage(1); },
-            className: 'p-1 rounded-md border text-xs bg-slate-50 dark:bg-slate-800 border-slate-300 dark:border-slate-600'
-          }, [10, 25, 50, 100].map(n => h('option', { key: n, value: n }, n)))
-        ])
-      ]),
-
       // API Error alert
       apiError && h('div', {
         className: 'p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-800 border border-red-200 dark:bg-red-950/60 dark:text-red-300 dark:border-red-900'
       }, `⚠️ ${apiError}`),
 
-      // Loading state
-      loading ? h('div', { className: 'p-12 text-center text-xs font-semibold text-slate-500' }, [
-        h('div', { className: 'w-8 h-8 border-3 border-[#0c4a7e] border-t-transparent rounded-full animate-spin mx-auto mb-3' }),
-        h('span', {}, 'Calculating dynamic retirement schedules...')
-      ]) : (
-        // Main Data Table
+      // Main Data Table Card Container
+      h('div', {
+        className: 'rounded-2xl border bg-white dark:bg-[#131f37] border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden'
+      }, [
+        // Table Header with Title, Dynamic Range Subtitle, Rows Per Page, and Page Indicator
         h('div', {
-          className: 'rounded-2xl border bg-white dark:bg-[#131f37] border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden'
+          className: 'p-4 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/70 dark:bg-slate-800/40'
         }, [
-          h('div', { className: 'overflow-x-auto' }, [
-            h('table', { className: 'w-full text-left text-xs border-collapse' }, [
-              h('thead', { className: 'bg-slate-100 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px]' }, [
-                h('tr', {}, [
-                  h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 text-center w-12' }, '#'),
-                  h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[100px]' }, 'Treasury Code'),
-                  h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[180px]' }, "Teacher's Name"),
-                  h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[110px]' }, 'Designation'),
-                  h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[130px]' }, 'Mandal'),
-                  h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[200px]' }, 'School Name'),
-                  h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 text-center min-w-[100px]' }, 'Date of Birth'),
-                  h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 text-center min-w-[110px]' }, 'Retirement Date'),
-                  h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[160px]' }, 'Countdown / Time Left'),
-                  h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 text-center min-w-[90px]' }, 'Status'),
-                  h('th', { className: 'p-3 font-bold border-b dark:border-slate-700 text-center min-w-[110px]' }, 'Action')
-                ])
-              ]),
-              h('tbody', { className: 'divide-y divide-slate-200 dark:divide-slate-800' },
-                teachersList.length === 0 ? [
-                  h('tr', { key: 'empty' }, [
-                    h('td', {
-                      colSpan: 11,
-                      className: 'p-8 text-center text-slate-500 dark:text-slate-400 font-semibold'
-                    }, 'No retirement records found matching the selected filter criteria.')
-                  ])
-                ] : teachersList.map((t, idx) => {
-                  const sNo = (currentPage - 1) * itemsPerPage + idx + 1;
-                  const isRet = (t.status === 'RETIRED');
+          h('div', {}, [
+            h('h3', { className: 'text-sm font-bold text-[#0c4a7e] dark:text-sky-300' },
+              activeMode === 'UPCOMING'
+                ? 'All Upcoming Retirements (Nearest First)'
+                : activeMode === 'THIS_MONTH'
+                ? `Retiring This Month (${MONTH_NAMES[currentMonth - 1]} ${currentYear})`
+                : activeMode === 'EVERY_MONTH'
+                ? `Retirements in ${MONTH_NAMES[selectedMonth - 1]} ${selectedYear}`
+                : activeMode === 'THIS_YEAR'
+                ? `All Retirements in Current Year (${currentYear})`
+                : activeMode === 'EVERY_YEAR'
+                ? `All Retirements in Year ${selectedYear}`
+                : activeMode === 'ALL_RECORDS' || activeMode === 'ALL'
+                ? 'All District Employee Retirement Records'
+                : 'Retired Personnel Archive'
+            ),
+            h('p', { className: 'text-xs text-slate-500 dark:text-slate-400 mt-0.5' }, rangeText)
+          ]),
+          h('div', { className: 'flex items-center space-x-3 text-xs font-bold text-slate-500 dark:text-slate-400' }, [
+            h('div', { className: 'flex items-center space-x-1.5' }, [
+              h('span', { className: 'font-semibold' }, 'Rows per page:'),
+              h('select', {
+                value: itemsPerPage,
+                onChange: handleRowsPerPageChange,
+                className: 'p-1 rounded-md border text-xs font-semibold bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 focus:outline-none cursor-pointer'
+              }, [
+                { label: '10', value: 10 },
+                { label: '25', value: 25 },
+                { label: '50', value: 50 },
+                { label: '100', value: 100 },
+                { label: 'All', value: 'all' }
+              ].map(opt => h('option', { key: opt.value, value: opt.value }, opt.label)))
+            ]),
+            h('div', { className: 'border-l pl-3 dark:border-slate-700 font-semibold text-[#0c4a7e] dark:text-sky-300' },
+              itemsPerPage === 'all' ? 'Page 1 of 1' : `Page ${safeCurrentPage} of ${totalPages}`
+            )
+          ])
+        ]),
 
-                  return h('tr', {
-                    key: t.treasuryCode,
-                    className: `hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${
-                      isRet ? 'opacity-85' : ''
-                    }`
+        // Table Content
+        h('div', { className: 'overflow-x-auto' }, [
+          h('table', { className: 'w-full text-left text-xs border-collapse' }, [
+            h('thead', { className: 'bg-slate-100 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px]' }, [
+              h('tr', {}, [
+                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 text-center w-12' }, '#'),
+                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[100px]' }, 'Treasury Code'),
+                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[180px]' }, "Teacher's Name"),
+                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[110px]' }, 'Designation'),
+                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[130px]' }, 'Mandal'),
+                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[200px]' }, 'School Name'),
+                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 text-center min-w-[100px]' }, 'Date of Birth'),
+                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 text-center min-w-[110px]' }, 'Retirement Date'),
+                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 min-w-[160px]' }, 'Countdown / Time Left'),
+                h('th', { className: 'p-3 font-bold border-b border-r dark:border-slate-700 text-center min-w-[90px]' }, 'Status'),
+                h('th', { className: 'p-3 font-bold border-b dark:border-slate-700 text-center min-w-[110px]' }, 'Action')
+              ])
+            ]),
+            h('tbody', { className: 'divide-y divide-slate-200 dark:divide-slate-800' },
+              loading ? [
+                h('tr', { key: 'loading' }, [
+                  h('td', {
+                    colSpan: 11,
+                    className: 'p-10 text-center text-slate-500 font-semibold'
                   }, [
-                    h('td', { className: 'p-3 text-center text-slate-500 font-mono border-r dark:border-slate-700' }, sNo),
-                    h('td', { className: 'p-3 font-mono font-bold text-[#0c4a7e] dark:text-sky-300 border-r dark:border-slate-700' }, t.treasuryCode),
-                    h('td', { className: 'p-3 font-semibold text-slate-900 dark:text-slate-100 border-r dark:border-slate-700' }, [
-                      h('div', {}, t.teacherName),
-                      h('div', { className: 'text-[10px] text-slate-400' }, t.gender || '-')
-                    ]),
-                    h('td', { className: 'p-3 font-medium text-slate-700 dark:text-slate-300 border-r dark:border-slate-700' }, t.designation || '-'),
-                    h('td', { className: 'p-3 text-slate-700 dark:text-slate-300 border-r dark:border-slate-700' }, t.mandal || '-'),
-                    h('td', { className: 'p-3 text-slate-700 dark:text-slate-300 border-r dark:border-slate-700' }, t.schoolName || '-'),
-                    h('td', { className: 'p-3 text-center font-mono text-slate-600 dark:text-slate-400 border-r dark:border-slate-700' }, t.dateOfBirth || '-'),
-                    h('td', { className: 'p-3 text-center font-mono font-bold text-[#0c4a7e] dark:text-sky-300 border-r dark:border-slate-700' }, t.dateOfRetirement || '-'),
-                    h('td', { className: 'p-3 border-r dark:border-slate-700' }, renderDaysRemainingBadge(t)),
-                    h('td', { className: 'p-3 text-center border-r dark:border-slate-700' }, [
-                      h('span', {
-                        className: `px-2 py-0.5 rounded text-[10px] font-bold ${
-                          isRet
-                            ? 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-300'
-                            : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
-                        }`
-                      }, t.status)
-                    ]),
-                    h('td', { className: 'p-3 text-center' }, [
-                      h('button', {
-                        onClick: () => setSelectedTeacherCode(t.treasuryCode),
-                        className: 'px-2.5 py-1 rounded-lg text-xs font-bold text-white bg-[#0c4a7e] hover:bg-[#08355b] transition-all shadow-xs cursor-pointer inline-flex items-center space-x-1'
-                      }, [
-                        h('span', {}, '👁️'),
-                        h('span', {}, 'Profile')
-                      ])
+                    h('div', { className: 'w-8 h-8 border-3 border-[#0c4a7e] border-t-transparent rounded-full animate-spin mx-auto mb-2' }),
+                    'Calculating dynamic retirement schedules...'
+                  ])
+                ])
+              ] : displayedTeachers.length === 0 ? [
+                h('tr', { key: 'empty' }, [
+                  h('td', {
+                    colSpan: 11,
+                    className: 'p-8 text-center text-slate-500 dark:text-slate-400 font-semibold'
+                  }, 'No retirement records found matching the selected filter criteria.')
+                ])
+              ] : displayedTeachers.map((t, idx) => {
+                const sNo = itemsPerPage === 'all' ? (idx + 1) : ((safeCurrentPage - 1) * numLimit + idx + 1);
+                const isRet = (t.status === 'RETIRED');
+
+                return h('tr', {
+                  key: t.treasuryCode,
+                  className: `hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${
+                    isRet ? 'opacity-85' : ''
+                  }`
+                }, [
+                  h('td', { className: 'p-3 text-center text-slate-500 font-mono border-r dark:border-slate-700' }, sNo),
+                  h('td', { className: 'p-3 font-mono font-bold text-[#0c4a7e] dark:text-sky-300 border-r dark:border-slate-700' }, t.treasuryCode),
+                  h('td', { className: 'p-3 font-semibold text-slate-900 dark:text-slate-100 border-r dark:border-slate-700' }, [
+                    h('div', {}, t.teacherName),
+                    h('div', { className: 'text-[10px] text-slate-400' }, t.gender || '-')
+                  ]),
+                  h('td', { className: 'p-3 font-medium text-slate-700 dark:text-slate-300 border-r dark:border-slate-700' }, t.designation || '-'),
+                  h('td', { className: 'p-3 text-slate-700 dark:text-slate-300 border-r dark:border-slate-700' }, t.mandal || '-'),
+                  h('td', { className: 'p-3 text-slate-700 dark:text-slate-300 border-r dark:border-slate-700' }, t.schoolName || '-'),
+                  h('td', { className: 'p-3 text-center font-mono text-slate-600 dark:text-slate-400 border-r dark:border-slate-700' }, t.dateOfBirth || '-'),
+                  h('td', { className: 'p-3 text-center font-mono font-bold text-[#0c4a7e] dark:text-sky-300 border-r dark:border-slate-700' }, t.dateOfRetirement || '-'),
+                  h('td', { className: 'p-3 border-r dark:border-slate-700' }, renderDaysRemainingBadge(t)),
+                  h('td', { className: 'p-3 text-center border-r dark:border-slate-700' }, [
+                    h('span', {
+                      className: `px-2 py-0.5 rounded text-[10px] font-bold ${
+                        isRet
+                          ? 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-300'
+                          : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                      }`
+                    }, t.status)
+                  ]),
+                  h('td', { className: 'p-3 text-center' }, [
+                    h('button', {
+                      onClick: () => setSelectedTeacherCode(t.treasuryCode),
+                      className: 'px-2.5 py-1 rounded-lg text-xs font-bold text-white bg-[#0c4a7e] hover:bg-[#08355b] transition-all shadow-xs cursor-pointer inline-flex items-center space-x-1'
+                    }, [
+                      h('span', {}, '👁️'),
+                      h('span', {}, 'Profile')
                     ])
-                  ]);
-                })
-              )
+                  ])
+                ]);
+              })
+            )
+          ])
+        ]),
+
+        // Bottom Pagination Bar
+        h('div', {
+          className: 'p-3 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs'
+        }, [
+          h('div', { className: 'flex items-center space-x-3 text-slate-500 dark:text-slate-400 font-semibold' }, [
+            h('span', {}, rangeText),
+            h('div', { className: 'hidden sm:flex items-center space-x-1.5 border-l pl-3 dark:border-slate-700' }, [
+              h('span', {}, 'Rows per page:'),
+              h('select', {
+                value: itemsPerPage,
+                onChange: handleRowsPerPageChange,
+                className: 'p-1 rounded-md border text-xs font-semibold bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 focus:outline-none cursor-pointer'
+              }, [
+                { label: '10', value: 10 },
+                { label: '25', value: 25 },
+                { label: '50', value: 50 },
+                { label: '100', value: 100 },
+                { label: 'All', value: 'all' }
+              ].map(opt => h('option', { key: opt.value, value: opt.value }, opt.label)))
             ])
           ]),
-
-          // Pagination Bar
-          totalPages > 1 && h('div', {
-            className: 'p-3 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between flex-wrap gap-2 text-xs'
-          }, [
-            h('div', { className: 'text-slate-500 dark:text-slate-400' },
-              `Page ${currentPage} of ${totalPages} (Total ${formatNum(totalCount)} employees)`
+          h('div', { className: 'flex items-center space-x-1.5' }, [
+            h('button', {
+              disabled: safeCurrentPage <= 1 || itemsPerPage === 'all',
+              onClick: () => setCurrentPage(1),
+              className: 'px-2.5 py-1 rounded border bg-white dark:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer shadow-xs transition-all'
+            }, '« First'),
+            h('button', {
+              disabled: safeCurrentPage <= 1 || itemsPerPage === 'all',
+              onClick: () => setCurrentPage(p => Math.max(1, p - 1)),
+              className: 'px-2.5 py-1 rounded border bg-white dark:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer shadow-xs transition-all'
+            }, '‹ Prev'),
+            h('span', { className: 'px-3 font-bold text-[#0c4a7e] dark:text-sky-300' },
+              itemsPerPage === 'all' ? 'Page 1 of 1' : `Page ${safeCurrentPage} of ${totalPages}`
             ),
-            h('div', { className: 'flex items-center space-x-1.5' }, [
-              h('button', {
-                disabled: currentPage <= 1,
-                onClick: () => setCurrentPage(1),
-                className: 'px-2.5 py-1 rounded border bg-white dark:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed font-semibold'
-              }, '« First'),
-              h('button', {
-                disabled: currentPage <= 1,
-                onClick: () => setCurrentPage(p => Math.max(1, p - 1)),
-                className: 'px-2.5 py-1 rounded border bg-white dark:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed font-semibold'
-              }, '‹ Prev'),
-              h('span', { className: 'px-3 font-bold text-[#0c4a7e] dark:text-sky-300' }, currentPage),
-              h('button', {
-                disabled: currentPage >= totalPages,
-                onClick: () => setCurrentPage(p => Math.min(totalPages, p + 1)),
-                className: 'px-2.5 py-1 rounded border bg-white dark:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed font-semibold'
-              }, 'Next ›'),
-              h('button', {
-                disabled: currentPage >= totalPages,
-                onClick: () => setCurrentPage(totalPages),
-                className: 'px-2.5 py-1 rounded border bg-white dark:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed font-semibold'
-              }, 'Last »')
-            ])
+            h('button', {
+              disabled: safeCurrentPage >= totalPages || itemsPerPage === 'all',
+              onClick: () => setCurrentPage(p => Math.min(totalPages, p + 1)),
+              className: 'px-2.5 py-1 rounded border bg-white dark:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer shadow-xs transition-all'
+            }, 'Next ›'),
+            h('button', {
+              disabled: safeCurrentPage >= totalPages || itemsPerPage === 'all',
+              onClick: () => setCurrentPage(totalPages),
+              className: 'px-2.5 py-1 rounded border bg-white dark:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer shadow-xs transition-all'
+            }, 'Last »')
           ])
         ])
-      )
+      ])
     ]);
   }
 

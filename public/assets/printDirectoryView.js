@@ -1,5 +1,5 @@
 // District Educational Office, Jangaon - Reusable Print Directory View Module
-// Standardized Government-Style Multi-Page Print Layout for Teachers & Students Directories
+// Standardized Government-Style Multi-Page Print Layout for Teachers & Schools Directories
 // Features: Print Current Filtered Results vs Print All Records, Repeated Headers, No Blank Pages
 
 (function () {
@@ -37,7 +37,7 @@
    * Generates the printable HTML and triggers browser print
    */
   async function executePrint({
-    directoryType, // 'TEACHERS' | 'STUDENTS'
+    directoryType, // 'TEACHERS' | 'SCHOOLS'
     mode,          // 'FILTERED' | 'ALL'
     title,
     subtitle,
@@ -74,7 +74,7 @@
 
     const mainTitle = title || (isTeachers
       ? (isMeo ? `TEACHERS INFORMATION DIRECTORY — ${userMandal} MANDAL` : 'OFFICIAL TEACHERS INFORMATION DIRECTORY — JANGAON DISTRICT')
-      : (isMeo ? `STUDENTS INFORMATION & ENROLLMENT DIRECTORY — ${userMandal} MANDAL` : 'OFFICIAL STUDENTS INFORMATION & ENROLLMENT DIRECTORY — JANGAON DISTRICT')
+      : (isMeo ? `SCHOOLS INFORMATION DIRECTORY — ${userMandal} MANDAL` : 'OFFICIAL SCHOOLS INFORMATION DIRECTORY — JANGAON DISTRICT')
     );
 
     const docSubtitle = subtitle || 'DEPARTMENT OF SCHOOL EDUCATION • GOVERNMENT OF TELANGANA';
@@ -97,8 +97,7 @@
         </div>
         <div class="dir-meta-bar">
           <div class="dir-meta-item"><strong>Mode:</strong> <span class="dir-meta-tag">${escapeHtml(modeLabel)}</span></div>
-          <div class="dir-meta-item"><strong>Total Records:</strong> ${formatNum(records.length)}</div>
-          ${!isTeachers && summaryStats.totalStudents ? `<div class="dir-meta-item"><strong>Total Students:</strong> ${formatNum(summaryStats.totalStudents)}</div>` : ''}
+          <div class="dir-meta-item"><strong>Total Records:</strong> ${formatNum(records.length)} ${isTeachers ? 'Teachers' : 'Schools'}</div>
           <div class="dir-meta-item"><strong>Generated:</strong> ${escapeHtml(formattedDate)}</div>
           <div class="dir-meta-item"><strong>Authorized Officer:</strong> ${escapeHtml(userRole)} ${userMandal ? `(${escapeHtml(userMandal)})` : ''}</div>
         </div>
@@ -153,16 +152,12 @@
         </tr>
       </tfoot>`;
     } else {
-      // Students Total
-      const totalStudents = summaryStats.totalStudents !== undefined
-        ? summaryStats.totalStudents
-        : records.reduce((sum, r) => sum + (Number(r.studentsCount || r.totalStudents) || 0), 0);
-
       html += `<tfoot>
         <tr class="dir-print-total-row">
-          <td colspan="4" style="text-align: center; font-weight: 800;">District / Mandal Grand Total (${records.length} Institutions)</td>
-          <td colspan="${Math.max(1, columns.length - 5)}" style="text-align: center; font-weight: 700;">Enrolled Student Strength</td>
-          <td colspan="1" style="text-align: right; font-weight: 900; font-size: 9px;">${formatNum(totalStudents)}</td>
+          <td colspan="3" style="text-align: center; font-weight: 800;">District / Mandal Grand Total</td>
+          <td colspan="${Math.max(1, columns.length - 3)}" style="font-weight: 800;">
+            ${formatNum(records.length)} Schools / Educational Institutions
+          </td>
         </tr>
       </tfoot>`;
     }
@@ -223,7 +218,7 @@
     const cleanDate = formattedDate.replace(/[^0-9]/g, '').slice(0, 8);
     const pdfName = isTeachers
       ? `Jangaon_DEO_Teachers_Directory_${isFiltered ? 'Filtered' : 'Complete'}_${cleanDate}`
-      : `Jangaon_DEO_Students_Directory_${isFiltered ? 'Filtered' : 'Complete'}_${cleanDate}`;
+      : `Jangaon_DEO_Schools_Directory_${isFiltered ? 'Filtered' : 'Complete'}_${cleanDate}`;
     document.title = pdfName;
 
     // 7. Trigger print
@@ -324,7 +319,7 @@
                 h('span', { className: 'text-xs font-bold text-sky-600 dark:text-sky-400' }, isMeo ? `Mandal: ${userMandal}` : 'District: Jangaon')
               ]),
               h('h3', { className: 'text-base font-black text-slate-900 dark:text-white leading-tight mt-0.5' },
-                isTeachers ? 'Print Teachers Information Directory' : 'Print Students Information & Enrollment Directory'
+                isTeachers ? 'Print Teachers Information Directory' : 'Print Schools Information Directory'
               )
             ])
           ]),

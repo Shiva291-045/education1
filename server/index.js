@@ -2,6 +2,13 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 
+process.on('uncaughtException', (err) => {
+  console.error('[SERVER UNCAUGHT EXCEPTION]:', err.message || err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('[SERVER UNHANDLED REJECTION]:', reason);
+});
+
 require('./loadEnv').loadEnv();
 
 const PORT = process.env.PORT || 5000;
@@ -31,76 +38,116 @@ async function bootServer(startListening) {
   startListening();
 }
 
-let app;
-let isExpress = false;
+// Global flag guaranteeing exactly one server starts and listens on PORT
+let serverStarted = false;
 
+// Check if Express framework is available
+let express;
 try {
-  const express = require('express');
-  app = express();
-  isExpress = true;
+  express = require('express');
+} catch (e) {
+  express = null;
+}
 
-  app.use((req, res, next) => {
-    const allowed = authConfig.applyCorsHeaders(req, res);
-    if (req.method === 'OPTIONS') {
+if (express) {
+  try {
+    const app = express();
+
+    app.use((req, res, next) => {
+      const allowed = authConfig.applyCorsHeaders(req, res);
+      if (req.method === 'OPTIONS') {
+        if (!allowed && req.headers.origin) {
+          return res.status(403).json({ success: false, message: 'Cross-origin request not allowed.' });
+        }
+        return res.status(204).end();
+      }
       if (!allowed && req.headers.origin) {
         return res.status(403).json({ success: false, message: 'Cross-origin request not allowed.' });
       }
-      return res.status(204).end();
-    }
-    if (!allowed && req.headers.origin) {
-      return res.status(403).json({ success: false, message: 'Cross-origin request not allowed.' });
-    }
-    next();
-  });
-  app.use(express.json());
-
-  app.get('/config.js', (req, res) => {
-    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-    res.setHeader('Cache-Control', 'no-store');
-    res.send(authConfig.publicConfigScript());
-  });
-
-  // Static files
-  app.use(express.static(PUBLIC_DIR));
-
-  // Routes
-  const authRoutes = require('./routes/authRoutes');
-  const portalRoutes = require('./routes/portalRoutes');
-  // Passkey direct routes (root and /api)
-  app.post(['/passkey/register/start', '/api/passkey/register/start'], (req, res) => authController.passkeyRegisterStart(req, res));
-  app.post(['/passkey/register/finish', '/api/passkey/register/finish'], (req, res) => authController.passkeyRegisterFinish(req, res));
-  app.post(['/passkey/login/start', '/api/passkey/login/start'], (req, res) => authController.passkeyLoginStart(req, res));
-  app.post(['/passkey/login/finish', '/api/passkey/login/finish'], (req, res) => authController.passkeyLoginFinish(req, res));
-
-  app.use('/api/auth', authRoutes);
-  app.use('/api', portalRoutes);
-
-  // Fallback to index.html for SPA routing
-  app.get('*', (req, res) => {
-    const indexPath = path.join(PUBLIC_DIR, 'index.html');
-    if (fs.existsSync(indexPath)) {
-      res.sendFile(indexPath);
-    } else {
-      res.send('DEO Jangaon Education Portal Server Running');
-    }
-  });
-
-  const startExpress = () => {
-    app.listen(PORT, () => {
-      console.log(`====================================================`);
-      console.log(`TELANGANA EDUCATION PORTAL - JANGAON DISTRICT`);
-      console.log(`Server running at http://localhost:${PORT}`);
-      console.log(`API endpoints available at http://localhost:${PORT}/api/auth`);
-      console.log(`====================================================`);
+      next();
     });
-  };
+    app.use(express.json());
 
-  bootServer(startExpress);
+    app.get('/config.js', (req, res) => {
+      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-store');
+      res.send(authConfig.publicConfigScript());
+    });
 
-} catch (e) {
+    // Static files serving with cache-busting headers
+    app.use(express.static(PUBLIC_DIR, {
+      setHeaders: (res, filePath) => {
+        const ext = path.extname(filePath);
+        if (ext === '.js' || ext === '.html' || ext === '.json') {
+          res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+        } else {
+          res.setHeader('Cache-Control', 'public, max-age=3600');
+        }
+      }
+    }));
+
+    // Routes
+    const authRoutes = require('./routes/authRoutes');
+    const portalRoutes = require('./routes/portalRoutes');
+
+    app.use('/api/auth', authRoutes);
+    app.use('/api', portalRoutes);
+
+    // Fallback to index.html for SPA routing
+    app.get('*', (req, res) => {
+      const indexPath = path.join(PUBLIC_DIR, 'index.html');
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        res.send('DEO Jangaon Education Portal Server Running');
+      }
+    });
+
+    // Catch-all for non-GET requests that didn't match any route
+    app.all('*', (req, res) => {
+      res.status(404).json({ success: false, message: 'Endpoint not found' });
+    });
+
+    const startExpress = () => {
+      if (serverStarted) return;
+      serverStarted = true;
+      const srv = app.listen(PORT, () => {
+        console.log(`====================================================`);
+        console.log(`TELANGANA EDUCATION PORTAL - JANGAON DISTRICT`);
+        console.log(`Server running at http://localhost:${PORT}`);
+        console.log(`API endpoints available at http://localhost:${PORT}/api/auth`);
+        console.log(`====================================================`);
+      });
+      srv.on('error', (err) => {
+        if (err.code === 'EADDRINUSE') {
+          console.error(`[EXPRESS SERVER ERROR]: Port ${PORT} already in use (EADDRINUSE).`);
+        } else {
+          console.error('[EXPRESS SERVER ERROR]:', err);
+        }
+      });
+    };
+
+    bootServer(startExpress);
+
+  } catch (err) {
+    console.warn('Express initialization error:', err.message);
+    if (!serverStarted) {
+      startNativeHttpServer();
+    }
+  }
+} else {
+  // Express not available - start native HTTP server fallback
+  startNativeHttpServer();
+}
+
+/**
+ * Pure Node.js HTTP Server fallback (Runs ONLY when Express is unavailable)
+ * Zero npm dependency required, supports full REST API, auth, sessions & SPA routing.
+ */
+function startNativeHttpServer() {
+  if (serverStarted) return;
   console.log('Express not detected or loading native HTTP server fallback...');
 
-  // Pure Node.js HTTP Server fallback (Zero npm install dependency required)
   const mimeTypes = {
     '.html': 'text/html',
     '.css': 'text/css',
@@ -179,54 +226,9 @@ try {
       }
     };
 
-    // API & Passkey Routing
-    if (pathname.startsWith('/api/') || pathname.startsWith('/passkey/')) {
+    // API Routing
+    if (pathname.startsWith('/api/')) {
       req.body = await parseBody();
-
-      // WebAuthn Passkey Registration Start
-      if (
-        (pathname === '/passkey/register/start' ||
-         pathname === '/api/passkey/register/start' ||
-         pathname === '/api/auth/passkey/register/start' ||
-         pathname === '/api/auth/webauthn/register-options')
-        && req.method === 'POST'
-      ) {
-        await authController.passkeyRegisterStart(req, mockRes);
-        return;
-      }
-      // WebAuthn Passkey Registration Finish
-      if (
-        (pathname === '/passkey/register/finish' ||
-         pathname === '/api/passkey/register/finish' ||
-         pathname === '/api/auth/passkey/register/finish' ||
-         pathname === '/api/auth/webauthn/register-verify')
-        && req.method === 'POST'
-      ) {
-        await authController.passkeyRegisterFinish(req, mockRes);
-        return;
-      }
-      // WebAuthn Passkey Login Start
-      if (
-        (pathname === '/passkey/login/start' ||
-         pathname === '/api/passkey/login/start' ||
-         pathname === '/api/auth/passkey/login/start' ||
-         pathname === '/api/auth/webauthn/login-options')
-        && req.method === 'POST'
-      ) {
-        await authController.passkeyLoginStart(req, mockRes);
-        return;
-      }
-      // WebAuthn Passkey Login Finish
-      if (
-        (pathname === '/passkey/login/finish' ||
-         pathname === '/api/passkey/login/finish' ||
-         pathname === '/api/auth/passkey/login/finish' ||
-         pathname === '/api/auth/webauthn/login-verify')
-        && req.method === 'POST'
-      ) {
-        await authController.passkeyLoginFinish(req, mockRes);
-        return;
-      }
 
       // Teacher Login
       if (pathname === '/api/auth/teacher/login' && req.method === 'POST') {
@@ -336,6 +338,13 @@ try {
       return mockRes.status(404).json({ success: false, message: 'Route not found' });
     }
 
+    // For non-GET / non-HEAD requests that were not matched by API routes, return 404
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: false, message: 'Endpoint not found' }));
+      return;
+    }
+
     // Static Files Serving
     let filePath = path.join(PUBLIC_DIR, pathname === '/' ? 'index.html' : pathname);
     if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
@@ -345,20 +354,40 @@ try {
     if (fs.existsSync(filePath)) {
       const ext = path.extname(filePath);
       const contentType = mimeTypes[ext] || 'application/octet-stream';
-      res.writeHead(200, { 'Content-Type': contentType });
-      fs.createReadStream(filePath).pipe(res);
+      res.writeHead(200, {
+        'Content-Type': contentType,
+        'Cache-Control': (ext === '.js' || ext === '.html' || ext === '.json') ? 'no-cache, must-revalidate' : 'public, max-age=3600'
+      });
+      const stream = fs.createReadStream(filePath);
+      stream.on('error', () => {
+        if (!res.headersSent) res.writeHead(500);
+        res.end();
+      });
+      stream.pipe(res);
     } else {
       res.writeHead(200, { 'Content-Type': 'text/html' });
       res.end('<h1>Telangana DEO Jangaon Education Portal</h1><p>Starting up...</p>');
     }
   });
 
-  bootServer(() => {
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`[NATIVE SERVER ERROR]: Port ${PORT} already in use (EADDRINUSE).`);
+    } else {
+      console.error('[NATIVE SERVER ERROR]:', err);
+    }
+  });
+
+  const startNative = () => {
+    if (serverStarted) return;
+    serverStarted = true;
     server.listen(PORT, () => {
       console.log(`====================================================`);
       console.log(`TELANGANA EDUCATION PORTAL - JANGAON DISTRICT`);
       console.log(`Native HTTP Server running at http://localhost:${PORT}`);
       console.log(`====================================================`);
     });
-  });
+  };
+
+  bootServer(startNative);
 }

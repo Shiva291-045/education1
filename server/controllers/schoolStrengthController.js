@@ -161,7 +161,7 @@ class SchoolStrengthController {
 
   /**
    * PUT /api/schools/information/district/:code
-   * Body: { schoolsCount, stages: { ... } }
+   * Body: { schoolsCount, stages: { ... }, mandal?: string }
    */
   async updateDistrict(req, res, codeParam) {
     try {
@@ -169,21 +169,41 @@ class SchoolStrengthController {
       if (!user) {
         return res.status(401).json({
           success: false,
-          message: "Authentication required. Schools Information is a protected dashboard feature strictly restricted to authenticated DEO and APO officers."
+          message: "Authentication required. Active login session required to edit schools particulars."
         });
       }
 
       const role = (user.role || '').toUpperCase();
       const isDeoOrApo = (role === 'DEO' || role === 'APO' || role === 'OFFICER');
-      if (!isDeoOrApo) {
+      const isMeo = (role === 'MEO');
+      if (!isDeoOrApo && !isMeo) {
         return res.status(403).json({
           success: false,
-          message: "Access Denied: Schools Information is a protected dashboard feature strictly restricted to authenticated DEO and APO officers."
+          message: "Access Denied: Schools Information editing is strictly restricted to authenticated DEO, APO, and assigned MEO officers."
         });
       }
 
+      let targetMandal = null;
+      if (req.query && req.query.mandal) {
+        targetMandal = req.query.mandal;
+      } else if (req.url) {
+        try {
+          const urlObj = new URL(req.url, 'http://localhost');
+          targetMandal = urlObj.searchParams.get('mandal');
+        } catch (_) {}
+      }
+      if (!targetMandal && req.body && req.body.mandal) {
+        targetMandal = req.body.mandal;
+      }
+      if (!targetMandal && req.headers && req.headers['x-preview-mandal']) {
+        targetMandal = req.headers['x-preview-mandal'];
+      }
+      if (!targetMandal && isMeo && user.mandal) {
+        targetMandal = user.mandal;
+      }
+
       const updates = req.body || {};
-      const result = schoolStrengthService.updateDistrictData(codeParam, updates, user);
+      const result = schoolStrengthService.updateDistrictData(codeParam, updates, user, targetMandal);
       return res.status(result.status || (result.success ? 200 : 400)).json(result);
     } catch (err) {
       console.error('[SchoolStrengthController] Error in updateDistrict:', err);

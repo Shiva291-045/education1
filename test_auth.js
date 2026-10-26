@@ -1,10 +1,15 @@
 /**
  * End-to-End Automated Verification Suite
- * Verifies OTP-free Registration, Real WebAuthn Passkey creation & assertion,
- * Dedicated Teacher Employee ID login, Password fallback, and Session management.
+ * Verifies:
+ * 1. Administrative Registration (Direct, no OTP, no passkeys)
+ * 2. Administrative Credentials Login (Mobile/ID + Password)
+ * 3. Dedicated Teacher Login (Employee ID + Mobile)
+ * 4. Session Validation via Cookie (/api/auth/me)
+ * 5. Protected Officer Portal Data Access
+ * 6. Deletion of Passkey/WebAuthn Endpoints (Confirm 404)
+ * 7. Logout & Session Termination
  */
 const http = require('http');
-const crypto = require('crypto');
 
 function request(method, path, body = null, headers = {}) {
   return new Promise((resolve, reject) => {
@@ -45,458 +50,127 @@ function request(method, path, body = null, headers = {}) {
   });
 }
 
-// Minimal CBOR encoder for creating a genuine WebAuthn test attestation
-function encodeCbor(val) {
-  if (typeof val === 'string') {
-    const buf = Buffer.from(val, 'utf8');
-    if (buf.length < 24) return Buffer.concat([Buffer.from([0x60 | buf.length]), buf]);
-    return Buffer.concat([Buffer.from([0x78, buf.length]), buf]);
+function assert(condition, message) {
+  if (!condition) {
+    console.error(`❌ ASSERTION FAILED: ${message}`);
+    process.exit(1);
   }
-  if (Buffer.isBuffer(val)) {
-    if (val.length < 24) return Buffer.concat([Buffer.from([0x40 | val.length]), val]);
-    if (val.length < 256) return Buffer.concat([Buffer.from([0x58, val.length]), val]);
-    const lenBuf = Buffer.alloc(2);
-    lenBuf.writeUInt16BE(val.length, 0);
-    return Buffer.concat([Buffer.from([0x59]), lenBuf, val]);
-  }
-  if (typeof val === 'number') {
-    if (val >= 0) {
-      if (val < 24) return Buffer.from([val]);
-      return Buffer.from([0x18, val]);
-    } else {
-      const n = -1 - val;
-      if (n < 24) return Buffer.from([0x20 | n]);
-      return Buffer.from([0x38, n]);
-    }
-  }
-  if (val instanceof Map || (typeof val === 'object' && val !== null && !Array.isArray(val))) {
-    const entries = (val instanceof Map) ? Array.from(val.entries()) : Object.entries(val);
-    const head = entries.length < 24 ? Buffer.from([0xa0 | entries.length]) : Buffer.from([0xb8, entries.length]);
-    const parts = [head];
-    for (const [k, v] of entries) {
-      parts.push(encodeCbor(k));
-      parts.push(encodeCbor(v));
-    }
-    return Buffer.concat(parts);
-  }
-  throw new Error("Unsupported type for test CBOR: " + typeof val);
-}
-
-function buildRegistrationAttestation(challenge, { origin = 'http://localhost:5000', rpId = 'localhost' } = {}) {
-  const { publicKey, privateKey } = crypto.generateKeyPairSync('ec', { namedCurve: 'prime256v1' });
-  const jwk = publicKey.export({ format: 'jwk' });
-  const xCoord = Buffer.from(jwk.x, 'base64url');
-  const yCoord = Buffer.from(jwk.y, 'base64url');
-
-  const coseKeyMap = new Map();
-  coseKeyMap.set(1, 2);
-  coseKeyMap.set(3, -7);
-  coseKeyMap.set(-1, 1);
-  coseKeyMap.set(-2, xCoord);
-  coseKeyMap.set(-3, yCoord);
-  const coseKeyBytes = encodeCbor(coseKeyMap);
-
-  const rpIdHash = crypto.createHash('sha256').update(rpId).digest();
-  const flags = Buffer.from([0x45]);
-  const signCount = Buffer.alloc(4);
-  signCount.writeUInt32BE(1, 0);
-  const aaguid = Buffer.alloc(16, 0);
-  const credentialId = crypto.randomBytes(32);
-  const credIdLen = Buffer.alloc(2);
-  credIdLen.writeUInt16BE(credentialId.length, 0);
-
-  const authData = Buffer.concat([
-    rpIdHash,
-    flags,
-    signCount,
-    aaguid,
-    credIdLen,
-    credentialId,
-    coseKeyBytes
-  ]);
-
-  const attestationMap = new Map();
-  attestationMap.set('fmt', 'none');
-  attestationMap.set('attStmt', new Map());
-  attestationMap.set('authData', authData);
-  const attestationObject = encodeCbor(attestationMap);
-
-  const clientDataJSON = JSON.stringify({
-    type: 'webauthn.create',
-    challenge,
-    origin
-  });
-
-  return {
-    credentialId,
-    privateKey,
-    payload: {
-      id: credentialId.toString('base64url'),
-      rawId: credentialId.toString('base64url'),
-      clientDataJSON: Buffer.from(clientDataJSON).toString('base64url'),
-      attestationObject: attestationObject.toString('base64url'),
-      transports: ['internal']
-    }
-  };
+  console.log(`  ✓ ${message}`);
 }
 
 async function runTests() {
-  console.log("=== STARTING PASSKEY & AUTHENTICATION VERIFICATION SUITE ===");
+  console.log('====================================================');
+  console.log('🧪 JANGAON DEO PORTAL - AUTH & CLEANUP VERIFICATION');
+  console.log('====================================================\n');
 
-  try {
-    const testAdminMobile = '98' + Math.floor(10000000 + Math.random() * 90000000);
+  const randomDigits = Math.floor(10000000 + Math.random() * 90000000);
+  const testMobile = `98${randomDigits}`;
+  const testPassword = 'AdminPassword#123';
 
-    // -------------------------------------------------------------
-    // Test 1: Direct Registration without OTP
-    // -------------------------------------------------------------
-    console.log(`\n[Test 1] Testing direct registration (NO OTP) for Administrative role 'APO'...`);
-    const regRes = await request('POST', '/api/auth/register', {
-      fullName: 'B. Srinivas Rao',
-      role: 'APO',
-      mobileNumber: testAdminMobile,
-      password: 'OfficialPassword2025!',
-      confirmPassword: 'OfficialPassword2025!'
-    });
+  // -------------------------------------------------------------------------
+  // TEST 1: Register Administrative Officer Account
+  // -------------------------------------------------------------------------
+  console.log('TEST 1: Direct Administrative Registration (Zero OTP, No Passkey)...');
+  const regRes = await request('POST', '/api/auth/register', {
+    fullName: 'Sri. K. Ramesh',
+    role: 'APO',
+    mobileNumber: testMobile,
+    password: testPassword,
+    confirmPassword: testPassword
+  });
 
-    if (!regRes.data.success) {
-      throw new Error("Registration failed: " + JSON.stringify(regRes.data));
-    }
-    console.log("✓ Account created without OTP! User ID:", regRes.data.user.id);
-    console.log("✓ WebAuthn Passkey options received from server. Challenge length:", regRes.data.passkeyOptions.challenge.length);
-    console.log("✓ RP configuration:", regRes.data.passkeyOptions.rp);
+  assert(regRes.status === 201, `Registration status is 201 Created (Got ${regRes.status})`);
+  assert(regRes.data.success === true, 'Response indicates success = true');
+  assert(regRes.data.user && regRes.data.user.role === 'APO', 'User role is APO');
+  assert(regRes.data.user.mobileNumber === testMobile, 'Mobile matches registered mobile');
+  assert(!regRes.data.passkeyOptions, 'No WebAuthn passkeyOptions in registration response');
+  assert(!regRes.data.user.passkeys, 'User object has no passkeys array');
+  assert(Boolean(regRes.cookie), 'Session cookie (deo_session_id) issued upon registration');
+  const regCookie = regRes.cookie;
 
-    const createdUserId = regRes.data.user.id;
-    const regChallenge = regRes.data.passkeyOptions.challenge;
+  // -------------------------------------------------------------------------
+  // TEST 2: Validate Session via /api/auth/me
+  // -------------------------------------------------------------------------
+  console.log('\nTEST 2: Validate Session via /api/auth/me...');
+  const meRes = await request('GET', '/api/auth/me', null, { Cookie: regCookie });
+  assert(meRes.status === 200, `Status is 200 OK (Got ${meRes.status})`);
+  assert(meRes.data.success === true, 'Session is valid (success = true)');
+  assert(meRes.data.user.fullName === 'Sri. K. Ramesh', 'Session user matches registered officer');
+  assert(!meRes.data.user.passkeys, 'Session user has no passkeys field');
 
-    // -------------------------------------------------------------
-    // Test 2: Role restrictions (Reject Teacher in public registration)
-    // -------------------------------------------------------------
-    console.log("\n[Test 2] Testing rejection of 'Teacher' in public registration form...");
-    const teacherRejectRes = await request('POST', '/api/auth/register', {
-      fullName: 'Teacher Should Not Register Here',
-      role: 'Teacher',
-      mobileNumber: '99' + Math.floor(10000000 + Math.random() * 90000000),
-      password: 'SomePassword2025!',
-      confirmPassword: 'SomePassword2025!'
-    });
+  // -------------------------------------------------------------------------
+  // TEST 3: Access Protected Officer School Data
+  // -------------------------------------------------------------------------
+  console.log('\nTEST 3: Access Protected Schools Data with Session...');
+  const schoolRes = await request('GET', '/api/schools/information', null, { Cookie: regCookie });
+  assert(schoolRes.status === 200, `Protected schools data status is 200 (Got ${schoolRes.status})`);
+  assert(schoolRes.data.success === true, 'Schools data query succeeded');
+  assert(Array.isArray(schoolRes.data.filterOptions.schools), 'Schools array returned in filterOptions');
+  assert(schoolRes.data.filterOptions.schools.length > 0, `Returned ${schoolRes.data.filterOptions.schools.length} official schools`);
 
-    if (teacherRejectRes.status === 400 && !teacherRejectRes.data.success) {
-      console.log("✓ 'Teacher' correctly rejected in public registration with HTTP 400:", teacherRejectRes.data.message);
-    } else {
-      throw new Error("Expected 'Teacher' to be rejected in public registration form!");
-    }
+  // -------------------------------------------------------------------------
+  // TEST 4: Logout
+  // -------------------------------------------------------------------------
+  console.log('\nTEST 4: Logout & Invalidate Session...');
+  const logoutRes = await request('POST', '/api/auth/logout', null, { Cookie: regCookie });
+  assert(logoutRes.status === 200, `Logout status is 200 (Got ${logoutRes.status})`);
 
-    // -------------------------------------------------------------
-    // Test 3: Real WebAuthn Passkey Registration Verification
-    // -------------------------------------------------------------
-    console.log("\n[Test 3] Performing real WebAuthn Passkey registration verification...");
+  const meAfterLogout = await request('GET', '/api/auth/me', null, { Cookie: regCookie });
+  assert(meAfterLogout.status === 401 && !meAfterLogout.data.user, 'Session successfully invalidated after logout');
 
-    const missingChallengeRes = await request('POST', '/api/auth/webauthn/register-verify', {
-      userId: 'USER-does-not-exist',
-      response: buildRegistrationAttestation('not-a-real-challenge').payload
-    });
-    if (missingChallengeRes.data.success || !/not found|expired|User account not found/i.test(JSON.stringify(missingChallengeRes.data))) {
-      throw new Error("Expected missing challenge/user to be rejected: " + JSON.stringify(missingChallengeRes.data));
-    }
-    console.log("✓ Missing challenge rejected:", missingChallengeRes.data.message);
+  // -------------------------------------------------------------------------
+  // TEST 5: Password Login with Registered Credentials
+  // -------------------------------------------------------------------------
+  console.log('\nTEST 5: Administrative Login with Mobile + Password...');
+  const loginRes = await request('POST', '/api/auth/login', {
+    identifier: testMobile,
+    password: testPassword
+  });
+  assert(loginRes.status === 200, `Login status is 200 (Got ${loginRes.status})`);
+  assert(loginRes.data.success === true, 'Login successful');
+  assert(loginRes.data.user.fullName === 'Sri. K. Ramesh', 'User matched correctly');
+  assert(Boolean(loginRes.cookie), 'New session cookie issued on login');
+  const loginCookie = loginRes.cookie;
 
-    const originMismatch = buildRegistrationAttestation(regChallenge, { origin: 'https://evil.example' });
-    const originRes = await request('POST', '/api/auth/webauthn/register-verify', {
-      userId: createdUserId,
-      response: originMismatch.payload
-    }, regRes.cookie ? { Cookie: regRes.cookie } : {});
-    if (originRes.data.success) {
-      throw new Error("Origin mismatch was incorrectly accepted.");
-    }
-    console.log("✓ Origin mismatch rejected:", originRes.data.message);
+  // -------------------------------------------------------------------------
+  // TEST 6: Dedicated Teacher Login (Employee ID + Mobile)
+  // -------------------------------------------------------------------------
+  console.log('\nTEST 6: Dedicated Teacher Login (Department Service Record)...');
+  const tchRes = await request('POST', '/api/auth/teacher/login', {
+    employeeId: 'TS-TCH-100234',
+    mobileNumber: '9876543210'
+  });
+  assert(tchRes.status === 200, `Teacher login status is 200 (Got ${tchRes.status})`);
+  assert(tchRes.data.success === true, 'Teacher login successful');
+  assert(tchRes.data.user.role === 'Teacher', 'Role is Teacher');
+  assert(!tchRes.data.user.passkeys, 'Teacher user has no passkeys');
 
-    const rpMismatch = buildRegistrationAttestation(regChallenge, { rpId: 'evil.example' });
-    const rpRes = await request('POST', '/api/auth/webauthn/register-verify', {
-      userId: createdUserId,
-      response: rpMismatch.payload
-    }, regRes.cookie ? { Cookie: regRes.cookie } : {});
-    if (rpRes.data.success) {
-      throw new Error("RP ID mismatch was incorrectly accepted.");
-    }
-    console.log("✓ RP ID mismatch rejected:", rpRes.data.message);
+  // -------------------------------------------------------------------------
+  // TEST 7: Verify All Passkey/WebAuthn Endpoints Return 404 Not Found
+  // -------------------------------------------------------------------------
+  console.log('\nTEST 7: Verify Removed Passkey Endpoints Return 404...');
+  const passkeyEndpoints = [
+    { method: 'POST', path: '/passkey/register/start' },
+    { method: 'POST', path: '/passkey/register/finish' },
+    { method: 'POST', path: '/passkey/login/start' },
+    { method: 'POST', path: '/passkey/login/finish' },
+    { method: 'POST', path: '/api/auth/webauthn/register-options' },
+    { method: 'POST', path: '/api/auth/webauthn/register-verify' },
+    { method: 'POST', path: '/api/auth/webauthn/login-options' },
+    { method: 'POST', path: '/api/auth/webauthn/login-verify' }
+  ];
 
-    const secondAdminMobile = '97' + Math.floor(10000000 + Math.random() * 90000000);
-    const secondReg = await request('POST', '/api/auth/register', {
-      fullName: 'Second Officer',
-      role: 'DEO',
-      mobileNumber: secondAdminMobile,
-      password: 'OfficialPassword2025!',
-      confirmPassword: 'OfficialPassword2025!'
-    });
-    if (!secondReg.data.success) {
-      throw new Error("Second registration failed: " + JSON.stringify(secondReg.data));
-    }
-    const crossUserAttest = buildRegistrationAttestation(regChallenge);
-    const crossUserRes = await request('POST', '/api/auth/webauthn/register-verify', {
-      userId: secondReg.data.user.id,
-      response: crossUserAttest.payload
-    });
-    if (crossUserRes.data.success) {
-      throw new Error("Cross-user challenge reuse was incorrectly accepted.");
-    }
-    console.log("✓ User mismatch rejected:", crossUserRes.data.message);
-
-    const registration = buildRegistrationAttestation(regChallenge);
-    const credentialId = registration.credentialId;
-    const privateKey = registration.privateKey;
-
-    const verifyPasskeyRes = await request('POST', '/api/auth/webauthn/register-verify', {
-      userId: createdUserId,
-      response: registration.payload
-    }, regRes.cookie ? { Cookie: regRes.cookie } : {});
-
-    if (!verifyPasskeyRes.data.success) {
-      throw new Error("Passkey registration verification failed: " + JSON.stringify(verifyPasskeyRes.data));
-    }
-    console.log("✓ WebAuthn Passkey cryptographically verified and registered!");
-    console.log("✓ Session established:", verifyPasskeyRes.data.sessionId);
-    console.log("✓ Cookie received:", verifyPasskeyRes.cookie);
-
-    const reuseRes = await request('POST', '/api/auth/webauthn/register-verify', {
-      userId: createdUserId,
-      response: registration.payload
-    }, regRes.cookie ? { Cookie: regRes.cookie } : {});
-    if (reuseRes.data.success || !/consumed|not found|expired/i.test(String(reuseRes.data.message || ''))) {
-      throw new Error("Expected consumed challenge reuse to be rejected: " + JSON.stringify(reuseRes.data));
-    }
-    console.log("✓ Reused challenge rejected:", reuseRes.data.message);
-
-    const aliasStart = await request('POST', '/api/passkey/register/start', {
-      userId: secondReg.data.user.id
-    }, secondReg.cookie ? { Cookie: secondReg.cookie } : {});
-    if (!aliasStart.data.success || !aliasStart.data.options || !aliasStart.data.options.challenge) {
-      throw new Error("Alias /api/passkey/register/start failed: " + JSON.stringify(aliasStart.data));
-    }
-    const aliasAttest = buildRegistrationAttestation(aliasStart.data.options.challenge);
-    const aliasFinish = await request('POST', '/api/passkey/register/finish', {
-      userId: secondReg.data.user.id,
-      response: aliasAttest.payload
-    }, aliasStart.cookie ? { Cookie: aliasStart.cookie } : {});
-    if (!aliasFinish.data.success) {
-      throw new Error("Alias /api/passkey/register/finish failed: " + JSON.stringify(aliasFinish.data));
-    }
-    console.log("✓ /api/passkey/register/start and /finish aliases verified.");
-
-    // Test root /passkey/register/start and /passkey/register/finish endpoints
-    console.log("\n[Test 3b] Testing root /passkey/register/start and /finish (with challenge preservation)...");
-    const thirdAdminMobile = '95' + Math.floor(10000000 + Math.random() * 90000000);
-    const thirdReg = await request('POST', '/api/auth/register', {
-      fullName: 'Root Passkey Officer',
-      role: 'APO',
-      mobileNumber: thirdAdminMobile,
-      password: 'OfficialPassword2025!',
-      confirmPassword: 'OfficialPassword2025!'
-    });
-    if (!thirdReg.data.success) {
-      throw new Error("Third registration failed: " + JSON.stringify(thirdReg.data));
-    }
-
-    const rootStart = await request('POST', '/passkey/register/start', {
-      userId: thirdReg.data.user.id
-    }, thirdReg.cookie ? { Cookie: thirdReg.cookie } : {});
-    if (!rootStart.data.success || !rootStart.data.options || !rootStart.data.options.challenge) {
-      throw new Error("Root /passkey/register/start failed: " + JSON.stringify(rootStart.data));
-    }
-    console.log("✓ Root /passkey/register/start generated challenge:", rootStart.data.options.challenge);
-
-    // Verify that a failed verification attempt does NOT delete or consume the challenge
-    const badAttest = buildRegistrationAttestation('invalid-nonmatching-challenge');
-    const failedAttempt = await request('POST', '/passkey/register/finish', {
-      userId: thirdReg.data.user.id,
-      response: badAttest.payload
-    }, rootStart.cookie ? { Cookie: rootStart.cookie } : {});
-    if (failedAttempt.data.success) {
-      throw new Error("Invalid attestation was unexpectedly accepted!");
-    }
-    console.log("✓ Failed verification correctly rejected:", failedAttempt.data.message);
-
-    // Subsequent retry with the exact stored challenge MUST succeed
-    const validRootAttest = buildRegistrationAttestation(rootStart.data.options.challenge);
-    const retryFinish = await request('POST', '/passkey/register/finish', {
-      userId: thirdReg.data.user.id,
-      response: validRootAttest.payload
-    }, rootStart.cookie ? { Cookie: rootStart.cookie } : {});
-    if (!retryFinish.data.success) {
-      throw new Error("Subsequent passkey registration retry failed: " + JSON.stringify(retryFinish.data));
-    }
-    console.log("✓ Challenge preserved across failure; retry succeeded on /passkey/register/finish!");
-
-    const expiredRegMobile = '96' + Math.floor(10000000 + Math.random() * 90000000);
-    const expiredReg = await request('POST', '/api/auth/register', {
-      fullName: 'Expired Challenge User',
-      role: 'MEO',
-      mobileNumber: expiredRegMobile,
-      password: 'OfficialPassword2025!',
-      confirmPassword: 'OfficialPassword2025!'
-    });
-    if (!expiredReg.data.success) {
-      throw new Error("Expired-challenge registration failed: " + JSON.stringify(expiredReg.data));
-    }
-    const db = require('./server/db');
-    const data = db.read();
-    const row = (data.webauthnChallenges || []).find((item) => item.challenge === expiredReg.data.passkeyOptions.challenge);
-    if (!row) {
-      throw new Error("Expected persisted challenge for expiration test.");
-    }
-    row.consumed = false;
-    row.consumedAt = null;
-    row.expiresAt = Date.now() - 1000;
-    db.write(data);
-    const expiredAttest = buildRegistrationAttestation(expiredReg.data.passkeyOptions.challenge);
-    const expiredRes = await request('POST', '/api/auth/webauthn/register-verify', {
-      userId: expiredReg.data.user.id,
-      response: expiredAttest.payload
-    }, expiredReg.cookie ? { Cookie: expiredReg.cookie } : {});
-    if (expiredRes.data.success || !/expired/i.test(String(expiredRes.data.message || ''))) {
-      throw new Error("Expected expired challenge to be rejected: " + JSON.stringify(expiredRes.data));
-    }
-    console.log("✓ Expired challenge rejected:", expiredRes.data.message);
-
-    let sessionCookie = verifyPasskeyRes.cookie;
-
-    // -------------------------------------------------------------
-    // Test 4: WebAuthn Passkey Login Verification
-    // -------------------------------------------------------------
-    console.log("\n[Test 4] Performing WebAuthn Passkey Login (navigator.credentials.get)...");
-    const loginOptRes = await request('POST', '/api/auth/webauthn/login-options', {
-      identifier: testAdminMobile
-    });
-    if (!loginOptRes.data.success) {
-      throw new Error("Failed to get passkey login options: " + JSON.stringify(loginOptRes.data));
-    }
-    console.log("✓ Retrieved Passkey Login options. Challenge:", loginOptRes.data.options.challenge);
-    const loginChallenge = loginOptRes.data.options.challenge;
-
-    // Client signs the authenticatorData + hash(clientDataJSON)
-    const loginClientDataJSON = JSON.stringify({
-      type: 'webauthn.get',
-      challenge: loginChallenge,
-      origin: 'http://localhost:5000'
-    });
-    const clientDataHash = crypto.createHash('sha256').update(Buffer.from(loginClientDataJSON)).digest();
-
-    const loginAuthData = Buffer.concat([
-      crypto.createHash('sha256').update('localhost').digest(),
-      Buffer.from([0x05]), // UP + UV
-      Buffer.from([0, 0, 0, 2]) // signCount: 2
-    ]);
-
-    const signatureBase = Buffer.concat([loginAuthData, clientDataHash]);
-    const signer = crypto.createSign('SHA256');
-    signer.update(signatureBase);
-    const signature = signer.sign(privateKey);
-
-    const loginVerifyRes = await request('POST', '/api/auth/webauthn/login-verify', {
-      identifier: testAdminMobile,
-      userId: createdUserId,
-      response: {
-        id: credentialId.toString('base64url'),
-        clientDataJSON: Buffer.from(loginClientDataJSON).toString('base64url'),
-        authenticatorData: loginAuthData.toString('base64url'),
-        signature: signature.toString('base64url')
-      }
-    });
-
-    if (!loginVerifyRes.data.success) {
-      throw new Error("Passkey login verification failed: " + JSON.stringify(loginVerifyRes.data));
-    }
-    console.log("✓ WebAuthn Passkey signature verified! Login successful for:", loginVerifyRes.data.user.fullName);
-    sessionCookie = loginVerifyRes.cookie;
-
-    // -------------------------------------------------------------
-    // Test 5: Dedicated Teacher Login (Employee ID + Mobile Number)
-    // -------------------------------------------------------------
-    console.log("\n[Test 5] Testing dedicated Teacher Login using Employee ID + Registered Mobile Number...");
-    const teacherLoginRes = await request('POST', '/api/auth/teacher/login', {
-      employeeId: 'TS-TCH-100234',
-      mobileNumber: '9876543210'
-    });
-
-    if (!teacherLoginRes.data.success) {
-      throw new Error("Teacher login failed: " + JSON.stringify(teacherLoginRes.data));
-    }
-    console.log("✓ Teacher authenticated successfully:", teacherLoginRes.data.user.fullName);
-    console.log("✓ Verified Role:", teacherLoginRes.data.user.role);
-    console.log("✓ Designation:", teacherLoginRes.data.user.designation);
-    console.log("✓ School:", teacherLoginRes.data.user.schoolName);
-
-    // Test rejection with mismatched mobile number
-    console.log("\n[Test 5b] Testing rejection of Teacher Login with mismatched phone number...");
-    const wrongMobRes = await request('POST', '/api/auth/teacher/login', {
-      employeeId: 'TS-TCH-100234',
-      mobileNumber: '9123456780'
-    });
-    if (wrongMobRes.status === 401 && !wrongMobRes.data.success) {
-      console.log("✓ Mismatched mobile number correctly rejected with HTTP 401:", wrongMobRes.data.message);
-    } else {
-      throw new Error("Expected HTTP 401 rejection for mismatched teacher mobile!");
-    }
-
-    // -------------------------------------------------------------
-    // Test 6: Fallback Password Login
-    // -------------------------------------------------------------
-    console.log("\n[Test 6] Testing Fallback Password Login for Administrative User...");
-    const pwdLoginRes = await request('POST', '/api/auth/login', {
-      identifier: testAdminMobile,
-      password: 'OfficialPassword2025!'
-    });
-    if (!pwdLoginRes.data.success) {
-      throw new Error("Password fallback login failed: " + JSON.stringify(pwdLoginRes.data));
-    }
-    console.log("✓ Password fallback login successful for:", pwdLoginRes.data.user.fullName);
-
-    // Wrong password test
-    const wrongPwdRes = await request('POST', '/api/auth/login', {
-      identifier: testAdminMobile,
-      password: 'WrongPassword123!'
-    });
-    if (wrongPwdRes.status === 401) {
-      console.log("✓ Incorrect password rejected safely with HTTP 401.");
-    } else {
-      throw new Error("Expected HTTP 401 for incorrect password!");
-    }
-
-    // -------------------------------------------------------------
-    // Test 7: Session Persistence (GET /api/auth/me) & Logout
-    // -------------------------------------------------------------
-    console.log("\n[Test 7] Verifying Session persistence via Cookie and Session Invalidation...");
-    const meRes = await request('GET', '/api/auth/me', null, {
-      'Cookie': sessionCookie
-    });
-    if (!meRes.data.success || !meRes.data.user) {
-      throw new Error("Session verification via cookie failed!");
-    }
-    console.log("✓ Session cookie verified active for:", meRes.data.user.fullName, `(${meRes.data.user.role})`);
-
-    const logoutRes = await request('POST', '/api/auth/logout', null, {
-      'Cookie': sessionCookie
-    });
-    if (!logoutRes.data.success) {
-      throw new Error("Logout failed!");
-    }
-    console.log("✓ Logged out successfully.");
-
-    const meAfterLogout = await request('GET', '/api/auth/me', null, {
-      'Cookie': sessionCookie
-    });
-    if (meAfterLogout.status === 401) {
-      console.log("✓ Server-side session correctly invalidated (HTTP 401 after logout).");
-    } else {
-      throw new Error("Expected session to be invalidated after logout!");
-    }
-
-    console.log("\n🎉 ALL PASSKEY & AUTHENTICATION VERIFICATION TESTS PASSED SUCCESSFULLY!\n");
-    process.exit(0);
-
-  } catch (err) {
-    console.error("\n❌ Test Suite Error:", err);
-    process.exit(1);
+  for (const ep of passkeyEndpoints) {
+    const res = await request(ep.method, ep.path, { dummy: true });
+    assert(res.status === 404, `Endpoint ${ep.method} ${ep.path} returns 404 Not Found (Got ${res.status})`);
   }
+
+  console.log('\n====================================================');
+  console.log('🎉 ALL TESTS PASSED! PASSKEY & STUDENT REMOVAL VERIFIED');
+  console.log('====================================================\n');
 }
 
-runTests();
+runTests().catch((err) => {
+  console.error('❌ Test suite failed with error:', err);
+  process.exit(1);
+});

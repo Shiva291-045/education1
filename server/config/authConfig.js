@@ -27,14 +27,8 @@ function normalizeRpId(value) {
     .toLowerCase();
 }
 
-function getWebAuthnRpId(req) {
-  const fromEnv = normalizeRpId(process.env.WEBAUTHN_RP_ID);
-  if (fromEnv) return fromEnv;
-  return normalizeRpId(hostnameFromHostHeader(req)) || 'localhost';
-}
-
 function getExpectedOrigin(req) {
-  const fromEnv = (process.env.WEBAUTHN_ORIGIN || process.env.FRONTEND_ORIGIN || '').trim().replace(/\/$/, '');
+  const fromEnv = (process.env.FRONTEND_ORIGIN || '').trim().replace(/\/$/, '');
   if (fromEnv) return fromEnv;
 
   const protoHeader = req && req.headers && req.headers['x-forwarded-proto'];
@@ -45,7 +39,6 @@ function getExpectedOrigin(req) {
 
 function getExpectedOrigins(req) {
   const origins = [
-    ...parseList(process.env.WEBAUTHN_ORIGIN),
     ...parseList(process.env.FRONTEND_ORIGIN),
     ...parseList(process.env.CORS_ORIGINS),
     getExpectedOrigin(req)
@@ -64,7 +57,7 @@ function getExpectedOrigins(req) {
 }
 
 function isSameSiteDeployment(req) {
-  const frontend = process.env.FRONTEND_ORIGIN || process.env.WEBAUTHN_ORIGIN;
+  const frontend = process.env.FRONTEND_ORIGIN;
   if (!frontend) return true;
   try {
     const frontendHost = new URL(frontend).hostname.toLowerCase();
@@ -117,7 +110,7 @@ function usesSecureCookies() {
   const sameSite = (process.env.COOKIE_SAMESITE || '').toLowerCase();
   if (sameSite === 'none') return true;
   if (process.env.COOKIE_SECURE === 'true' || process.env.COOKIE_SECURE === '1') return true;
-  const origin = process.env.WEBAUTHN_ORIGIN || process.env.FRONTEND_ORIGIN || '';
+  const origin = process.env.FRONTEND_ORIGIN || '';
   return origin.startsWith('https://') || (isProduction() && Boolean(origin));
 }
 
@@ -174,7 +167,6 @@ function publicConfigScript() {
 module.exports = {
   parseList,
   isProduction,
-  getWebAuthnRpId,
   getExpectedOrigin,
   getExpectedOrigins,
   isOriginAllowed,

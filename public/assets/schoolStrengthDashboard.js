@@ -104,10 +104,8 @@
     const [selectedStage, setSelectedStage] = useState('ALL');
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Tab state & Student Directory Pagination
-    const [activeTab, setActiveTab] = useState(initialTab || 'MANDAL_WISE'); // 'MANDAL_WISE' | 'DISTRICT_WISE' | 'STUDENT_DIRECTORY' | 'CHARTS'
-    const [studentPage, setStudentPage] = useState(1);
-    const studentItemsPerPage = 20;
+    // Tab state
+    const [activeTab, setActiveTab] = useState('MANDAL_WISE'); // 'MANDAL_WISE' | 'DISTRICT_WISE'
 
     // Editing modal state
     const [editModal, setEditModal] = useState({
@@ -250,6 +248,7 @@
         if (user?.sessionId) headers['Authorization'] = `Bearer ${user.sessionId}`;
         if (userRole) headers['x-preview-role'] = userRole;
         if (assignedMandal) headers['x-preview-mandal'] = assignedMandal;
+        if (assignedMandal) headers['x-preview-mandal'] = assignedMandal;
 
         const mandalName = encodeURIComponent(editModal.record.mandal);
         const res = await fetch(`/api/schools/information/mandal/${mandalName}`, {
@@ -286,12 +285,15 @@
         if (user?.sessionId) headers['Authorization'] = `Bearer ${user.sessionId}`;
         if (userRole) headers['x-preview-role'] = userRole;
 
-        const res = await fetch(`/api/schools/information/district/${editModal.record.code}`, {
+        const mandalParam = isMeo ? (assignedMandal || '') : (selectedMandal && selectedMandal !== 'ALL' ? selectedMandal : '');
+        const queryStr = mandalParam ? `?mandal=${encodeURIComponent(mandalParam)}` : '';
+        const res = await fetch(`/api/schools/information/district/${editModal.record.code}${queryStr}`, {
           method: 'PUT',
           headers,
           body: JSON.stringify({
             schoolsCount: editModal.values.schoolsCount,
-            stages: editModal.values.stages
+            stages: editModal.values.stages,
+            mandal: mandalParam
           })
         });
 
@@ -335,17 +337,14 @@
       return rows;
     }, [dashboardData, searchTerm]);
 
-    // Filtered Student Schools Directory for Students Information
-    const filteredStudentSchools = useMemo(() => {
+    // Filtered Schools Directory for Schools Information Print View
+    const filteredSchools = useMemo(() => {
       const allSchools = dashboardData?.filterOptions?.schools || [];
       return allSchools.filter(s => {
         if (selectedMandal !== 'ALL' && s.mandal && s.mandal.toUpperCase() !== selectedMandal.toUpperCase()) {
           return false;
         }
         if (selectedManagement !== 'ALL' && s.management !== selectedManagement && s.displayType !== selectedManagement) {
-          return false;
-        }
-        if (selectedStage !== 'ALL' && s.stage !== selectedStage) {
           return false;
         }
         if (searchTerm.trim()) {
@@ -358,21 +357,7 @@
         }
         return true;
       });
-    }, [dashboardData, selectedMandal, selectedManagement, selectedStage, searchTerm]);
-
-    const totalStudentStrength = useMemo(() => {
-      return filteredStudentSchools.reduce((sum, s) => sum + (Number(s.studentsCount) || 0), 0);
-    }, [filteredStudentSchools]);
-
-    const paginatedStudentSchools = useMemo(() => {
-      const start = (studentPage - 1) * studentItemsPerPage;
-      return filteredStudentSchools.slice(start, start + studentItemsPerPage);
-    }, [filteredStudentSchools, studentPage]);
-
-    // Reset student page to 1 when filters or search change
-    useEffect(() => {
-      setStudentPage(1);
-    }, [selectedMandal, selectedManagement, selectedStage, searchTerm]);
+    }, [dashboardData, selectedMandal, selectedManagement, searchTerm]);
 
     // Summary numbers
     const summary = dashboardData?.summary || {};
@@ -431,9 +416,6 @@
               }
 
               const allSchools = dashboardData?.filterOptions?.schools || [];
-              const allTotalStudents = allSchools.reduce((sum, s) => sum + (Number(s.studentsCount) || 0), 0);
-              const filteredTotalStudents = filteredStudentSchools.reduce((sum, s) => sum + (Number(s.studentsCount) || 0), 0);
-
               const filterParts = [];
               if (isMeo) {
                 filterParts.push(`Mandal: ${assignedMandal}`);
@@ -443,51 +425,38 @@
               if (selectedManagement && selectedManagement !== 'ALL') {
                 filterParts.push(`Management: ${selectedManagement}`);
               }
-              if (selectedStage && selectedStage !== 'ALL') {
-                filterParts.push(`Stage: ${selectedStage}`);
-              }
               if (searchTerm.trim()) {
                 filterParts.push(`Search: "${searchTerm.trim()}"`);
               }
               const filterSummary = filterParts.length > 0 ? filterParts.join(' • ') : 'All Institutions (No Filters Active)';
 
-              const studentColumns = [
+              const schoolColumns = [
                 { key: '_sno', header: 'S.No', align: 'center', width: '38px' },
                 { key: 'diseCode', header: 'U-DISE Code', align: 'center', width: '85px', style: 'font-weight: 700;' },
-                { key: 'name', header: 'School / Institution Name', align: 'left', width: '200px', style: 'font-weight: 700;' },
-                { key: 'mandal', header: 'Mandal', align: 'left', width: '90px' },
-                { key: 'displayType', header: 'Management / Category', align: 'left', width: '120px' },
-                { key: 'stage', header: 'Stage / Classes', align: 'left', width: '110px' },
-                { key: 'medium', header: 'Medium', align: 'left', width: '90px' },
-                {
-                  key: 'studentsCount',
-                  header: 'Total Students',
-                  align: 'right',
-                  width: '80px',
-                  style: 'font-weight: 800;',
-                  render: (row) => formatNum(row.studentsCount || 0)
-                }
+                { key: 'name', header: 'School / Institution Name', align: 'left', width: '220px', style: 'font-weight: 700;' },
+                { key: 'mandal', header: 'Mandal', align: 'left', width: '95px' },
+                { key: 'displayType', header: 'Management / Category', align: 'left', width: '130px' },
+                { key: 'stage', header: 'Stage / Classes', align: 'left', width: '120px' },
+                { key: 'medium', header: 'Medium', align: 'left', width: '95px' }
               ];
 
               window.openPrintDirectoryModal({
-                directoryType: 'STUDENTS',
-                title: isMeo ? `STUDENTS INFORMATION & ENROLLMENT DIRECTORY — ${assignedMandal} MANDAL` : 'OFFICIAL STUDENTS INFORMATION & ENROLLMENT DIRECTORY — JANGAON DISTRICT',
+                directoryType: 'SCHOOLS',
+                title: isMeo ? `SCHOOLS INFORMATION DIRECTORY — ${assignedMandal} MANDAL` : 'OFFICIAL SCHOOLS INFORMATION DIRECTORY — JANGAON DISTRICT',
                 subtitle: 'DEPARTMENT OF SCHOOL EDUCATION • GOVERNMENT OF TELANGANA',
                 scopeText: isMeo ? `Mandal Educational Office: ${assignedMandal} Mandal` : 'District Educational Office: Jangaon District (All 12 Mandals)',
                 user: user,
-                filteredCount: filteredStudentSchools.length,
+                filteredCount: filteredSchools.length,
                 totalCount: allSchools.length,
                 activeFiltersSummary: filterSummary,
-                summaryStats: {
-                  totalStudents: filteredTotalStudents
-                },
+                summaryStats: {},
                 fetchFiltered: async () => {
-                  return filteredStudentSchools;
+                  return filteredSchools;
                 },
                 fetchAll: async () => {
                   return allSchools;
                 },
-                columns: studentColumns
+                columns: schoolColumns
               });
             },
             className: `px-3 py-1.5 rounded-xl text-xs font-bold border flex items-center space-x-1.5 transition-all shadow-xs cursor-pointer ${
@@ -653,56 +622,7 @@
         ])
       ]),
 
-      // 4. STUDENT ENROLLMENT SECTION (IMAGE 2)
-      h('div', {
-        key: 'student-enrollment-section',
-        className: `p-4 sm:p-5 rounded-2xl border shadow-sm space-y-3 ${
-          isDark ? 'bg-[#131f37] border-slate-700' : 'bg-white border-slate-200'
-        }`
-      }, [
-        h('div', { className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-1.5' }, [
-          h('div', { className: 'flex items-center space-x-2' }, [
-            h('span', { className: 'text-base' }, '📊'),
-            h('h3', { className: `text-xs sm:text-sm font-black uppercase tracking-wider ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` },
-              t('DISTRICT CLASS / STAGE-WISE STUDENT ENROLLMENT')
-            ),
-            (selectedMandal !== 'ALL' || selectedSchool !== 'ALL') && h('span', {
-              className: 'ml-2 px-2 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 border border-sky-300 dark:border-sky-800'
-            }, selectedSchool !== 'ALL' ? selectedSchool : selectedMandal)
-          ]),
-          h('span', { className: 'text-[11px] text-slate-400 font-medium' },
-            t('Source: District Schools Strength Sheet 1')
-          )
-        ]),
-
-        h('div', { className: 'grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5' },
-          STAGE_KEYS.map(s => {
-            const count = stageSummary[s.key] || 0;
-            const denom = (summary.activeDenominator !== undefined && summary.activeDenominator > 0)
-              ? summary.activeDenominator
-              : (summary.districtTotalStudents || 74657);
-            const pct = denom > 0 ? ((count / denom) * 100).toFixed(1) : '0.0';
-            const scopeLabel = summary.scope || (selectedSchool !== 'ALL' ? t('School') : (selectedMandal !== 'ALL' ? t('Mandal') : t('District')));
-            const isSelected = selectedStage === s.key;
-
-            return h('div', {
-              key: s.key,
-              onClick: () => setSelectedStage(isSelected ? 'ALL' : s.key),
-              className: `p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
-                isSelected
-                  ? 'border-sky-500 bg-sky-50 dark:bg-sky-950/60 ring-2 ring-sky-400 shadow-xs'
-                  : (isDark ? 'bg-slate-800/80 border-slate-700 hover:border-slate-600' : 'bg-slate-50/80 border-slate-200 hover:border-slate-300')
-              }`
-            }, [
-              h('div', { className: 'text-[11px] font-bold text-slate-700 dark:text-slate-300 truncate', title: s.desc }, s.label),
-              h('div', { className: 'text-base sm:text-lg font-black text-sky-600 dark:text-sky-400 my-1' }, formatNum(count)),
-              h('div', { className: 'text-[10px] text-slate-500 dark:text-slate-400 font-medium' }, `${pct}% of ${scopeLabel}`)
-            ]);
-          })
-        )
-      ]),
-
-      // 5. INTERACTIVE FILTERS & SCHOOL CATEGORY SECTION (IMAGE 1)
+      // 4. INTERACTIVE FILTERS & SCHOOL CATEGORY SECTION (IMAGE 1)
       h('div', {
         key: 'filters-and-category-section',
         className: `p-4 sm:p-5 rounded-2xl border shadow-sm space-y-4 ${
@@ -893,19 +813,6 @@
             }, 'Sheet 1: District Schools & Stage Breakdown'),
 
             h('button', {
-              key: 'tab-students',
-              onClick: () => {
-                setActiveTab('STUDENT_DIRECTORY');
-                setStudentPage(1);
-              },
-              className: `px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === 'STUDENT_DIRECTORY'
-                  ? 'bg-[#0c4a7e] text-white shadow-xs'
-                  : (isDark ? 'text-slate-300 hover:bg-slate-800' : 'text-slate-600 hover:bg-slate-100')
-              }`
-            }, '👥 Students Information Directory'),
-
-            h('button', {
               key: 'tab-charts',
               onClick: () => setActiveTab('CHARTS'),
               className: `px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
@@ -913,7 +820,7 @@
                   ? 'bg-[#0c4a7e] text-white shadow-xs'
                   : (isDark ? 'text-slate-300 hover:bg-slate-800' : 'text-slate-600 hover:bg-slate-100')
               }`
-            }, '📈 Visual Analytics & Distribution')
+            }, '📊 Visual Representation & Breakdown')
           ]),
 
           h('div', { className: 'flex items-center space-x-2' }, [
@@ -935,9 +842,9 @@
             h('div', { className: 'text-xs text-slate-500 dark:text-slate-400 font-semibold' },
               activeTab === 'MANDAL_WISE'
                 ? `${filteredMandalRows.length} Mandal(s)`
-                : activeTab === 'STUDENT_DIRECTORY'
-                ? `${filteredStudentSchools.length} School(s)`
-                : `${filteredDistrictRows.length} Categories`
+                : activeTab === 'DISTRICT_WISE'
+                ? `${filteredDistrictRows.length} Categories`
+                : 'District Visual Analytics'
             )
           ])
         ]),
@@ -1058,15 +965,27 @@
           h('div', { className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100 dark:border-slate-800' }, [
             h('div', {}, [
               h('h3', { className: `text-sm font-bold ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` },
-                'Schools Strength Particulars - Dist : Jangaon'
+                isMeo ? `Schools Strength Particulars - Mandal : ${assignedMandal || 'Assigned Mandal'}` : (selectedMandal && selectedMandal !== 'ALL' ? `Schools Strength Particulars - Mandal : ${selectedMandal}` : 'Schools Strength Particulars - Dist : Jangaon')
               ),
               h('p', { className: 'text-xs text-slate-500 dark:text-slate-400 mt-0.5' },
-                'Management Code, School Counts, and Class/Stage distribution across Jangaon District.'
+                isMeo ? `Management Code, School Counts, and Class/Stage distribution for ${assignedMandal || 'Assigned'} Mandal.` : (selectedMandal && selectedMandal !== 'ALL' ? `Management Code, School Counts, and Class/Stage distribution for ${selectedMandal} Mandal.` : 'Management Code, School Counts, and Class/Stage distribution across Jangaon District.')
               )
             ]),
-            h('div', { className: 'text-xs font-semibold text-slate-500' },
-              isMeo ? 'ℹ️ Read-Only District Benchmark View for MEO' : '✏️ DEO & APO District Edit Access Enabled'
-            )
+            h('div', { className: 'flex items-center space-x-2' }, [
+              h('button', {
+                type: 'button',
+                onClick: () => setActiveTab('CHARTS'),
+                className: `px-2.5 py-1 rounded-lg text-xs font-bold border transition-all flex items-center space-x-1 cursor-pointer ${
+                  isDark ? 'bg-sky-950/70 border-sky-800 text-sky-300 hover:bg-sky-900' : 'bg-sky-50 border-sky-200 text-[#0c4a7e] hover:bg-sky-100'
+                }`
+              }, [
+                h('span', {}, '📊'),
+                h('span', {}, 'Visual Representation & Breakdown →')
+              ]),
+              h('span', { className: 'text-xs font-semibold text-slate-500' },
+                isMeo ? `✏️ MEO Edit Access Enabled (${assignedMandal || 'Mandal'})` : '✏️ DEO & APO District Edit Access Enabled'
+              )
+            ])
           ]),
 
           h('div', { className: 'overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700' }, [
@@ -1087,7 +1006,7 @@
                     h('div', { className: 'text-[9px] font-normal opacity-70' }, s.desc)
                   ])),
                   h('th', { className: 'p-2.5 font-black border-b border-r dark:border-slate-700 text-right min-w-[90px] bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300' }, 'Total Students'),
-                  !isMeo && h('th', { className: 'p-2.5 font-bold border-b dark:border-slate-700 text-center min-w-[80px]' }, 'Actions')
+                  h('th', { className: 'p-2.5 font-bold border-b dark:border-slate-700 text-center min-w-[80px]' }, 'Actions')
                 ])
               ]),
 
@@ -1119,7 +1038,7 @@
                   h('td', { className: 'p-2.5 text-right font-black border-r dark:border-slate-700 bg-emerald-50/40 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400' },
                     formatNum(row.totalStudents)
                   ),
-                  !isMeo && h('td', { className: 'p-2 text-center' }, [
+                  h('td', { className: 'p-2 text-center' }, [
                     h('button', {
                       onClick: () => setEditModal({
                         open: true,
@@ -1137,7 +1056,7 @@
 
                 // Footer Row
                 h('tr', { className: isDark ? 'bg-slate-900 font-black text-slate-100' : 'bg-slate-100 font-black text-slate-900' }, [
-                  h('td', { className: 'p-2.5 text-center border-r dark:border-slate-700', colSpan: 3 }, 'District Grand Total'),
+                  h('td', { className: 'p-2.5 text-center border-r dark:border-slate-700', colSpan: 3 }, (isMeo || (selectedMandal && selectedMandal !== 'ALL')) ? `${(isMeo ? assignedMandal : selectedMandal)} Grand Total` : 'District Grand Total'),
                   h('td', { className: 'p-2.5 text-center border-r dark:border-slate-700 text-sky-600 dark:text-sky-400' },
                     formatNum(filteredDistrictRows.reduce((sum, r) => sum + (Number(r.schoolsCount) || 0), 0))
                   ),
@@ -1151,251 +1070,207 @@
                   h('td', { className: 'p-2.5 text-right text-emerald-600 dark:text-emerald-400 border-r dark:border-slate-700' },
                     formatNum(filteredDistrictRows.reduce((sum, r) => sum + (Number(r.totalStudents) || 0), 0))
                   ),
-                  !isMeo && h('td', { className: 'p-2' }, '')
+                  h('td', { className: 'p-2 text-center text-slate-400 font-bold' }, '-')
                 ])
               ])
             ])
           ])
         ]),
-        // TAB 3: STUDENTS INFORMATION & ENROLLMENT DIRECTORY
-        activeTab === 'STUDENT_DIRECTORY' && h('div', {
-          key: 'student-directory-wrap',
-          className: `p-4 sm:p-5 rounded-2xl border shadow-sm space-y-4 ${
-            isDark ? 'bg-[#131f37] border-slate-700' : 'bg-white border-slate-200'
-          }`
-        }, [
-          // Header inside table
-          h('div', { className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100 dark:border-slate-800' }, [
-            h('div', {}, [
-              h('div', { className: 'flex items-center space-x-2' }, [
-                h('span', { className: 'text-base' }, '👥'),
-                h('h3', { className: `text-sm font-bold ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` },
-                  isMeo ? `Students Information Directory — ${assignedMandal} Mandal` : 'Students Information & Enrollment Directory — Jangaon District'
-                )
-              ]),
-              h('p', { className: 'text-xs text-slate-500 dark:text-slate-400 mt-0.5' },
-                `Showing ${paginatedStudentSchools.length} of ${formatNum(filteredStudentSchools.length)} schools (${formatNum(totalStudentStrength)} Enrolled Students)`
-              )
-            ]),
-            h('div', { className: 'flex items-center space-x-2' }, [
-              h('button', {
-                type: 'button',
-                onClick: () => {
-                  const allSchools = dashboardData?.filterOptions?.schools || [];
-                  const filteredTotalStudents = filteredStudentSchools.reduce((sum, s) => sum + (Number(s.studentsCount) || 0), 0);
-                  const filterParts = [];
-                  if (isMeo) filterParts.push(`Mandal: ${assignedMandal}`);
-                  else if (selectedMandal !== 'ALL') filterParts.push(`Mandal: ${selectedMandal}`);
-                  if (selectedManagement !== 'ALL') filterParts.push(`Management: ${selectedManagement}`);
-                  if (searchTerm.trim()) filterParts.push(`Search: "${searchTerm.trim()}"`);
-                  const filterSummary = filterParts.length > 0 ? filterParts.join(' • ') : 'All Institutions (No Filters Active)';
 
-                  const studentColumns = [
-                    { key: '_sno', header: 'S.No', align: 'center', width: '38px' },
-                    { key: 'diseCode', header: 'U-DISE Code', align: 'center', width: '85px', style: 'font-weight: 700;' },
-                    { key: 'name', header: 'School / Institution Name', align: 'left', width: '200px', style: 'font-weight: 700;' },
-                    { key: 'mandal', header: 'Mandal', align: 'left', width: '90px' },
-                    { key: 'displayType', header: 'Management / Category', align: 'left', width: '120px' },
-                    { key: 'stage', header: 'Stage / Classes', align: 'left', width: '110px' },
-                    { key: 'medium', header: 'Medium', align: 'left', width: '90px' },
-                    {
-                      key: 'studentsCount',
-                      header: 'Total Students',
-                      align: 'right',
-                      width: '80px',
-                      style: 'font-weight: 800;',
-                      render: (row) => formatNum(row.studentsCount || 0)
-                    }
-                  ];
-
-                  window.openPrintDirectoryModal({
-                    directoryType: 'STUDENTS',
-                    title: isMeo ? `STUDENTS INFORMATION & ENROLLMENT DIRECTORY — ${assignedMandal} MANDAL` : 'OFFICIAL STUDENTS INFORMATION & ENROLLMENT DIRECTORY — JANGAON DISTRICT',
-                    subtitle: 'DEPARTMENT OF SCHOOL EDUCATION • GOVERNMENT OF TELANGANA',
-                    scopeText: isMeo ? `Mandal Educational Office: ${assignedMandal} Mandal` : 'District Educational Office: Jangaon District (All 12 Mandals)',
-                    user: user,
-                    filteredCount: filteredStudentSchools.length,
-                    totalCount: allSchools.length,
-                    activeFiltersSummary: filterSummary,
-                    summaryStats: { totalStudents: filteredTotalStudents },
-                    fetchFiltered: async () => filteredStudentSchools,
-                    fetchAll: async () => allSchools,
-                    columns: studentColumns
-                  });
-                },
-                className: 'px-2.5 py-1 rounded-lg text-xs font-bold bg-[#0c4a7e] hover:bg-[#08355b] text-white flex items-center space-x-1 cursor-pointer shadow-xs'
-              }, [
-                h('span', { key: 'i' }, '🖨️'),
-                h('span', { key: 't' }, 'Print Directory View')
-              ]),
-              h('div', { className: 'text-xs font-bold text-slate-500 dark:text-slate-400' },
-                `Page ${studentPage} of ${Math.max(1, Math.ceil(filteredStudentSchools.length / studentItemsPerPage))}`
-              )
-            ])
-          ]),
-
-          // Table
-          h('div', { className: 'overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700' }, [
-            h('table', { className: 'w-full text-xs text-left border-collapse' }, [
-              h('thead', { className: isDark ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-700' }, [
-                h('tr', {}, [
-                  h('th', { className: 'p-2.5 font-bold border-b border-r dark:border-slate-700 text-center w-12' }, 'S.No'),
-                  h('th', { className: 'p-2.5 font-bold border-b border-r dark:border-slate-700 text-center min-w-[110px]' }, 'U-DISE Code'),
-                  h('th', { className: 'p-2.5 font-bold border-b border-r dark:border-slate-700 min-w-[220px]' }, 'School / Institution Name'),
-                  h('th', { className: 'p-2.5 font-bold border-b border-r dark:border-slate-700 min-w-[120px]' }, 'Mandal'),
-                  h('th', { className: 'p-2.5 font-bold border-b border-r dark:border-slate-700 min-w-[140px]' }, 'Management / Category'),
-                  h('th', { className: 'p-2.5 font-bold border-b border-r dark:border-slate-700 min-w-[130px]' }, 'Stage / Classes'),
-                  h('th', { className: 'p-2.5 font-bold border-b border-r dark:border-slate-700 min-w-[110px]' }, 'Medium'),
-                  h('th', { className: 'p-2.5 font-black border-b dark:border-slate-700 text-right min-w-[110px] bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300' }, 'Total Students')
-                ])
-              ]),
-
-              h('tbody', { className: 'divide-y divide-slate-200 dark:divide-slate-800' }, [
-                paginatedStudentSchools.length === 0 ? (
-                  h('tr', {}, [
-                    h('td', { colSpan: 8, className: 'p-8 text-center text-slate-500 font-semibold' },
-                      'No school or student records found matching the active criteria.'
-                    )
-                  ])
-                ) : (
-                  paginatedStudentSchools.map((s, idx) => {
-                    const sNo = (studentPage - 1) * studentItemsPerPage + idx + 1;
-                    return h('tr', {
-                      key: s.diseCode || idx,
-                      className: isDark ? 'hover:bg-slate-800/50' : 'hover:bg-slate-50'
-                    }, [
-                      h('td', { className: 'p-2.5 text-center font-semibold border-r dark:border-slate-700 text-slate-500' }, sNo),
-                      h('td', { className: 'p-2.5 text-center font-mono font-bold text-sky-700 dark:text-sky-300 border-r dark:border-slate-700' }, s.diseCode || '-'),
-                      h('td', { className: 'p-2.5 font-bold text-slate-900 dark:text-slate-100 border-r dark:border-slate-700' }, s.name),
-                      h('td', { className: 'p-2.5 font-semibold text-slate-700 dark:text-slate-300 border-r dark:border-slate-700' }, s.mandal),
-                      h('td', { className: 'p-2.5 border-r dark:border-slate-700' }, [
-                        h('span', {
-                          className: 'px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
-                        }, s.displayType || s.management)
-                      ]),
-                      h('td', { className: 'p-2.5 text-slate-600 dark:text-slate-400 border-r dark:border-slate-700 text-[11px]' }, s.stage || '-'),
-                      h('td', { className: 'p-2.5 text-slate-600 dark:text-slate-400 border-r dark:border-slate-700 text-[11px]' }, s.medium || 'Telugu Medium'),
-                      h('td', { className: 'p-2.5 text-right font-black border-r dark:border-slate-700 bg-emerald-50/30 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 text-xs' },
-                        formatNum(s.studentsCount || 0)
-                      )
-                    ]);
-                  })
-                ),
-
-                // Table Grand Total row
-                paginatedStudentSchools.length > 0 && h('tr', {
-                  className: isDark ? 'bg-slate-900 font-black text-slate-100' : 'bg-slate-100 font-black text-slate-900'
-                }, [
-                  h('td', { className: 'p-2.5 text-center border-r dark:border-slate-700', colSpan: 3 },
-                    `Total Matching: ${formatNum(filteredStudentSchools.length)} Institutions`
-                  ),
-                  h('td', { className: 'p-2.5 text-center border-r dark:border-slate-700 text-slate-500 font-bold', colSpan: 4 },
-                    'Enrolled Student Strength (Current Filter Selection)'
-                  ),
-                  h('td', { className: 'p-2.5 text-right text-emerald-600 dark:text-emerald-400 font-black text-xs' },
-                    formatNum(totalStudentStrength)
-                  )
-                ])
-              ])
-            ])
-          ]),
-
-          // Pagination Controls
-          filteredStudentSchools.length > studentItemsPerPage && h('div', {
-            className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs font-semibold'
-          }, [
-            h('div', { className: 'text-slate-500 dark:text-slate-400' },
-              `Showing ${(studentPage - 1) * studentItemsPerPage + 1} to ${Math.min(studentPage * studentItemsPerPage, filteredStudentSchools.length)} of ${formatNum(filteredStudentSchools.length)} records`
-            ),
-            h('div', { className: 'flex items-center space-x-2' }, [
-              h('button', {
-                type: 'button',
-                disabled: studentPage === 1,
-                onClick: () => setStudentPage(p => Math.max(1, p - 1)),
-                className: `px-3 py-1.5 rounded-lg border transition-all ${
-                  studentPage === 1
-                    ? 'opacity-40 cursor-not-allowed border-slate-200 dark:border-slate-700'
-                    : 'hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer border-slate-300 dark:border-slate-600'
-                }`
-              }, '← Previous'),
-              h('span', { className: 'px-2 font-bold text-slate-700 dark:text-slate-300' },
-                `Page ${studentPage} / ${Math.max(1, Math.ceil(filteredStudentSchools.length / studentItemsPerPage))}`
-              ),
-              h('button', {
-                type: 'button',
-                disabled: studentPage >= Math.ceil(filteredStudentSchools.length / studentItemsPerPage),
-                onClick: () => setStudentPage(p => p + 1),
-                className: `px-3 py-1.5 rounded-lg border transition-all ${
-                  studentPage >= Math.ceil(filteredStudentSchools.length / studentItemsPerPage)
-                    ? 'opacity-40 cursor-not-allowed border-slate-200 dark:border-slate-700'
-                    : 'hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer border-slate-300 dark:border-slate-600'
-                }`
-              }, 'Next →')
-            ])
-          ])
-        ]),
-
-        // TAB 4: VISUAL ANALYTICS & DISTRIBUTION BARS
+        // TAB 3: VISUAL REPRESENTATION & BREAKDOWN (CHARTS & DISTRIBUTION BARS)
         activeTab === 'CHARTS' && h('div', {
           key: 'charts-wrap',
-          className: 'grid grid-cols-1 lg:grid-cols-2 gap-6'
+          className: 'space-y-6'
         }, [
-          // Management Share Chart
+          // Banner & Overview Cards
           h('div', {
-            key: 'c-mgmt-share',
             className: `p-5 rounded-2xl border shadow-sm space-y-4 ${
               isDark ? 'bg-[#131f37] border-slate-700' : 'bg-white border-slate-200'
             }`
           }, [
-            h('h3', { className: `text-sm font-bold ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` },
-              '🏫 Management Category Distribution'
-            ),
-            h('div', { className: 'space-y-3' }, [
-              { label: 'Private Schools (PVT + CBSE)', count: catSummary.privateStudents || 35000, total: 74657, color: 'bg-purple-500' },
-              { label: 'MPP / Zilla Parishad (MPP/ZPP)', count: 21852, total: 74657, color: 'bg-blue-600' },
-              { label: 'Residential Welfare (KGBV, TGMS, MJPTBC, etc.)', count: catSummary.residentialWelfareStudents || 15582, total: 74657, color: 'bg-emerald-500' },
-              { label: 'Government High School & Junior Colleges', count: 2051, total: 74657, color: 'bg-amber-500' },
-              { label: 'Aided & Special Schools', count: 172, total: 74657, color: 'bg-rose-500' }
-            ].map(item => {
-              const pct = ((item.count / item.total) * 100).toFixed(1);
-              return h('div', { key: item.label, className: 'space-y-1' }, [
-                h('div', { className: 'flex justify-between text-xs font-semibold' }, [
-                  h('span', { className: isDark ? 'text-slate-300' : 'text-slate-700' }, item.label),
-                  h('span', { className: 'text-slate-500' }, `${formatNum(item.count)} (${pct}%)`)
+            h('div', { className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800' }, [
+              h('div', {}, [
+                h('h3', { className: `text-base font-bold flex items-center space-x-2 ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, [
+                  h('span', {}, '📊'),
+                  h('span', {}, 'District Visual Analytics, Representation & Breakdown')
                 ]),
-                h('div', { className: 'w-full h-3 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden' }, [
-                  h('div', {
-                    className: `h-full rounded-full ${item.color} transition-all duration-500`,
-                    style: { width: `${pct}%` }
-                  })
-                ])
-              ]);
-            }))
+                h('p', { className: 'text-xs text-slate-500 dark:text-slate-400 mt-0.5' },
+                  'Comprehensive visual distribution of management categories, 7 academic stages, and mandal-wise strength benchmarking across Jangaon District.'
+                )
+              ]),
+              h('div', { className: 'flex items-center space-x-2' }, [
+                h('button', {
+                  onClick: () => setActiveTab('DISTRICT_WISE'),
+                  className: `px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                    isDark ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200'
+                  }`
+                }, '← Sheet 1: Stage Breakdown Table'),
+                h('button', {
+                  onClick: () => setActiveTab('MANDAL_WISE'),
+                  className: `px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                    isDark ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200'
+                  }`
+                }, 'Sheet 2: Mandal Matrix →')
+              ])
+            ]),
+
+            // Key Summary Badges Grid
+            h('div', { className: 'grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1' }, [
+              h('div', { className: `p-3 rounded-xl border text-center ${isDark ? 'bg-slate-800/60 border-slate-700' : 'bg-sky-50/70 border-sky-200'}` }, [
+                h('div', { className: 'text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400' }, 'Total Institutions'),
+                h('div', { className: 'text-lg font-black text-sky-600 dark:text-sky-400 mt-0.5' }, formatNum(summary.districtTotalSchools || 495)),
+                h('div', { className: 'text-[10px] text-slate-500 mt-0.5' }, 'Across 12 Mandals')
+              ]),
+              h('div', { className: `p-3 rounded-xl border text-center ${isDark ? 'bg-slate-800/60 border-slate-700' : 'bg-emerald-50/70 border-emerald-200'}` }, [
+                h('div', { className: 'text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400' }, 'Total Student Strength'),
+                h('div', { className: 'text-lg font-black text-emerald-600 dark:text-emerald-400 mt-0.5' }, formatNum(summary.districtTotalStudents || 74657)),
+                h('div', { className: 'text-[10px] text-slate-500 mt-0.5' }, 'Avg 151 per School')
+              ]),
+              h('div', { className: `p-3 rounded-xl border text-center ${isDark ? 'bg-slate-800/60 border-slate-700' : 'bg-amber-50/70 border-amber-200'}` }, [
+                h('div', { className: 'text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400' }, 'Management Types'),
+                h('div', { className: 'text-lg font-black text-amber-600 dark:text-amber-400 mt-0.5' }, '16 Categories'),
+                h('div', { className: 'text-[10px] text-slate-500 mt-0.5' }, 'Govt, Welfare & Pvt')
+              ]),
+              h('div', { className: `p-3 rounded-xl border text-center ${isDark ? 'bg-slate-800/60 border-slate-700' : 'bg-purple-50/70 border-purple-200'}` }, [
+                h('div', { className: 'text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400' }, 'Academic Stages'),
+                h('div', { className: 'text-lg font-black text-purple-600 dark:text-purple-400 mt-0.5' }, '7 Stages'),
+                h('div', { className: 'text-[10px] text-slate-500 mt-0.5' }, 'PS, UPS, HS & Inter')
+              ])
+            ])
           ]),
 
-          // Stage Distribution Chart
-          h('div', {
-            key: 'c-stage-share',
-            className: `p-5 rounded-2xl border shadow-sm space-y-4 ${
-              isDark ? 'bg-[#131f37] border-slate-700' : 'bg-white border-slate-200'
-            }`
-          }, [
-            h('h3', { className: `text-sm font-bold ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` },
-              '🎓 Class & Stage Enrollment Breakdown'
-            ),
-            h('div', { className: 'space-y-3' },
-              STAGE_KEYS.map(s => {
-                const count = stageSummary[s.key] || 0;
-                const pct = summary.districtTotalStudents ? ((count / summary.districtTotalStudents) * 100).toFixed(1) : 0;
-                return h('div', { key: s.key, className: 'space-y-1' }, [
+          // 2-Column Grid: Management Share & Stage Breakdown
+          h('div', { className: 'grid grid-cols-1 lg:grid-cols-2 gap-6' }, [
+            // Panel 1: Management Category Distribution Chart
+            h('div', {
+              key: 'c-mgmt-share',
+              className: `p-5 rounded-2xl border shadow-sm space-y-4 ${
+                isDark ? 'bg-[#131f37] border-slate-700' : 'bg-white border-slate-200'
+              }`
+            }, [
+              h('div', { className: 'flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800' }, [
+                h('h3', { className: `text-sm font-bold flex items-center space-x-2 ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, [
+                  h('span', {}, '🏫'),
+                  h('span', {}, 'Management Category Distribution')
+                ]),
+                h('span', { className: 'text-[10px] font-bold px-2 py-0.5 rounded bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-200' },
+                  'District Overview'
+                )
+              ]),
+              h('p', { className: 'text-xs text-slate-500 dark:text-slate-400' },
+                'Enrolled strength proportions across government, private, and social welfare educational institutions.'
+              ),
+              h('div', { className: 'space-y-3 pt-1' }, [
+                { label: 'Private Schools (PVT + CBSE)', count: catSummary.privateStudents || 35000, total: 74657, color: 'bg-purple-500', schools: '182 Schools' },
+                { label: 'MPP / Zilla Parishad (MPP/ZPP)', count: 21852, total: 74657, color: 'bg-blue-600', schools: '263 Schools' },
+                { label: 'Residential Welfare (KGBV, TGMS, MJPTBC, etc.)', count: catSummary.residentialWelfareStudents || 15582, total: 74657, color: 'bg-emerald-500', schools: '32 Schools' },
+                { label: 'Government High School & Junior Colleges', count: 2051, total: 74657, color: 'bg-amber-500', schools: '16 Schools' },
+                { label: 'Aided & Special Schools', count: 172, total: 74657, color: 'bg-rose-500', schools: '2 Schools' }
+              ].map(item => {
+                const pct = ((item.count / item.total) * 100).toFixed(1);
+                return h('div', { key: item.label, className: 'space-y-1' }, [
                   h('div', { className: 'flex justify-between text-xs font-semibold' }, [
-                    h('span', { className: isDark ? 'text-slate-300' : 'text-slate-700' }, `${s.label} - ${s.desc}`),
-                    h('span', { className: 'text-slate-500' }, `${formatNum(count)} (${pct}%)`)
+                    h('div', { className: 'flex items-center space-x-2' }, [
+                      h('span', { className: isDark ? 'text-slate-200' : 'text-slate-800' }, item.label),
+                      h('span', { className: 'text-[10px] text-slate-500 font-normal' }, `(${item.schools})`)
+                    ]),
+                    h('span', { className: 'font-bold text-slate-700 dark:text-slate-300' }, `${formatNum(item.count)} (${pct}%)`)
                   ]),
                   h('div', { className: 'w-full h-3 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden' }, [
                     h('div', {
-                      className: 'h-full rounded-full bg-sky-500 transition-all duration-500',
+                      className: `h-full rounded-full ${item.color} transition-all duration-500`,
                       style: { width: `${pct}%` }
+                    })
+                  ])
+                ]);
+              }))
+            ]),
+
+            // Panel 2: Class & Stage Enrollment Breakdown Chart
+            h('div', {
+              key: 'c-stage-share',
+              className: `p-5 rounded-2xl border shadow-sm space-y-4 ${
+                isDark ? 'bg-[#131f37] border-slate-700' : 'bg-white border-slate-200'
+              }`
+            }, [
+              h('div', { className: 'flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800' }, [
+                h('h3', { className: `text-sm font-bold flex items-center space-x-2 ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, [
+                  h('span', {}, '🎓'),
+                  h('span', {}, 'Class & Stage Enrollment Breakdown')
+                ]),
+                h('span', { className: 'text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200' },
+                  '7 Academic Stages'
+                )
+              ]),
+              h('p', { className: 'text-xs text-slate-500 dark:text-slate-400' },
+                'Cumulative student strength distributed across Primary, Upper Primary, Secondary, and Intermediate stages.'
+              ),
+              h('div', { className: 'space-y-3 pt-1' },
+                STAGE_KEYS.map(s => {
+                  const count = stageSummary[s.key] || 0;
+                  const pct = summary.districtTotalStudents ? ((count / summary.districtTotalStudents) * 100).toFixed(1) : 0;
+                  return h('div', { key: s.key, className: 'space-y-1' }, [
+                    h('div', { className: 'flex justify-between text-xs font-semibold' }, [
+                      h('span', { className: isDark ? 'text-slate-200' : 'text-slate-800' }, `${s.label} - ${s.desc}`),
+                      h('span', { className: 'font-bold text-slate-700 dark:text-slate-300' }, `${formatNum(count)} (${pct}%)`)
+                    ]),
+                    h('div', { className: 'w-full h-3 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden' }, [
+                      h('div', {
+                        className: 'h-full rounded-full bg-sky-500 transition-all duration-500',
+                        style: { width: `${pct}%` }
+                      })
+                    ])
+                  ]);
+                })
+              )
+            ])
+          ]),
+
+          // Panel 3: Mandal-wise Strength Distribution Overview
+          h('div', {
+            key: 'c-mandal-bars',
+            className: `p-5 rounded-2xl border shadow-sm space-y-4 ${
+              isDark ? 'bg-[#131f37] border-slate-700' : 'bg-white border-slate-200'
+            }`
+          }, [
+            h('div', { className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100 dark:border-slate-800' }, [
+              h('div', {}, [
+                h('h3', { className: `text-sm font-bold flex items-center space-x-2 ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` }, [
+                  h('span', {}, '🗺️'),
+                  h('span', {}, 'Mandal-Wise Strength Distribution Overview')
+                ]),
+                h('p', { className: 'text-xs text-slate-500 dark:text-slate-400 mt-0.5' },
+                  'Enrolled strength comparison across all 12 mandals in Jangaon District.'
+                )
+              ]),
+              h('button', {
+                onClick: () => setActiveTab('MANDAL_WISE'),
+                className: 'px-3 py-1.5 rounded-xl text-xs font-bold bg-[#0c4a7e] hover:bg-[#08355b] text-white transition-all shadow-xs flex items-center space-x-1 cursor-pointer self-start sm:self-auto'
+              }, [
+                h('span', {}, '📋'),
+                h('span', {}, 'Open Complete Mandal Matrix →')
+              ])
+            ]),
+
+            h('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1' },
+              (dashboardData?.tables?.mandalStrength || []).map(m => {
+                const total = Number(summary.districtTotalStudents) || 74657;
+                const mTotal = Number(m.totalStudents) || 0;
+                const pct = ((mTotal / total) * 100).toFixed(1);
+                return h('div', {
+                  key: m.mandal,
+                  className: `p-3 rounded-xl border space-y-2 transition-all ${
+                    isDark ? 'bg-slate-800/50 border-slate-700 hover:border-sky-500' : 'bg-slate-50 border-slate-200 hover:border-sky-400'
+                  }`
+                }, [
+                  h('div', { className: 'flex justify-between items-center text-xs' }, [
+                    h('span', { className: 'font-bold text-slate-800 dark:text-slate-100' }, m.mandal),
+                    h('span', { className: 'font-black text-sky-600 dark:text-sky-400' }, `${formatNum(mTotal)} (${pct}%)`)
+                  ]),
+                  h('div', { className: 'w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden' }, [
+                    h('div', {
+                      className: 'h-full rounded-full bg-emerald-500 transition-all duration-500',
+                      style: { width: `${Math.min(100, (mTotal / 24047) * 100)}%` }
                     })
                   ])
                 ]);
@@ -1405,7 +1280,7 @@
         ])
       ]),
 
-      // 7. EDIT MODAL DIALOG
+      // 5. EDIT MODAL DIALOG
       editModal.open && h('div', {
         key: 'edit-modal',
         className: 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs'
@@ -1421,12 +1296,12 @@
               h('h3', { className: `text-base font-bold ${isDark ? 'text-sky-300' : 'text-[#0c4a7e]'}` },
                 editModal.type === 'mandal'
                   ? `✏️ Edit Mandal Particulars: ${editModal.record?.mandal}`
-                  : `✏️ Edit District Particulars: ${editModal.record?.managementName} (Code ${editModal.record?.code})`
+                  : `✏️ Edit Particulars: ${editModal.record?.managementName} (Code ${editModal.record?.code})${isMeo ? ` - ${assignedMandal} Mandal` : (selectedMandal && selectedMandal !== 'ALL' ? ` - ${selectedMandal} Mandal` : ' - District Benchmark')}`
               ),
               h('p', { className: 'text-xs text-slate-500 dark:text-slate-400 mt-0.5' },
                 editModal.type === 'mandal'
                   ? 'Update student strength counts across management categories for this mandal.'
-                  : 'Update schools count and class/stage student breakdown.'
+                  : (isMeo || (selectedMandal && selectedMandal !== 'ALL') ? `Update schools count and stage-wise student strength for ${(isMeo ? assignedMandal : selectedMandal)} Mandal.` : 'Update schools count and class/stage student breakdown across district benchmarks.')
               )
             ]),
             h('button', {
